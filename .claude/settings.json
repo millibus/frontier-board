@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/check-data.mjs)",
+      "Bash(node scripts/check-data.mjs:*)",
+      "Bash(node scripts/smoke.mjs)"
+    ]
+  }
+}
