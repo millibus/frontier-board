@@ -1,0 +1,1709 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Frontier Board</title></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#f6f7f9; --surface:#ffffff; --surface-2:#f0f2f5; --surface-3:#e7eaef;
+  --ink:#0e1116; --ink-2:#565d67; --ink-3:#858d98;
+  --line:#dee2e8; --line-2:#c9cfd8;
+  --accent:#2a78d6; --accent-ink:#1c5cab; --accent-wash:#eaf2fd;
+  --open:#eb6834; --open-ink:#c14a1c; --open-wash:#fdeee7;
+  --good:#1a7a4c; --warn:#9a6400; --bad:#b03a2e;
+  --good-wash:#e6f3ec; --warn-wash:#f8f0dd; --bad-wash:#f9e9e6;
+  --shadow:0 1px 2px rgba(14,17,22,.06), 0 8px 24px -12px rgba(14,17,22,.18);
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0f1216; --surface:#161a1f; --surface-2:#1d2228; --surface-3:#252b33;
+    --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#6d7783;
+    --line:#262c34; --line-2:#333b45;
+    --accent:#3987e5; --accent-ink:#7db1f0; --accent-wash:#152537;
+    --open:#e0703f; --open-ink:#f0a077; --open-wash:#2e1d14;
+    --good:#3fa473; --warn:#c99a2e; --bad:#e07264;
+    --good-wash:#152a20; --warn-wash:#2b2312; --bad-wash:#2e1a17;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0f1216; --surface:#161a1f; --surface-2:#1d2228; --surface-3:#252b33;
+  --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#6d7783;
+  --line:#262c34; --line-2:#333b45;
+  --accent:#3987e5; --accent-ink:#7db1f0; --accent-wash:#152537;
+  --open:#e0703f; --open-ink:#f0a077; --open-wash:#2e1d14;
+  --good:#3fa473; --warn:#c99a2e; --bad:#e07264;
+  --good-wash:#152a20; --warn-wash:#2b2312; --bad-wash:#2e1a17;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:Archivo,"IBM Plex Sans",sans-serif;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* ---------- masthead ---------- */
+.top{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1500px;margin:0 auto;padding:14px 22px 0;display:flex;flex-direction:column;gap:12px}
+.brandrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand{font-family:Archivo;font-weight:800;font-size:21px;letter-spacing:-.025em}
+.brand em{font-style:normal;color:var(--accent)}
+.stamp{font-size:11px;color:var(--ink-2);letter-spacing:.04em;text-transform:uppercase}
+.stamp b{color:var(--ink);font-weight:600}
+.spacer{flex:1}
+.tabs{display:flex;gap:2px;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;padding:9px 14px;
+  font:inherit;font-weight:500;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+
+.themesw{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface-2)}
+.themesw button{appearance:none;border:0;background:none;font:inherit;font-size:12px;color:var(--ink-2);padding:3px 10px;cursor:pointer}
+.themesw button:hover{color:var(--ink)}
+.themesw button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
+/* ---------- filter rail ---------- */
+.rail{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:var(--topH,96px);z-index:30}
+.rail-in{max-width:1500px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.fg{display:flex;gap:6px;align-items:center}
+.fg > label{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.chip{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);
+  border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface);font-weight:500}
+input[type=search],select{
+  font:inherit;font-size:13px;padding:4px 9px;border:1px solid var(--line-2);border-radius:var(--r);
+  background:var(--surface);color:var(--ink);min-width:150px}
+.count{margin-left:auto;font-size:12px;color:var(--ink-3)}
+.count b{color:var(--ink);font-weight:600}
+
+main{max-width:1500px;margin:0 auto;padding:22px}
+.panel{display:none}
+.panel.on{display:block}
+
+/* ---------- board table ---------- */
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;box-shadow:var(--shadow)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+thead th{position:sticky;top:0;background:var(--surface-2);z-index:2;
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);font-weight:600;
+  text-align:right;padding:9px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--ink)}
+thead th.l{text-align:left}
+thead th .arw{opacity:.35;font-size:9px}
+thead th[data-active] .arw{opacity:1;color:var(--accent)}
+tbody td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+tbody td.l{text-align:left}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr.open td{background:var(--accent-wash)}
+.mname{display:flex;align-items:center;gap:8px;font-weight:600}
+.dot{width:7px;height:7px;border-radius:2px;flex:none}
+.dot.p{background:var(--accent)} .dot.o{background:var(--open)}
+.prov{color:var(--ink-3);font-size:12px;font-weight:400}
+.na{color:var(--ink-3)}
+.q{display:inline-block;width:5px;height:5px;border-radius:50%;margin-left:4px;vertical-align:2px}
+.q.ven{background:var(--warn)} .q.unv{background:var(--bad)} .q.ind{background:transparent}
+.rk{color:var(--ink-3);font-size:11.5px;width:28px}
+.det td{background:var(--surface-2)!important;padding:0;border-bottom:2px solid var(--line-2)}
+.detbox{text-align:left;padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px 26px;position:sticky;left:0;width:min(1454px,calc(100vw - 64px));box-sizing:border-box;white-space:normal}
+.detbox h3{grid-column:1/-1;font-size:13px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dline{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  border-bottom:1px dotted var(--line-2);padding-bottom:3px}
+.dline .k{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.dline .v{white-space:nowrap}
+.dline .v{font-weight:600;font-size:13px}
+.dnote{grid-column:1/-1;font-size:12px;color:var(--ink-2);border-left:2px solid var(--line-2);padding-left:10px}
+.badge{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  padding:1.5px 6px;border-radius:3px;border:1px solid transparent}
+.badge.ind{background:var(--good-wash);color:var(--good);border-color:var(--good)}
+.badge.ven{background:var(--warn-wash);color:var(--warn);border-color:var(--warn)}
+.badge.unv{background:var(--bad-wash);color:var(--bad);border-color:var(--bad)}
+.badge.open{background:var(--open-wash);color:var(--open-ink);border-color:var(--open)}
+.badge.pro{background:var(--accent-wash);color:var(--accent-ink);border-color:var(--accent)}
+
+/* ---------- charts ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+.card + .card{margin-top:18px}
+.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:4px}
+.cardhead h2{font-size:16px;letter-spacing:-.015em}
+.sub{font-size:12.5px;color:var(--ink-2);max-width:62ch;margin-top:3px}
+.legend{display:flex;gap:14px;align-items:center;font-size:12px;color:var(--ink-2);flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:0}
+svg{display:block;max-width:100%;height:auto}
+.gridline{stroke:var(--line);stroke-width:1}
+.axline{stroke:var(--line-2);stroke-width:1}
+.quadline{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:3 4;opacity:.55}
+.axlab{fill:var(--ink-3);font-size:10.5px;font-family:"IBM Plex Mono",monospace}
+.axtitle{fill:var(--ink-2);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-family:"IBM Plex Sans",sans-serif}
+.qlab{fill:var(--ink-3);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.ptlab{fill:var(--ink);font-size:11px;font-weight:500;font-family:"IBM Plex Sans",sans-serif;paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.pt{stroke:var(--surface);stroke-width:2}
+.pt:hover{stroke:var(--ink)}
+.barlab{fill:var(--ink);font-size:12px;font-family:"IBM Plex Sans",sans-serif}
+.barval{fill:var(--ink);font-size:12px;font-weight:600;font-family:"IBM Plex Mono",monospace}
+.tip{position:fixed;z-index:99;pointer-events:none;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:var(--r);padding:9px 11px;box-shadow:var(--shadow);font-size:12.5px;max-width:270px;opacity:0;transition:opacity .1s}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:13px;margin-bottom:4px}
+.tip .tl{display:flex;justify-content:space-between;gap:14px;color:var(--ink-2)}
+.tip .tl span:last-child{color:var(--ink);font-weight:600}
+
+/* ---------- benchmark sections ---------- */
+.bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:18px;align-items:start}
+.bhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:2px}
+.bhead h3{font-size:14.5px;letter-spacing:-.01em}
+.bmeta{font-size:11.5px;color:var(--ink-3)}
+.bsub{font-size:12px;color:var(--ink-2);margin:4px 0 12px;max-width:60ch}
+.warnbox{background:var(--warn-wash);border-left:3px solid var(--warn);padding:8px 12px;border-radius:0 var(--r) var(--r) 0;
+  font-size:12.5px;color:var(--ink);margin:10px 0 12px}
+.warnbox b{color:var(--warn)}
+
+
+/* ---------- coverage matrix ---------- */
+.covwrap{overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.cov{border-collapse:separate;border-spacing:0;font-size:12px}
+table.cov th.ch{position:sticky;top:0;z-index:3;background:var(--surface-2);padding:6px 0 8px;height:104px;
+  vertical-align:bottom;border-bottom:1px solid var(--line-2)}
+table.cov th.ch span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:10.5px;font-weight:600;
+  letter-spacing:.03em;color:var(--ink-2);white-space:nowrap;display:inline-block}
+table.cov th.cm{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;font-weight:600;
+  padding:0 12px 0 12px;white-space:nowrap;border-right:1px solid var(--line-2);font-size:12px}
+table.cov thead th.cm{z-index:4;background:var(--surface-2);border-bottom:1px solid var(--line-2)}
+table.cov td{padding:0 1px;height:18px}
+table.cov tr:hover th.cm{background:var(--surface-2)}
+.cc{width:15px;height:13px;border-radius:2px;background:var(--surface-3);display:block}
+.cc.ind{background:var(--accent)} .cc.o.ind{background:var(--open)}
+.cc.ven{background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 2px,var(--surface) 2px,var(--surface) 4px)}
+.cc.o.ven{background:repeating-linear-gradient(45deg,var(--open),var(--open) 2px,var(--surface) 2px,var(--surface) 4px)}
+.cc.unv{background:var(--bad)}
+.cc:hover{outline:1.5px solid var(--ink);outline-offset:1px}
+.covn{font-family:"IBM Plex Mono",monospace;color:var(--ink-3);font-size:11px;padding:0 10px;text-align:right}
+.covlegend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:10px;align-items:center}
+.covlegend i{display:inline-block;width:13px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.cardmeta{font-size:11.5px;color:var(--ink-3);margin:8px 0 0}
+.missing{font-size:12px;color:var(--ink-2);background:var(--surface-2);border-radius:var(--r);padding:7px 10px;margin-top:10px}
+.missing b{color:var(--ink)}
+
+/* ---------- charts tab ---------- */
+:root{--e0:#a3aab4;--e1:#86b6ef;--e2:#3987e5;--e3:#256abf;--e4:#184f95;--e5:#0d366b}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--e0:#5c6570;--e1:#256abf;--e2:#3987e5;--e3:#6da7ec;--e4:#9ec5f4;--e5:#e3eefc}}
+:root[data-theme="dark"]{--e0:#5c6570;--e1:#256abf;--e2:#3987e5;--e3:#6da7ec;--e4:#9ec5f4;--e5:#e3eefc}
+.jump{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.jump a{font-size:12.5px;text-decoration:none;color:var(--ink-2);border:1px solid var(--line-2);background:var(--surface);
+  border-radius:999px;padding:3px 11px}
+.jump a:hover{color:var(--ink);border-color:var(--ink-3)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(430px,100%),1fr));gap:18px;margin-top:18px;align-items:start}
+.grid2 > .card{margin-top:0}
+.grid2 + .card{margin-top:18px}
+.card{scroll-margin-top:190px}
+.effkey{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--ink-2)}
+.effkey i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.effsel{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 6px}
+.effline{fill:none;stroke:var(--ink-3);stroke-width:1.5;stroke-linejoin:round}
+.effline.o{stroke:var(--open)}
+.effsvg:hover .effg{opacity:.22}
+.effsvg .effg:hover{opacity:1}
+.effsvg .effg:hover .effline{stroke-width:2.5;stroke:var(--ink)}
+.effg{transition:opacity .12s}
+.dumbline{stroke:var(--line-2);stroke-width:4;stroke-linecap:round}
+.effdot{stroke:var(--surface);stroke-width:1.5}
+.eff{font-size:10px;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;margin-left:4px;letter-spacing:.02em}
+table.efftab{grid-column:1/-1;justify-self:start;border-collapse:collapse;font-size:12px;width:auto}
+table.efftab th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;text-align:right;padding:4px 14px 4px 0;border-bottom:1px solid var(--line-2)}
+table.efftab th:first-child,table.efftab td:first-child{text-align:left}
+table.efftab td{padding:4px 14px 4px 0;text-align:right;border-bottom:1px dotted var(--line-2);font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+table.efftab td:first-child{font-family:"IBM Plex Sans",sans-serif}
+.effh{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-2);font-weight:600;margin-top:4px}
+
+details.archive{margin-top:30px;border-top:1px solid var(--line-2);padding-top:16px}
+details.archive summary{cursor:pointer;font-size:13px;color:var(--ink-2)}
+details.archive summary span{font-family:Archivo;font-size:15px;color:var(--ink);font-weight:700;margin-right:8px}
+.picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:12px;margin-bottom:14px}
+.pick{appearance:none;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
+.pick:hover{border-color:var(--accent)}
+.pick .pl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.pick .pm{font-family:Archivo;font-weight:700;font-size:16px;letter-spacing:-.015em;display:flex;align-items:center;gap:7px}
+.pick .pv{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink)}
+.pick .pr{font-size:11.5px;color:var(--ink-3)}
+details.changes{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;padding:0 14px}
+details.changes summary{cursor:pointer;padding:10px 0;font-size:13px;color:var(--ink-2)}
+details.changes summary b{color:var(--ink);font-weight:600}
+.chg{border-top:1px solid var(--line);padding:10px 0 12px}
+.chg h4{margin:0 0 6px;font-size:12px;font-family:"IBM Plex Mono",monospace;color:var(--ink-2);font-weight:500}
+.chg ul{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+.chg li{font-size:13px;color:var(--ink);display:flex;gap:8px;align-items:baseline}
+.ctag{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:3px;border:1px solid var(--line-2);color:var(--ink-2);flex:none;min-width:62px;text-align:center}
+.ctag.add{color:var(--good);border-color:var(--good);background:var(--good-wash)}
+.ctag.rescale{color:var(--warn);border-color:var(--warn);background:var(--warn-wash)}
+.ctag.data{color:var(--accent-ink);border-color:var(--accent);background:var(--accent-wash)}
+/* ---------- sources ---------- */
+.srcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.srccard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.srccard h3{font-size:13.5px;margin-bottom:6px}
+.srccard p{margin:0 0 8px;font-size:12.5px;color:var(--ink-2)}
+.srccard a{font-size:12px;word-break:break-word}
+.prose{max-width:72ch}
+.prose h2{font-size:17px;margin:26px 0 8px;letter-spacing:-.015em}
+.prose h2:first-child{margin-top:0}
+.prose p,.prose li{font-size:13.5px;color:var(--ink-2)}
+.prose li{margin-bottom:6px}
+.prose code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--surface-3);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.empty{padding:40px;text-align:center;color:var(--ink-3);font-size:13px}
+@media (max-width:700px){
+  main{padding:14px} .top-in,.rail-in{padding-left:14px;padding-right:14px}
+  .bgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brandrow">
+      <span class="brand">Frontier<em>·</em>Board</span>
+      <span class="stamp">Snapshot <b id="asof">—</b> · <b id="nmodels">—</b> models · <b id="nbench">—</b> benchmarks</span>
+      <span class="spacer"></span>
+      <div class="themesw" role="group" aria-label="Colour theme">
+        <button type="button" data-t="light" aria-pressed="false" title="Light mode">☀︎ Light</button>
+        <button type="button" data-t="dark" aria-pressed="false" title="Dark mode">☾ Dark</button>
+        <button type="button" data-t="system" aria-pressed="false" title="Follow your device setting">Auto</button>
+      </div>
+      <span class="stamp" id="qkey">
+        <span class="badge ind">Independent</span>
+        <span class="badge ven">Vendor-run</span>
+        <span class="badge unv">Unverified</span>
+      </span>
+    </div>
+    <p class="sub" id="asofnote" style="margin:-6px 0 0;font-size:12px;max-width:none"></p>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-p="board" aria-selected="true">Board</button>
+      <button class="tab" role="tab" data-p="quad" aria-selected="false">Charts</button>
+      <button class="tab" role="tab" data-p="bench" aria-selected="false">Benchmarks</button>
+      <button class="tab" role="tab" data-p="src" aria-selected="false">Sources &amp; caveats</button>
+      <button class="tab" role="tab" data-p="upd" aria-selected="false">How to update</button>
+    </nav>
+  </div>
+</header>
+
+<div class="rail">
+  <div class="rail-in">
+    <div class="fg"><label for="q">Find</label><input type="search" id="q" placeholder="model or provider"></div>
+    <div class="fg"><label>Tier</label><span id="tierchips"></span></div>
+    <div class="fg"><label>Weights</label><span id="wchips"></span></div>
+    <div class="fg"><label for="provsel">Provider</label><select id="provsel"><option value="">All</option></select></div>
+    <span class="count"><b id="shown">0</b> shown</span>
+  </div>
+</div>
+
+<main>
+  <section class="panel on" id="p-board">
+    <div class="picks" id="picks"></div>
+    <details class="changes" id="changes"></details>
+    <div class="tablewrap"><table id="board"><thead></thead><tbody></tbody></table></div>
+    <p class="sub" style="margin-top:10px">Click any row to open every score that model has, each with its source and provenance. A dot beside a number means the figure is <span class="q ven" style="position:relative;top:-1px"></span> vendor-run or <span class="q unv" style="position:relative;top:-1px"></span> unverified rather than independently measured.</p>
+  </section>
+
+  <section class="panel" id="p-quad">
+    <nav class="jump" aria-label="Charts">
+      <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a>
+      <a href="#ch-price">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
+      <a href="#ch-ttft">Latency</a><a href="#ch-blend">Price</a><a href="#ch-ctx">Context window</a><a href="#ch-ppp">Price of a point</a>
+    </nav>
+
+    <div class="card" id="ch-index">
+      <div class="cardhead"><div><h2>Intelligence Index</h2>
+        <p class="sub">Artificial Analysis Intelligence Index v4.3.2, each model at its highest-scoring effort level — the level is named beside the score.</p></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span></div></div>
+      <div id="c-index"></div>
+    </div>
+
+    <div class="card" id="ch-effort">
+      <div class="cardhead"><div><h2>What each effort level scores</h2>
+        <p class="sub">Every reasoning-effort setting Artificial Analysis has measured, one dot per level on the same row. A long bar means the effort dial matters a lot for that model; a short one means you can run it cheaply at little cost to capability. Hover a dot for its score, cost and speed.</p></div>
+        <div class="effkey" id="effkey"></div></div>
+      <div id="c-effort"></div>
+    </div>
+
+    <div class="card" id="ch-effcost">
+      <div class="cardhead"><div><h2>Intelligence vs cost to run, by effort</h2>
+        <p class="sub">Each line is one model walking up its effort levels, lowest to highest, against cost per index task on a log scale. Where a line runs flat, the extra effort buys cost without capability; where it doubles back, a lower setting cost more than a higher one. Pick which models to compare; hover a line to isolate it.</p></div>
+        <div class="effkey" id="effkey2"></div></div>
+      <div class="effsel" id="effsel"></div>
+      <div id="c-effcost"></div>
+    </div>
+
+    <div class="card" id="ch-price">
+      <div class="cardhead">
+        <div>
+          <h2>What intelligence costs</h2>
+          <p class="sub">Artificial Analysis Intelligence Index v4.3.2 against blended price per million tokens, log scale. Dashed lines mark the median of each axis, so the upper-left quadrant is the value zone: above-median capability at below-median price.</p>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>Proprietary</span>
+          <span><i style="background:var(--open)"></i>Open weights</span>
+          <span style="color:var(--ink-3)">Point size = context window</span>
+        </div>
+      </div>
+      <div class="fg" style="margin:12px 0 4px">
+        <label for="xaxis">X axis</label>
+        <select id="xaxis">
+          <option value="price">Blended price — $ per 1M tokens</option>
+          <option value="costTask">Cost to run the index — $ per task</option>
+        </select>
+        <label for="yaxis" style="margin-left:14px">Y axis</label>
+        <select id="yaxis">
+          <option value="aaii">AA Intelligence Index</option>
+          <option value="webdev">WebDev Arena Elo</option>
+          <option value="lmarena">Arena text Elo</option>
+          <option value="weirdml">WeirdML v2</option>
+          <option value="arc2">ARC-AGI-2</option>
+        </select>
+      </div>
+      <div id="quad"></div>
+    </div>
+
+    <div class="card" id="ch-speedq">
+      <div class="cardhead"><div><h2>Intelligence vs output speed</h2>
+        <p class="sub">Index score against output tokens per second at the same effort level, log scale. The upper-right quadrant is fast and capable.</p></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span></div></div>
+      <div id="c-speedq"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card" id="ch-speed"><div class="cardhead"><div><h2>Output speed</h2>
+        <p class="sub">Output tokens per second at the same effort level as the Index score, fastest first.</p></div></div><div id="c-speed"></div></div>
+      <div class="card" id="ch-ttft"><div class="cardhead"><div><h2>Latency</h2>
+        <p class="sub">Seconds to the first answer token, quickest first. For reasoning models at high effort this includes thinking time, which is why the slowest run to minutes.</p></div></div><div id="c-ttft"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card" id="ch-blend"><div class="cardhead"><div><h2>Price</h2>
+        <p class="sub">Blended dollars per million tokens, cheapest first — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
+      <div class="card" id="ch-ctx"><div class="cardhead"><div><h2>Context window</h2>
+        <p class="sub">Maximum input tokens, largest first.</p></div></div><div id="c-ctx"></div></div>
+    </div>
+
+    <div class="card" id="ch-ppp">
+      <div class="cardhead"><div><h2>Price of a point</h2>
+        <p class="sub">Blended dollars per million tokens divided by index score — how much you pay per unit of measured capability. Lower is better.</p></div></div>
+      <div id="ppp"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-bench"><div id="benchhost"></div></section>
+
+  <section class="panel" id="p-src">
+    <div class="prose" style="margin-bottom:22px">
+      <h2>How to read this board</h2>
+      <p>Every figure here was pulled from a live leaderboard or a provider's own publication on the snapshot date in the header. Nothing is estimated, interpolated, or filled in from memory — a model with no score on a benchmark shows a dash, not a guess.</p>
+      <p>Three provenance levels are marked on every number. <b>Independent</b> means a third party ran the eval (Artificial Analysis, Vals AI, Scale, Snorkel, ARC Prize, the SWE-bench team, OpenRouter, the WeirdML author). <b>Vendor-run</b> means the number comes from the model maker's own announcement or model card, or from a competitor's comparison table — useful, but not neutral. <b>Unverified</b> means it appeared on one aggregator with no upstream citation.</p>
+    </div>
+    <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Caveats worth knowing before you trust a column</h2>
+    <div class="srcgrid" id="caveats" style="margin-bottom:26px"></div>
+    <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Benchmark sources</h2>
+    <div class="srcgrid" id="srclist"></div>
+  </section>
+
+  <section class="panel" id="p-upd">
+    <div class="prose">
+      <h2>Refreshing the board</h2>
+      <p>Ask Claude to update it — "add Gemini 4 to the board", "refresh the arena numbers", "Kimi K4 just shipped". It re-runs the research, edits the data block in this page's source, and republishes to this same URL, so the link never changes and previous versions stay in the version picker.</p>
+      <h2>What lives in the data block</h2>
+      <p>Everything on this page is driven by two objects at the top of the file. <code>BENCH</code> defines each benchmark — its label, source URL, snapshot date, unit, and whether higher is better. <code>MODELS</code> is one entry per model:</p>
+      <ul>
+        <li><code>name</code>, <code>prov</code> (provider), <code>tier</code> (<code>frontier</code>, <code>challenger</code>, or <code>legacy</code>), <code>open</code> (true for open weights), <code>rel</code> (release date), <code>note</code>.</li>
+        <li><code>s</code> — the scores map. Each entry is <code>benchId: [value, quality]</code> where quality is <code>ind</code>, <code>ven</code>, or <code>unv</code>. Adding a benchmark to a model is one line; adding a whole benchmark means one <code>BENCH</code> entry plus the scores.</li>
+      </ul>
+      <h2>What to refresh, and how often</h2>
+      <ul>
+        <li><b>On a release</b> — the new model plus whatever it has on day one, which is usually vendor-run only. Independent numbers land one to three weeks later.</li>
+        <li><b>Monthly</b> — Arena Elo and Artificial Analysis move continuously; ARC Prize and WeirdML add models as they test them.</li>
+        <li><b>Rarely</b> — SWE-bench Pro and METR update in bursts and are currently months behind the frontier.</li>
+      </ul>
+      <h2>Where the gaps are right now</h2>
+      <p>Six benchmark pages render entirely in JavaScript and return nothing to a plain fetch: the official SWE-bench board, Terminal-Bench's own leaderboard, OSWorld, LiveCodeBench, Epoch AI's dashboards, and the ARC Prize leaderboard. Their data here came from mirrors, per-model result pages, or independent re-runs. Reading them directly needs a headless browser — worth adding if you want this to refresh itself on a schedule rather than on request.</p>
+    </div>
+  </section>
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+/* ============================================================================
+   FRONTIER BOARD — DATA BLOCK
+   Snapshot: 31 August 2026.  Every figure was read off a live source on that
+   date.  Nothing is estimated.  A missing score is absent, never guessed.
+
+   quality codes:  ind = independently run · ven = vendor/competitor-run · unv = unverified
+   To add a model: append to MODELS.  To add a benchmark: add to BENCH, then add
+   `benchId: [value, "quality"]` to whichever models have a score.
+   ========================================================================= */
+
+const ASOF = "8 Oct 2026";
+const ASOF_NOTE = "Last refreshed 8 Oct 2026. Open What changed, below, for the history of each update.";
+
+const BENCH = {
+  aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"26 Sep 2026",
+    d:"Composite of ten evals — AA-Briefcase v1.1, GDPval-AA v2.1, AutomationBench-AA, Terminal-Bench 4.0, SciCode, HLE, GDP.pdf, CritPt, AA-Omniscience and AA-LCR v1.1. Version 4.3.2. Each model's highest-effort configuration is shown.",
+    warn:"Rescaled on 7 Sep. Version 4.3 swapped τ³-Banking for AutomationBench and Terminal-Bench 2.1 for 4.0, and every score dropped — Claude Fable 5.1 went from 66 to 53 with no change to the model. Only models Artificial Analysis has re-run on v4.3.2 carry a score here; anything only ever measured on the old version shows a dash rather than a number on a different scale."},
+  price:{l:"Blended price",s:"$/1M",g:"headline",f:"usd2",hi:0,col:1,
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"3 Sep 2026",
+    d:"Dollars per million tokens, blended 7:2:1 across cache-hit, input and output. That weighting is why some blended rates sit below the model's own input rate."},
+  costTask:{l:"Cost per index task",s:"$/task",g:"headline",f:"usd2",hi:0,
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/leaderboards/models",asof:"26 Sep 2026",
+    d:"What one task of the v4.3.2 Intelligence Index costs, at the same effort level as the Index score. Reasoning-heavy models can be cheap per token and expensive per task."},
+  speed:{l:"Output speed",s:"tok/s",g:"speed",f:"n0",hi:1,
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"26 Sep 2026",
+    d:"Output tokens per second from the Artificial Analysis leaderboard, measured at the same effort level as the model's Index score. One source for every row, so speeds are comparable across models."},
+  ttft:{l:"Time to first token",s:"TTFT s",g:"speed",f:"n1",hi:0,
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"26 Sep 2026",
+    d:"Seconds to the first answer token, at the same effort level as the Index score. For reasoning models on high effort this includes thinking time, which is why the heavy tiers run to minutes. The Effort levels detail on each model shows how much faster the lower settings respond."},
+  ctx:{l:"Context window",s:"Context",g:"speed",f:"ctx",hi:1,
+    src:"Provider docs",url:"https://artificialanalysis.ai/models",asof:"3 Sep 2026",
+    d:"Maximum input tokens per provider documentation."},
+
+  swebv:{arch:"Saturated — seven models above 95% and the labs stopped reporting it.",l:"SWE-bench Verified",s:"SWE-V",g:"coding",f:"pct",hi:1,col:1,
+    src:"Vals AI / SWE-bench team",url:"https://www.vals.ai/benchmarks/swebench",asof:"26 Aug 2026",
+    d:"Saturated. Seven of 86 models tested now clear 95%, and neither the Claude Opus 5 nor the GPT-5.6 announcement reports a number at all. Treat it as a floor check, not a ranking.",
+    warn:"Saturated — the labs have stopped reporting it. Scores here mix an Aug 2026 independent run, a Feb 2026 official run, and self-reported figures."},
+  swepro:{arch:"Scale has not added a frontier model since spring.",l:"SWE-bench Pro (public)",s:"SWE-Pro",g:"coding",f:"pct",hi:1,
+    src:"Scale AI",url:"https://labs.scale.com/leaderboard/swe_bench_pro_public",asof:"undated",
+    d:"Harder, contamination-resistant successor on public repos. Rows marked with the mini-swe-agent harness are not strictly comparable to the uncapped 250-turn runs.",
+    warn:"Scale publishes no snapshot date, and the board has not been updated for Opus 5, Fable 5 or GPT-5.6."},
+  sweproPriv:{arch:"Scale has not added a frontier model since spring.",l:"SWE-bench Pro (held-out)",s:"SWE-Pro·P",g:"coding",f:"pct",hi:1,
+    src:"Scale AI",url:"https://labs.scale.com/leaderboard/swe_bench_pro_private",asof:"undated",
+    d:"The private split. Roughly ten points below the public set for the same model — the gap is the contamination estimate."},
+  tb21:{l:"Terminal-Bench 2.1",s:"TB 2.1",g:"coding",f:"pct",hi:1,col:1,
+    src:"Vals AI & Snorkel AI",url:"https://snorkel.ai/leaderboard/terminal-bench-2-1/",asof:"22 Sep 2026",
+    d:"Real terminal tasks in a sandboxed container. The agent scaffold moves the result three to four points on its own — Fable 5 scores 83.8% under Claude Code and 80.4% under Terminus 2.",
+    warn:"Never compare across Terminal-Bench versions. Within this column, the current frontier — Opus 5.5, GPT-6 Astra, Fable 5.1, Opus 5 and GPT-5.6 Sol — is all from Vals AI so those models compare on one evaluator; older rows come from Snorkel, whose scores depend on the agent harness. Hover a bar to see who measured it. Artificial Analysis scores the same models three to six points higher, and dropped Terminal-Bench 2.1 from its index in September."},
+  tb30:{arch:"Superseded by Terminal-Bench 4.0.",l:"Terminal-Bench 3.0",s:"TB 3.0",g:"coding",f:"pct",hi:1,
+    src:"xAI (comparison table)",url:"https://x.ai/news/grok-4-6",asof:"12 Aug 2026",
+    d:"The de-saturated rebuild, released 30 Jul 2026. Only xAI has published a cross-vendor table. Version 4.0 shipped 28 Aug 2026 with an empty leaderboard."},
+  lcb:{arch:"Only three models were ever readable.",l:"LiveCodeBench",s:"LCB",g:"coding",f:"pct",hi:1,
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/livecodebench",asof:"31 Aug 2026",
+    d:"Contamination-controlled competitive programming. Only the top three rows were machine-readable."},
+  webdev:{l:"WebDev Arena",s:"WebDev",g:"coding",f:"n0",hi:1,col:1,
+    src:"Arena (formerly LMArena)",url:"https://arena.ai/leaderboard/code/webdev",asof:"7 Oct 2026",
+    d:"Human pairwise votes on generated web apps. 846,326 votes across 141 models. Preference, not correctness — but the one benchmark measuring whether output is nice to use."},
+
+  tau3bank:{arch:"No new models since July; Artificial Analysis dropped it from its index.",l:"τ³-Banking",s:"τ³-Bank",g:"agentic",f:"pct",hi:1,
+    src:"Sierra / taubench.com",url:"https://taubench.com/leaderboard",asof:"Aug 2026",
+    d:"Pass@1 on multi-turn banking support with tool use and policy constraints. The current tau-bench generation; τ² is largely saturated."},
+  tau2air:{l:"τ²-bench Airline",s:"τ²-Air",g:"agentic",f:"pct",hi:1,
+    src:"OpenRouter",url:"https://openrouter.ai/benchmarks/tau2-bench-airline",asof:"4 Oct 2026",
+    d:"Saturated and compressed — Amazon Nova Micro, a small cheap model, places second. Read the top of this column as a pass/fail, not a ranking."},
+  osworld:{arch:"Mostly vendor system-card numbers from the previous generation.",l:"OSWorld Verified",s:"OSWorld",g:"agentic",f:"pct",hi:1,
+    src:"Provider system cards via Steel",url:"https://leaderboard.steel.dev/leaderboards/osworld/",asof:"Aug 2026",
+    d:"Desktop computer use. The top of this table is almost entirely Anthropic system-card numbers — weight accordingly.",
+    warn:"Predominantly vendor-reported. The official OSWorld leaderboard could not be read."},
+  osworld2:{arch:"Replaced by the August 2026 task build.",l:"OSWorld 2.0",s:"OSW 2.0",g:"agentic",f:"pct",hi:1,
+    src:"Official OSWorld harness via Steel",url:"https://leaderboard.steel.dev/leaderboards/osworld-2/",asof:"Jun–Jul 2026",
+    d:"108 long-horizon desktop workflows with partial credit. Anthropic says Opus 5 beats Fable 5's best result at a third of the cost but publishes no number."},
+  metr:{arch:"Not updated since May 2026.",l:"METR 50% time horizon",s:"METR",g:"agentic",f:"min",hi:1,
+    src:"METR",url:"https://metr.org/time-horizons/",asof:"8 May 2026",
+    d:"Length of task, in human time, that the model completes half the time. METR's own caveat: measurements above 16 hours are unreliable with the current task suite.",
+    warn:"Four months stale. No frontier model released since April 2026 has a published horizon."},
+
+  tb40:{l:"Terminal-Bench 4.0",s:"TB 4.0",g:"coding",f:"pct",hi:1,col:1,
+    src:"Anthropic (comparison table)",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"22 Sep 2026",
+    d:"The current Terminal-Bench generation, released 28 Aug 2026 with an eight-hour agent timeout and the saturated tasks removed. Anthropic published the first cross-vendor table four days later; the official leaderboard is still empty.",
+    warn:"Every row is vendor-run, and five vendors now publish it. They agree closely on shared models — Claude Opus 5 is 52.3% from Anthropic, 51.8% from DeepSeek and 49.0% from Xiaomi — with one exception: xAI's Grok 4.7 chart gives Fable 5.1 57.9%, the figure everyone else assigns GPT-6 Astra. Mythos 5.1 scores 60.9% against Fable 5.1's 55.8%, so about five points is refusal behaviour, not capability."},
+  tbsci:{l:"Terminal-Bench Science 0.1",s:"TB-Sci",g:"agentic",f:"pct",hi:1,col:1,
+    src:"Anthropic (comparison table)",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"1 Sep 2026",
+    d:"Agentic scientific research in a terminal, released 27 Aug 2026. The widest spread of any benchmark on this board — Fable 5.1 more than doubles the previous best.",
+    warn:"Anthropic-run, and two days old. Reported standard error is 3.5–4.5 points per model, which swallows the gaps between everything except Fable 5.1 and the rest."},
+  gdpval:{arch:"Superseded by GDPval-AA v2.1, and vendor runs of v2 disagreed.",l:"GDPval-AA v2",s:"GDPval",g:"agentic",f:"n0",hi:1,
+    src:"Anthropic (comparison table)",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"1 Sep 2026",
+    d:"Economically valuable knowledge work scored on an Elo-style scale, and one of the nine evals inside the Artificial Analysis Intelligence Index.",
+    warn:"Two vendors have run this and disagree on the same models. xAI's August table scores Fable 5 at 1741 and GPT-5.6 Sol at 1728; Anthropic's September table scores the same two at 1723 and 1711. The figures shown are Anthropic's, so xAI's Grok results are not directly comparable and are left out."},
+  cursorbench:{arch:"Superseded by CursorBench 4.0.",l:"CursorBench 3.2",s:"Cursor",g:"coding",f:"pct",hi:1,
+    src:"Anthropic & xAI",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"1 Sep 2026",
+    d:"The previous CursorBench version, superseded by 4.0 in September. Agentic coding inside the Cursor harness. Unusually, Anthropic and xAI ran this separately and got identical numbers for the models they share — Fable 5 at 70.5% and GPT-5.6 Sol at 67.2% — which is why Grok's rows are included here and not in GDPval."},
+  automationbench:{l:"Zapier AutomationBench",s:"AutoB",g:"agentic",f:"pct",hi:1,
+    src:"Anthropic (comparison table)",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"1 Sep 2026",
+    d:"Building working business automations end to end. Still low in absolute terms for every model — the best result on the board is under a third of tasks."},
+  osw2strict:{arch:"Anthropic-only, and superseded by the August 2026 task build.",l:"OSWorld 2.0 (strict)",s:"OSW·strict",g:"agentic",f:"pct",hi:1,
+    src:"Anthropic (comparison table)",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"1 Sep 2026",
+    d:"OSWorld 2.0 scored strictly — full task completion rather than partial credit. Roughly half the partial-credit score for the same model, which is the honest number for whether a desktop workflow actually finished.",
+    warn:"Anthropic-run, and a different metric from the partial-credit OSWorld 2.0 column. Do not read the two side by side."},
+
+  deepswe:{l:"DeepSWE v1.1",s:"DeepSWE",g:"coding",f:"pct",hi:1,col:1,
+    src:"OpenAI, Anthropic & xAI",url:"https://openai.com/index/gpt-6-astra/",asof:"22 Sep 2026",
+    d:"Long-horizon software engineering. The most widely-published vendor benchmark on the board — OpenAI, Anthropic, xAI, DeepSeek, Xiaomi and StepFun all report it, and they agree within about a point on shared models (Claude Opus 5: 73.7 from OpenAI, 74.0 from DeepSeek and Xiaomi). Every row is still vendor-run.",
+    warn:"Still vendor-run in every row. No independent evaluator has published DeepSWE numbers."},
+  frontiercode:{l:"FrontierCode 1.1 (main)",s:"FrontCode",g:"coding",f:"pct",hi:1,
+    src:"OpenAI",url:"https://openai.com/index/gpt-6-astra/",asof:"3 Sep 2026",
+    d:"Hard competitive-programming-style code generation. The main split only — OpenAI also publishes an Extended split roughly ten points higher, and xAI's separately-run figures line up with Extended rather than main, so the two cannot be pooled.",
+    warn:"OpenAI-run, including the competitor rows. Compressed: five of six models land within three points."},
+  fmath4:{l:"FrontierMath Tier 4 (v2)",s:"FMath T4",g:"reasoning",f:"pct",hi:1,col:1,
+    src:"OpenAI",url:"https://openai.com/index/gpt-6-astra/",asof:"3 Sep 2026",
+    d:"The hardest tier of Epoch AI's research-mathematics set. Separate from the Tier 1–3 column — do not read the two together.",
+    warn:"OpenAI-run, including the competitor rows. Epoch AI's own dashboard renders client-side and could not be read, so there is no independent check on any of these."},
+  exploitgym:{l:"ExploitGym",s:"Exploit",g:"agentic",f:"pct",hi:1,col:1,
+    src:"OpenAI",url:"https://openai.com/index/gpt-6-astra/",asof:"3 Sep 2026",
+    d:"Autonomous discovery and exploitation of software vulnerabilities. The benchmark behind OpenAI classifying GPT-6 Astra as meeting the Critical cybersecurity threshold in its Preparedness Framework — the first model to do so.",
+    warn:"OpenAI-run, including the competitor rows, and a capability where a vendor has an obvious interest in the framing. Read the direction, not the decimals."},
+  ale:{l:"Agents' Last Exam",s:"ALE",g:"agentic",f:"pct",hi:1,
+    src:"OpenAI",url:"https://openai.com/index/gpt-6-astra/",asof:"3 Sep 2026",
+    d:"Long-horizon agentic tasks intended as the agentic counterpart to Humanity's Last Exam."},
+  osw2ga:{l:"OSWorld 2.0 (Aug 2026 build)",s:"OSW·0808",g:"agentic",f:"pct",hi:1,col:1,
+    src:"OpenAI",url:"https://openai.com/index/gpt-6-astra/",asof:"3 Sep 2026",
+    d:"OSWorld 2.0 on the v2026.08.08 task build — the current one. Kept separate from the older OSWorld 2.0 column rather than merged into it, because the task set changed underneath.",
+    warn:"OpenAI-run. Three models only, and not comparable to either the older OSWorld 2.0 column or the strict-pass column."},
+  healthbench:{l:"HealthBench Professional",s:"Health",g:"reasoning",f:"pct",hi:1,
+    src:"OpenAI",url:"https://openai.com/index/gpt-6-astra/",asof:"3 Sep 2026",
+    d:"Clinical reasoning graded against physician-written rubrics. Notably flat across six models from four vendors — an eleven-point spread where coding benchmarks show forty."},
+
+  cursor4:{l:"CursorBench 4.0",s:"Cursor 4",g:"coding",f:"pct",hi:1,
+    src:"Anthropic & xAI",url:"https://www.anthropic.com/claude-opus-5-5",asof:"22 Sep 2026",
+    d:"The current CursorBench — noticeably harder than 3.2, where the same models scored 20 points higher. Anthropic and xAI ran it separately and agree exactly on the models they share: Fable 5.1 at 51.8% and GPT-5.6 Sol at 41.7%.",
+    warn:"Vendor-run. Not comparable with the CursorBench 3.2 column."},
+  gdpval21:{l:"GDPval-AA v2.1",s:"GDPval 2.1",g:"agentic",f:"n0",hi:1,col:1,
+    src:"Anthropic, xAI & Xiaomi",url:"https://www.anthropic.com/claude-opus-5-5",asof:"22 Sep 2026",
+    d:"Economically valuable knowledge work on an Elo-style scale, and a component of Intelligence Index v4.3.2. Unlike v2, the three vendors that have run it agree on every model they share — Fable 5.1 at 1735 from Anthropic and xAI, Opus 5 at 1708 and GPT-5.6 Sol at 1588 from Anthropic and Xiaomi, GPT-6 Astra at 1542 from Anthropic and xAI.",
+    warn:"Vendor-run. Not comparable with the GDPval-AA v2 column."},
+
+  hle:{l:"Humanity's Last Exam",s:"HLE",g:"reasoning",f:"pct",hi:1,col:1,
+    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"27 Sep 2026",
+    d:"Expert-written questions across 100+ subjects, no tools. Scores here are without tool use; with search and code execution most models gain 10–15 points.",
+    warn:"The official leaderboard at lastexam.ai is abandoned — it still tops out at Gemini 3 Pro on 38.3%. Scale AI is five months behind. Only Artificial Analysis covers the current frontier."},
+  gpqa:{l:"GPQA Diamond",s:"GPQA",g:"reasoning",f:"pct",hi:1,col:1,
+    src:"Artificial Analysis / Vals AI",url:"https://www.vals.ai/benchmarks/gpqa",asof:"26 Aug 2026",
+    d:"Graduate-level physics, chemistry and biology written to be Google-proof.",
+    warn:"Scoring methods diverge. Vals AI found Claude Fable 5's published 93.18% counts refusal-triggered fallbacks as successes; scored strictly it is 55.56%. Cross-vendor GPQA figures are probably not comparable."},
+  arc1:{arch:"Saturated — every frontier model scores 96–99%.",l:"ARC-AGI-1",s:"ARC-1",g:"reasoning",f:"pct",hi:1,
+    src:"ARC Prize (verified)",url:"https://arcprize.org/results",asof:"22 Sep 2026",
+    d:"Semi-private set, run and verified by ARC Prize rather than self-reported. Effectively solved at the frontier."},
+  arc2:{l:"ARC-AGI-2",s:"ARC-2",g:"reasoning",f:"pct",hi:1,col:1,
+    src:"ARC Prize (verified)",url:"https://arcprize.org/results",asof:"22 Sep 2026",
+    d:"Harder compositional reasoning. Still the cleanest single measure of novel-problem ability, and independently verified rather than self-reported."},
+  arc3:{l:"ARC-AGI-3",s:"ARC-3",g:"reasoning",f:"pct",hi:1,
+    src:"ARC Prize (verified)",url:"https://arcprize.org/results",asof:"22 Sep 2026",
+    d:"Interactive agency over multi-step environments. Figures here are ARC Prize's standard harness, which is what every model on this board was run under.",
+    warn:"The harness now decides the headline. GPT-6 Astra scores 62.7% under the standard harness but 99.95% under ARC Prize's Provider Adapter, which preserves reasoning state across requests. ARC Prize headlines the 99.95%. This column shows the standard-harness figure so the models remain comparable — treat the gap between the two as a measurement of the scaffold, not the model."},
+  arc2cost:{l:"ARC-AGI-2 cost",s:"ARC-2 $",g:"reasoning",f:"usd2",hi:0,
+    src:"ARC Prize",url:"https://arcprize.org/results",asof:"1 Sep 2026",
+    d:"Dollars per task on ARC-AGI-2 at the tested reasoning effort. Published inconsistently and version-specific — do not carry it across ARC versions."},
+  weirdml:{l:"WeirdML v2",s:"WeirdML",g:"reasoning",f:"pct",hi:1,col:1,
+    src:"Håvard Tveit Ihle",url:"https://htihle.github.io/weirdml.html",asof:"Aug 2026",
+    d:"Unusual small machine-learning problems the model must write working code for. One evaluator, one harness, published cost per run — the cleanest independent dataset on this board."},
+  weirdmlCost:{l:"WeirdML cost/run",s:"WML $",g:"reasoning",f:"usd3",hi:0,
+    src:"Håvard Tveit Ihle",url:"https://htihle.github.io/weirdml.html",asof:"Aug 2026",
+    d:"Dollars for one full WeirdML run. Spans three orders of magnitude across the board."},
+  frontiermath:{arch:"OpenAI-only; the Tier 4 column is the current comparison.",l:"FrontierMath v2 (T1–3)",s:"FMath",g:"reasoning",f:"pct",hi:1,
+    src:"OpenAI (self-reported)",url:"https://openai.com/index/gpt-5-6/",asof:"9 Jul 2026",
+    d:"Research-level mathematics. Epoch AI's dashboard renders client-side and could not be read, so only OpenAI's own figures are available.",
+    warn:"Self-reported by one lab only. No cross-vendor FrontierMath table exists here."},
+  matharena:{l:"MathArena (expected)",s:"MathAr",g:"reasoning",f:"pct",hi:1,
+    src:"MathArena",url:"https://matharena.ai/",asof:"Sep 2026",
+    d:"Expected performance across the AIME and HMMT competitions. MathArena runs each model at a named effort level — Opus 5.5 at high, GPT-6 Astra and Sol at max — so the gaps partly reflect effort settings, not just capability."},
+  lmarena:{l:"Arena text Elo",s:"Arena",g:"reasoning",f:"n0",hi:1,col:1,
+    src:"Arena (formerly LMArena)",url:"https://arena.ai/leaderboard/text",asof:"2 Oct 2026",
+    d:"Human pairwise preference, 8.6M votes across 413 models. lmarena.ai now redirects to arena.ai, and Grok is listed under the org name SpaceXAI."}
+};
+
+const MODELS = [
+/* ---------------------------------------------------------------- FRONTIER */
+{name:"Gemini 4 Argon", prov:"Google", tier:"frontier", open:false, rel:"2026-09-30",
+ note:"Google's new flagship, announced 30 Sep. It opens at an introductory $2/$10, rising to $4/$20 later, with cached input 95% off. Artificial Analysis scores it 53 at high effort for $1.99 per index task, level with GPT-6 Astra and Fable 5.1. It went straight to #1 on Arena text at 1525, five clear of the field, but sits ninth on WebDev at 1680. Rollout starts with vetted cyber defenders, then paid API customers and AI Ultra. Google's own table claims DeepSWE 77.9% and AutomationBench 51.3%, the best on the board for both.",
+ s:{aaii:[53,"ind"],costTask:[1.99,"ind"],price:[1.47,"ind"],ctx:[1000000,"ind"],lmarena:[1525,"ind"],webdev:[1678,"ind","preliminary"],deepswe:[77.9,"ven"],automationbench:[51.3,"ven"]}},
+
+{name:"GPT-6.1 Sol", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-29",
+ note:"Launched 29 Sep at DevDay at GPT-6 Sol's $2/$10 price, with cached input cut to $0.10 — a 95% discount. Artificial Analysis now scores it 52 at max effort, four points above GPT-6 Sol and one behind GPT-6 Astra, for $0.72 per index task — about an eighth of Opus 5.5's $5.98. Even at medium (48, $0.21) it matches GPT-6 Sol at max. The one weak spot so far is τ²-bench Airline at 66.7%, below GPT-6 Sol's 68.7%. OpenAI's own comparison tables are still images only, so no vendor numbers are on the board. An Ultrafast tier (up to 300 tokens/sec, 6× the price) is coming.",
+ s:{lmarena:[1483,"ind","max variant; 13,071 votes"],ttft:[281.94,"ind"],speed:[65,"ind"],arc2:[94.2,"ind"],arc1:[98.5,"ind"],webdev:[1757,"ind","max variant"],tau2air:[70.0,"ind"],costTask:[0.72,"ind"],aaii:[52,"ind"],price:[1.47,"ind","computed with Artificial Analysis's 7:2:1 blend from OpenAI list prices"],ctx:[1050000,"ind"]}},
+
+{name:"Claude Haiku 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-10-07",
+ note:"Released 7 Oct at $0.10/$0.50 per million tokens for prompts under 100K tokens, and $0.50/$2.50 above that. That's a tenth of Haiku 4.5's price, with a 1M context window and adjustable effort. Anthropic's own table puts it far ahead of Haiku 4.5 and GPT-6 Luna: Terminal-Bench 4.0 39.2% against Luna's 16.4%, GDPval-AA v2.1 1620 against 1437, and HLE 45.9% without tools. That HLE score is close to Opus 5's level. Every number is vendor-run so far. Artificial Analysis scored it a day later: 43 at max for $0.21 per task, or 38 at high for eight cents. That beats Mistral Large 4 at a fraction of its cost.",
+ s:{ttft:[341.02,"ind"],speed:[244,"ind"],costTask:[0.21,"ind"],aaii:[43,"ind"],price:[0.08,"ind","computed with Artificial Analysis's 7:2:1 blend from Anthropic's under-100K list prices"],ctx:[1000000,"ind"],tb40:[39.2,"ven"],gdpval21:[1620,"ven"],frontiercode:[46.4,"ven"],hle:[45.9,"ven","Anthropic, no tools — 57.4% with tools"]}},
+
+{name:"Claude Sonnet 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-09-28",
+ note:"Released 28 Sep at Sonnet 5's $2/$10 price, and Artificial Analysis now scores it 56 at max effort — second on the board behind Opus 5.5 (58), at about half Opus 5.5's per-token price. The catch is effort: at max it costs $7.60 per index task, more than Opus 5.5's $5.98, because it thinks longer. At extra-high it drops to 52 for $2.74. Anthropic's own table puts it ahead of Opus 5.5 on Terminal-Bench 4.0 (70.6% against 66.4%). Arena and ARC Prize had not run it yet.",
+ s:{hle:[56.9,"ven","Anthropic, no tools — 64.5% with tools"],lmarena:[1471,"ind","xhigh variant; 3,145 votes"],speed:[139,"ind"],webdev:[1773,"ind","xhigh variant — 1716 at high"],tau2air:[74.7,"ind"],price:[1.54,"ind","computed with Artificial Analysis's 7:2:1 blend from Anthropic list prices"],costTask:[7.67,"ind"],aaii:[56,"ind"],ctx:[1000000,"ind"],tb40:[70.6,"ven"],cursor4:[55.5,"ven"],frontiercode:[46.2,"ven","max effort — 52.1% at xhigh"],gdpval21:[1844,"ven"]}},
+
+{name:"Claude Opus 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-09-22",
+ note:"Top of the Intelligence Index at 58 — five clear of Fable 5.1 and GPT-6 Astra — at $4/$20, which is cheaper per token than the Opus 5 it replaces. Anthropic says it matches Fable 5.1 on most work and costs 40% less to run than Opus 5. It also tops both Arena boards, but on 2,307 text votes and 1,219 WebDev votes against tens of thousands for the models below it. Sonnet 5.5 and Haiku 5.5 are announced as coming in the following weeks.",
+ s:{frontiercode:[54.4,"ven"],ttft:[147.14,"ind","xhigh — max not yet measured"],speed:[92,"ind","xhigh — max not yet measured"],matharena:[83.4,"ind","high effort"],tau2air:[73.3,"ind"],tb21:[87.64,"ind","Vals AI — 79.8% counting refusal fallbacks as failures"],hle:[61.4,"ind","Artificial Analysis"],aaii:[58,"ind"],price:[2.94,"ind"],costTask:[5.98,"ind"],ctx:[1000000,"ind"],
+    tb40:[66.4,"ven"],cursor4:[57.8,"ven"],tbsci:[58.7,"ven"],gdpval21:[1846,"ven"],automationbench:[40.0,"ven"],
+    arc1:[98.5,"ind"],arc2:[93.3,"ind"],lmarena:[1504,"ind"],webdev:[1814,"ind"]}},
+
+{name:"GPT-6 Sol", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-09-22",
+ note:"Superseded by GPT-6.1 Sol on 29 Sep at the same $2/$10 price.",
+ s:{frontiercode:[49.3,"ven"],matharena:[85.0,"ind","max effort"],tau2air:[68.7,"ind"],aaii:[48,"ind"],price:[1.54,"ind"],costTask:[1.06,"ind"],speed:[85,"ind"],ttft:[165.07,"ind"],ctx:[1050000,"ind"],
+    deepswe:[68.8,"ven"],automationbench:[33.2,"ven"],ale:[56.4,"ven"],webdev:[1687,"ind"]}},
+
+{name:"Grok 4.7", prov:"xAI", tier:"frontier", open:false, rel:"2026-09-21",
+ note:"Two Index points over Grok 4.6 at the same $2/$6 list price. xAI's launch chart is the one table that disagrees with the others on a shared row — it labels Claude Fable 5.1 at 57.9% on Terminal-Bench 4.0, which is the figure every other vendor gives GPT-6 Astra. Not yet on Arena text.",
+ s:{aaii:[46,"ind"],price:[1.35,"ind"],costTask:[3.74,"ind"],speed:[49,"ind"],ttft:[1.52,"ind"],ctx:[500000,"ind"],
+    tb40:[37.6,"ven"],deepswe:[71.0,"ven"],cursor4:[46.3,"ven"],gdpval21:[1695,"ven"],webdev:[1632,"ind"]}},
+
+{name:"GPT-6 Luna", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-22",
+ note:"Eight cents per million blended tokens and seven cents per index task. OpenAI puts its DeepSWE score within five points of Claude Opus 5 at about 93% less cost; the one independent reasoning check, ARC-AGI-2 at 59.3%, lands level with the GPT-5.6 Luna it replaces.",
+ s:{frontiercode:[42.4,"ven","Anthropic's Haiku 5.5 comparison table"],tb40:[16.4,"ven","Anthropic's Haiku 5.5 comparison table"],gdpval21:[1437,"ven","Anthropic's Haiku 5.5 comparison table"],tau2air:[66.0,"ind"],aaii:[37,"ind"],price:[0.08,"ind"],costTask:[0.07,"ind"],speed:[144,"ind"],ttft:[135.83,"ind"],ctx:[1050000,"ind"],
+    deepswe:[66.6,"ven"],arc1:[86.7,"ind"],arc2:[59.3,"ind"],webdev:[1593,"ind"]}},
+
+{name:"GPT-6 Astra", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-03",
+ note:"Shipped today, gated at launch to OpenAI's Trusted Access Program. The first model OpenAI has classified as meeting the Critical cybersecurity threshold under its Preparedness Framework — it leads ExploitGym by twelve points and scores 100% on ExploitBench. Two things cut against the headline: Artificial Analysis measures it at 61 on the Intelligence Index, level with GPT-5.6 Sol and five behind Fable 5.1, and it loses Humanity's Last Exam with tools to all three current Claudes. Its ARC-AGI-3 result of 99.95% comes from ARC Prize's Provider Adapter harness; under the standard harness every other model here was run on, it scores 62.7%.",
+ s:{matharena:[88.0,"ind","max effort"],tau2air:[68.0,"ind"],tb21:[87.27,"ind","Vals AI"],gdpval21:[1542,"ven"],webdev:[1788,"ind"],lmarena:[1478,"ind"],ttft:[348.28,"ind"],speed:[58,"ind"],costTask:[3.26,"ind"],aaii:[53,"ind"],price:[7.70,"ind"],ctx:[1050000,"ind"],
+    tb40:[57.9,"ven"],deepswe:[74.1,"ven"],frontiercode:[53.3,"ven"],
+    tbsci:[64.6,"ven"],automationbench:[41.4,"ven"],exploitgym:[42.4,"ven"],ale:[59.3,"ven"],osw2ga:[72.6,"ven"],
+    gpqa:[96.3,"ind"],arc1:[98.5,"ind"],arc2:[95.0,"ind"],arc3:[62.71,"ind"],
+    fmath4:[97.6,"ven"],healthbench:[63.4,"ven"]}},
+
+{name:"Muse Spark 1.3", prov:"Meta", tier:"frontier", open:false, rel:"2026-09-02",
+ note:"Meta's third Muse Spark in five months. Index 62 at max effort puts it third on the board, but Artificial Analysis has no pricing or speed data for that configuration yet — the price and throughput shown are the xhigh variant, which scores 61.",
+ s:{lmarena:[1494,"ind"],costTask:[1.6,"ind"],aaii:[48,"ind"],price:[0.78,"ind"],speed:[22,"ind"],ttft:[324.72,"ind"],ctx:[1000000,"ind"],
+    webdev:[1658,"ind"]}},
+
+{name:"Claude Fable 5.1", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-09-01",
+ note:"Anthropic's top tier since 1 Sep, now overtaken on the Intelligence Index by the cheaper Claude Opus 5.5 (58 against 53). Same $10/$50 token pricing as Fable 5 — the change was a 75% cut to cache reads. Its sibling Mythos 5.1 is the same model with lighter safeguards, gated to vetted access programmes.",
+ s:{tau2air:[79.3,"ind"],cursor4:[51.8,"ven"],gdpval21:[1735,"ven"],deepswe:[67.4,"ven"],frontiercode:[50.9,"ven"],exploitgym:[30.4,"ven"],gpqa:[93.7,"ven"],fmath4:[87.8,"ven"],healthbench:[58.1,"ven"],
+    aaii:[53,"ind"],price:[7.17,"ind"],costTask:[7.63,"ind"],speed:[69,"ind"],ttft:[260.11,"ind"],ctx:[1000000,"ind"],
+    tb21:[85.02,"ind","Vals AI"],tb40:[55.8,"ven"],cursorbench:[73.4,"ven"],
+    tbsci:[52.6,"ven"],gdpval:[1853,"ven"],automationbench:[31.4,"ven"],osw2strict:[41.7,"ven"],
+    hle:[59.1,"ind"],arc1:[97.5,"ind"],arc2:[90.0,"ind"],
+    lmarena:[1501,"ind"],webdev:[1745,"ind"]}},
+
+{name:"Gemini 3.8 Flash", prov:"Google", tier:"frontier", open:false, rel:"2026-09-02",
+ note:"Shipped 2 Sep 2026 at exactly Gemini 3.7 Flash's price — $0.75/$3.75 until the rate doubles on 1 Jan 2027 — for three more Index points and a twelve-point jump on τ³-Banking. Artificial Analysis flags it as verbose: 120M output tokens to complete the index. A gated sibling, Gemini 3.8 Flash Cyber, launched the same day for vetted defenders.",
+ s:{arc3:[10.37,"ind"],arc2:[89.2,"ind"],arc1:[98.5,"ind"],costTask:[1.24,"ind"],tb40:[19.1,"ven"],deepswe:[73.8,"ven"],frontiercode:[43.6,"ven"],gpqa:[95.3,"ind","Artificial Analysis"],healthbench:[52.1,"ven"],
+    aaii:[41,"ind"],price:[0.58,"ind"],speed:[330,"ind"],ttft:[18.95,"ind"],ctx:[1000000,"ind"],
+    tau3bank:[45,"ind"],lmarena:[1495,"ind"],webdev:[1584,"ind"]}},
+
+{name:"Claude Opus 5", prov:"Anthropic", tier:"legacy", open:false, rel:"2026-07-24",
+ note:"Superseded by Claude Opus 5.5 on 22 Sep, which is cheaper per token and seven Index points higher. Still the most-voted Anthropic model on WebDev Arena.",
+ s:{tb30:[43.3,"ven"],cursor4:[46.6,"ven"],gdpval21:[1708,"ven"],deepswe:[73.7,"ven"],frontiercode:[53.4,"ven"],exploitgym:[22.0,"ven"],ale:[55.5,"ven"],osw2ga:[70.2,"ven"],gpqa:[93.7,"ven"],fmath4:[73.2,"ven"],healthbench:[56.4,"ven"],
+    tb40:[52.3,"ven"],cursorbench:[70.0,"ven"],tbsci:[29.0,"ven"],gdpval:[1824,"ven"],automationbench:[26.9,"ven"],osw2strict:[39.6,"ven"],
+    aaii:[51,"ind"],price:[3.85,"ind"],ctx:[1000000,"ind"],
+    swebv:[97.0,"ind"],tb21:[84.64,"ind","Vals AI"],tau3bank:[48.7,"ind"],tau2air:[80.1,"ind"],
+    hle:[54.9,"ind"],arc1:[97.5,"ind"],arc2:[90.4,"ind"],arc3:[30.16,"ind"],
+    weirdml:[91.8,"ind"],weirdmlCost:[4.74,"ind"],matharena:[84.4,"ind"],lmarena:[1491,"ind"],webdev:[1692,"ind"]}},
+
+{name:"Claude Fable 5", prov:"Anthropic", tier:"legacy", open:false, rel:"2026-06-09",
+ note:"Superseded by Fable 5.1 on 1 Sep 2026 at the same token price. Still holds the top Arena text Elo, though Fable 5.1 sits inside its confidence interval, and still leads WeirdML — which has not yet tested 5.1.",
+ s:{gdpval21:[1595,"ven"],deepswe:[69.9,"ven"],frontiercode:[53.5,"ven"],exploitgym:[28.4,"ven"],fmath4:[87.8,"ven"],healthbench:[60.9,"ven"],
+    tb40:[42.0,"ven"],cursorbench:[70.5,"ven"],tbsci:[24.7,"ven"],gdpval:[1723,"ven"],automationbench:[17.1,"ven"],osw2strict:[36.1,"ven"],
+    price:[7.70,"ind"],ctx:[1000000,"ind"],
+    swebv:[95.0,"ven"],tb21:[83.8,"ind","Snorkel · Claude Code"],tau2air:[81.5,"ind"],osworld:[85.0,"ven"],
+    hle:[55.5,"ind"],gpqa:[93.18,"ind"],arc1:[98.5,"ind"],arc2:[89.2,"ind"],arc2cost:[5.45,"ind"],
+    weirdml:[91.95,"ind"],weirdmlCost:[8.42,"ind"],lmarena:[1504,"ind"],webdev:[1627,"ind"]}},
+
+{name:"GPT-5.6 Sol", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-07-09",
+ note:"Superseded by GPT-6 Sol on 22 Sep at half the price for a one-point Index gain.",
+ s:{cursor4:[41.7,"ven"],gdpval21:[1588,"ven"],deepswe:[72.7,"ven"],frontiercode:[47.5,"ven"],exploitgym:[30.3,"ven"],ale:[53.6,"ven"],osw2ga:[65.7,"ven"],fmath4:[83.0,"ven"],healthbench:[60.5,"ven"],
+    tb40:[37.3,"ven"],cursorbench:[67.2,"ven"],tbsci:[22.4,"ven"],gdpval:[1711,"ven"],automationbench:[19.6,"ven"],
+    aaii:[47,"ind"],price:[3.08,"ind"],ctx:[1050000,"ind"],
+    tb21:[85.77,"ind","Vals AI"],tb30:[34.6,"ven"],tau3bank:[46.9,"ind"],osworld2:[62.6,"ven"],
+    hle:[44.5,"ven"],gpqa:[94.1,"ind"],arc1:[96.5,"ind"],arc2:[92.5,"ind"],arc3:[7.78,"ind"],
+    weirdml:[86.97,"ind"],weirdmlCost:[2.31,"ind"],frontiermath:[89,"ven"],matharena:[79.7,"ind"],
+    lmarena:[1483,"ind"],webdev:[1617,"ind"]}},
+
+{name:"Grok 4.6", prov:"xAI", tier:"legacy", open:false, rel:"2026-08-12",
+ note:"Matches GPT-5.6 Sol on the Index at less than half the blended price. Weak on ARC-AGI-2 relative to its Index score — strong at knowledge, thinner on novel reasoning.",
+ s:{tb40:[20.3,"ven"],cursor4:[40.4,"ven"],gdpval21:[1605,"ven"],deepswe:[65.9,"ven"],
+    cursorbench:[69.9,"ven"],
+    aaii:[44,"ind"],price:[1.35,"ind"],costTask:[2.32,"ind"],speed:[72,"ind"],ttft:[41.69,"ind"],ctx:[500000,"ind"],
+    tb30:[26.0,"ven"],gpqa:[94.9,"ind"],arc1:[87.5,"ind"],arc2:[67.1,"ind"],arc3:[2.11,"ind"],
+    weirdml:[67.29,"ind"],weirdmlCost:[0.335,"ind"],webdev:[1624,"ind"]}},
+
+{name:"Gemini 3.7 Flash", prov:"Google", tier:"legacy", open:false, rel:"2026-08-13",
+ note:"Google's newest and, per Google, most intelligent model. Six times the output speed of the Anthropic flagships at a seventh of the price. Listed price doubles on 1 Jan 2027.",
+ s:{price:[0.58,"ind"],ctx:[1000000,"ind"],
+    tau2air:[80.6,"ind"],gpqa:[94.5,"ind"],arc1:[95.5,"ind"],arc2:[84.6,"ind"],arc2cost:[0.25,"ind"],
+    lmarena:[1488,"ind"],webdev:[1595,"ind"]}},
+
+{name:"Muse Spark 1.2", prov:"Meta", tier:"legacy", open:false, rel:"2026-08-05",
+ note:"Meta's proprietary flagship — the Llama line is retired. Fourth on Arena text, but mid-pack on the code-execution benchmarks.",
+ s:{price:[0.78,"ind"],ctx:[1000000,"ind"],
+    weirdml:[60.3,"ind"],weirdmlCost:[0.38,"ind"],lmarena:[1496,"ind"],webdev:[1534,"ind"]}},
+
+{name:"GPT-5.6 Terra", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-07-09",
+ note:"The balanced middle tier of the GPT-5.6 family. WeirdML at a tenth of Sol's cost per run.",
+ s:{aaii:[42,"ind"],price:[1.74,"ind"],costTask:[1.4,"ind"],speed:[100,"ind"],ttft:[181.88,"ind"],ctx:[1050000,"ind"],
+    tb21:[78.4,"ind","Snorkel · Codex CLI"],arc3:[0.80,"ven"],weirdml:[78.27,"ind"],weirdmlCost:[0.25,"ind"],
+    frontiermath:[84.9,"ven"],lmarena:[1466,"ind"],webdev:[1519,"ind"]}},
+
+{name:"Claude Sonnet 5", prov:"Anthropic", tier:"legacy", open:false, rel:"2026-06-30",
+ note:"Superseded by Claude Sonnet 5.5 on 28 Sep at the same price.",
+ s:{gdpval21:[1449,"ven"],cursor4:[34.1,"ven"],tb40:[10.3,"ven"],aaii:[38,"ind"],price:[1.54,"ind"],costTask:[5.09,"ind"],speed:[77,"ind"],ttft:[124.72,"ind"],ctx:[1000000,"ind"],
+    swebv:[85.2,"ven"],tb21:[74.6,"ind","Snorkel · Claude Code"],osworld:[81.2,"ven"],
+    weirdml:[68.8,"ind"],weirdmlCost:[0.895,"ind"],webdev:[1538,"ind"]}},
+
+{name:"Grok 4.5", prov:"xAI", tier:"legacy", open:false, rel:"2026-07-08",
+ note:"Superseded by 4.6 five weeks later, which gained 15 points on ARC-AGI-2 and 10 on Terminal-Bench 3.0.",
+ s:{deepswe:[54.0,"ven"],
+    cursorbench:[66.7,"ven"],
+    price:[1.21,"ind"],ctx:[500000,"ind"],
+    tb21:[79.3,"ind","Snorkel · Cursor CLI"],tb30:[15.7,"ven"],tau3bank:[47.9,"ind"],
+    arc1:[87.2,"ind"],arc2:[52.6,"ind"],arc3:[0.32,"ind"],
+    weirdml:[46.43,"ind"],weirdmlCost:[0.081,"ind"],lmarena:[1470,"ind"],webdev:[1552,"ind"]}},
+
+{name:"Gemini 3.6 Flash", prov:"Google", tier:"legacy", open:false, rel:"2026-07-21",
+ note:"Three weeks older than 3.7 Flash, four Index points behind at the same list price.",
+ s:{price:[0.63,"ind"],ctx:[1000000,"ind"],
+    arc1:[91.2,"ind"],arc2:[60.4,"ind"],weirdml:[56.1,"ind"],weirdmlCost:[0.623,"ind"],
+    lmarena:[1482,"ind"],webdev:[1537,"ind"]}},
+
+{name:"GPT-5.6 Luna", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-07-09",
+ note:"The cheap tier — an Index score of 52 for 17 cents per million blended tokens, and two cents per index task.",
+ s:{price:[0.17,"ind"],ctx:[1050000,"ind"],
+    tb21:[75.7,"ind","Snorkel · Codex CLI"],arc1:[90.7,"ind"],arc2:[59.6,"ind"],arc3:[0.18,"ven"],
+    weirdml:[60.9,"ind"],weirdmlCost:[0.040,"ind"],frontiermath:[78.6,"ven"],webdev:[1519,"ind"]}},
+
+{name:"Gemini 3.1 Pro", prov:"Google", tier:"frontier", open:false, rel:"2026-02-19",
+ note:"Still Google's newest Pro-tier model and still labelled preview. Axios reported in August that Gemini 3.5 Pro was never delivered and Google may skip to Gemini 4.",
+ s:{ttft:[27.65,"ind"],aaii:[30,"ind"],costTask:[0.67,"ind"],speed:[120,"ind"],ctx:[1000000,"ind"],
+    swebv:[80.6,"ven"],swepro:[46.1,"ind"],sweproPriv:[32.2,"ind"],tb21:[65.8,"ind","Snorkel · Gemini CLI"],
+    hle:[46.44,"ind"],gpqa:[95.45,"ind"],weirdml:[72.1,"ind"],weirdmlCost:[1.36,"ind"],
+    lmarena:[1487,"ind"],webdev:[1446,"ind"]}},
+
+{name:"Muse Spark 1.1", prov:"Meta", tier:"legacy", open:false, rel:"2026-07-09",
+ note:"Leads both SWE-bench Pro splits by a clear margin — the strongest coding result on that board from any vendor.",
+ s:{price:[0.78,"ind"],ctx:[1000000,"ind"],
+    swepro:[61.5,"ind"],sweproPriv:[51.5,"ind"],tb21:[76.2,"ind","Snorkel · mini-SWE-agent"],lmarena:[1491,"ind"],webdev:[1542,"ind"]}},
+
+{name:"GPT-5.3 Codex", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-02-05",
+ note:"The coding-agent specialist. Six months old and now beaten on WeirdML by GPT-5.6 Terra at a tenth of the cost.",
+ s:{aaii:[33,"ind"],price:[1.87,"ind"],speed:[120,"ind"],ttft:[71.64,"ind"],ctx:[400000,"ind"],
+    weirdml:[77.9,"ind"],weirdmlCost:[2.45,"ind"],webdev:[1408,"ind"]}},
+
+{name:"Claude Haiku 4.5", prov:"Anthropic", tier:"legacy", open:false, rel:"2025-10-01",
+ note:"Superseded by Claude Haiku 5.5 on 7 Oct 2026.",
+ s:{costTask:[0.21,"ind"],aaii:[17,"ind"],price:[0.77,"ind"],speed:[85,"ind"],ttft:[18.34,"ind"],ctx:[200000,"ind"],
+    swebv:[70.0,"ind"],swepro:[39.45,"ind"],osworld:[50.7,"ven"],webdev:[1328,"ind"]}},
+
+/* ------------------------------------------------------------- CHALLENGERS */
+{name:"MiMo-V2.6-Pro", prov:"Xiaomi", tier:"challenger", open:true, rel:"2026-09-22",
+ note:"1T total / 42B active, MIT-licensed. Ties Grok 4.7 on the Intelligence Index at 46 for 18 cents blended — about a seventh of Grok's price — which makes it the highest-scoring open-weights model on the board.",
+ s:{tau2air:[75.7,"ind"],aaii:[46,"ind"],price:[0.18,"ind"],costTask:[0.13,"ind"],speed:[45,"ind"],ttft:[3.53,"ind"],ctx:[1000000,"ind"],
+    tb40:[34.9,"ven"],tb21:[89.9,"ven","Xiaomi"],deepswe:[71.9,"ven"],gdpval21:[1673,"ven"],exploitgym:[17.8,"ven"],
+    lmarena:[1480,"ind"],webdev:[1619,"ind"]}},
+
+{name:"DeepSeek V4.1 Flash", prov:"DeepSeek", tier:"challenger", open:true, rel:"2026-09-10",
+ note:"Replaced V4 Flash on 10 Sep; the old model IDs now route here. Outscores DeepSeek's own V4 Pro on the Intelligence Index (39 against 36) at about a quarter of the blended price, and runs at 233 tokens per second with a sub-second first token. DeepSeek's table puts its DeepSWE above Claude Opus 5 — vendor-run, and the widest claimed lead on the board.",
+ s:{tau2air:[75.7,"ind"],aaii:[39,"ind"],price:[0.18,"ind"],costTask:[0.27,"ind"],speed:[235,"ind"],ttft:[0.97,"ind"],ctx:[1000000,"ind"],
+    tb40:[31.2,"ven"],tb30:[30.0,"ven"],tb21:[90.6,"ven","DeepSeek"],deepswe:[74.2,"ven"],exploitgym:[15.3,"ven"],
+    gpqa:[90.9,"ven"],hle:[36.8,"ven"],lmarena:[1477,"ind"],webdev:[1620,"ind"]}},
+
+{name:"Step 5 Preview", prov:"StepFun", tier:"challenger", open:false, rel:"2026-09-20",
+ note:"Preview; StepFun says weights open on 15 Oct. 600B total / 27B active, listed at $1.00/$2.70 per 1M. An Index score of 44 puts it level with Kimi K3 and Grok 4.6. Artificial Analysis has no model page yet, so there is no blended price and it does not appear on the cost chart.",
+ s:{aaii:[44,"ind"],costTask:[0.72,"ind"],speed:[77,"ind"],ttft:[2.92,"ind"],ctx:[1000000,"ind"],deepswe:[67.7,"ven"]}},
+
+{name:"MiMo-V2.6-Flash", prov:"Xiaomi", tier:"challenger", open:true, rel:"2026-09-22",
+ note:"309B total / 15B active, MIT, listed at $0.14/$0.28. No Intelligence Index score yet.",
+ s:{ctx:[1000000,"ind"],tb40:[28.8,"ven"],deepswe:[67.9,"ven"],exploitgym:[6.0,"ven"],lmarena:[1454,"ind"]}},
+
+{name:"Kimi K3", prov:"Moonshot AI", tier:"challenger", open:true, rel:"2026-07-16",
+ note:"2.8T-parameter open-weight MoE. An Index score of 60 — within three points of every closed flagship — and second on WebDev Arena. The strongest open model on this board.",
+ s:{tb30:[17.7,"ven"],tb40:[12.6,"ven"],deepswe:[67.5,"ven"],aaii:[44,"ind"],price:[2.31,"ind"],costTask:[2.0,"ind"],speed:[35,"ind"],ttft:[4.01,"ind"],ctx:[1050000,"ind"],
+    hle:[43.5,"ven"],gpqa:[93.5,"ven"],arc1:[94.5,"ind"],arc2:[60.4,"ind"],arc2cost:[1.59,"ind"],
+    weirdml:[82.57,"ind"],weirdmlCost:[2.05,"ind"],matharena:[69.7,"ind"],lmarena:[1488,"ind"],webdev:[1660,"ind"]}},
+
+{name:"GLM-5.3", prov:"Z.ai", tier:"challenger", open:true, rel:"2026-08-14",
+ note:"753B open MoE, post-trained from the same base as GLM-5.2 with no retraining. An Index score of 60 at 90 cents blended — the best capability-per-dollar on the board.",
+ s:{exploitgym:[15.0,"ven"],gpqa:[88.1,"ven"],tb30:[28.3,"ven"],tb40:[37.9,"ven"],deepswe:[66.9,"ven"],costTask:[2.01,"ind"],aaii:[45,"ind"],price:[0.90,"ind"],speed:[69,"ind"],ttft:[3.49,"ind"],ctx:[1000000,"ind"],
+    tau2air:[80.0,"ind"],lmarena:[1480,"ind"],webdev:[1622,"ind"]}},
+
+{name:"Qwen3.8 Max", prov:"Alibaba", tier:"challenger", open:false, rel:"2026-08-03",
+ note:"2.4T total / 95B active. The Index score is the 2 Sep snapshot (0902), which Artificial Analysis rates at 45; the WebDev and text Arena scores are the original August release, still on the board separately. Held the τ³-Banking lead before Artificial Analysis dropped that benchmark from its index.",
+ s:{aaii:[45,"ind"],price:[1.18,"ind"],costTask:[5.41,"ind"],speed:[39,"ind"],ttft:[3.04,"ind"],ctx:[1000000,"ind"],
+    tau3bank:[55.2,"ind"],lmarena:[1479,"ind"],webdev:[1672,"ind","preliminary"]}},
+
+{name:"GLM-5.3-Flash", prov:"Z.ai", tier:"challenger", open:true, rel:"2026-08-26",
+ note:"321B open weights. An Index score of 57 for ten cents blended — roughly Muse Spark 1.2's capability at an eighth of the price. Z.ai is running 50% off through 9 Sep 2026.",
+ s:{costTask:[0.25,"ind"],aaii:[42,"ind"],price:[0.10,"ind"],speed:[44,"ind"],ttft:[3.39,"ind"],ctx:[1000000,"ind"],
+    lmarena:[1474,"ind"],webdev:[1612,"ind"]}},
+
+{name:"Qwen3.8 Flash Next", prov:"Alibaba", tier:"challenger", open:true, rel:"2026-08-26",
+ note:"180B open weights at nine cents blended — the cheapest model on the board scoring above 55 on the Index.",
+ s:{costTask:[0.37,"ind"],aaii:[40,"ind"],price:[0.09,"ind"],speed:[54,"ind"],ttft:[2.78,"ind"],ctx:[256000,"ind"],webdev:[1636,"ind"]}},
+
+{name:"DeepSeek V4 Pro", prov:"DeepSeek", tier:"challenger", open:true, rel:"2026-08-13",
+ note:"MIT-licensed. Second-highest independently measured SWE-bench Verified score on the board, and WeirdML at eight and a half cents per run.",
+ s:{exploitgym:[5.4,"ven"],gpqa:[92.4,"ven"],tb30:[11.8,"ven"],tb40:[12.4,"ven"],deepswe:[62.7,"ven"],aaii:[36,"ind"],price:[0.69,"ind"],costTask:[0.67,"ind"],speed:[89,"ind"],ttft:[1.69,"ind"],ctx:[1000000,"ind"],
+    swebv:[96.40,"ind"],tau2air:[78.0,"ind"],hle:[42.7,"ven"],arc1:[90.5,"ind"],arc2:[61.3,"ind"],
+    weirdml:[66.2,"ind"],weirdmlCost:[0.085,"ind"],webdev:[1581,"ind"]}},
+
+{name:"GLM-5.2", prov:"Z.ai", tier:"legacy", open:true, rel:"2026-06-16",
+ note:"Same 753B base as GLM-5.3, seven Index points behind after two months of post-training.",
+ s:{price:[0.90,"ind"],ctx:[1000000,"ind"],
+    hle:[40.5,"ven"],gpqa:[91.2,"ven"],weirdml:[70.1,"ind"],weirdmlCost:[0.507,"ind"],
+    lmarena:[1476,"ind"],webdev:[1600,"ind"]}},
+
+{name:"Qwen3.8 27B", prov:"Alibaba", tier:"challenger", open:true, rel:"2026-08-14",
+ note:"Apache 2.0, 28B parameters, and an Index score of 52 — matching GPT-5.6 Luna on a model you can run yourself.",
+ s:{aaii:[34,"ind"],price:[0.43,"ind"],costTask:[1.01,"ind"],speed:[44,"ind"],ttft:[3.9,"ind"],ctx:[260000,"ind"],
+    webdev:[1591,"ind"]}},
+
+{name:"DeepSeek V4 Flash", prov:"DeepSeek", tier:"legacy", open:true, rel:"2026-07-31",
+ note:"Retired 10 Sep; its API IDs now route to DeepSeek V4.1 Flash.",
+ s:{tb30:[7.6,"ven"],tb40:[7.0,"ven"],deepswe:[54.4,"ven"],price:[0.23,"ind"],ctx:[1000000,"ind"],
+    hle:[37.8,"ven"],arc1:[89.0,"ind"],arc2:[61.4,"ind"],
+    weirdml:[63.0,"ind"],weirdmlCost:[0.029,"ind"],webdev:[1579,"ind"]}},
+
+{name:"Gemini 3.5 Flash", prov:"Google", tier:"legacy", open:false, rel:"2026",
+ note:"Prior Flash generation, superseded twice in six weeks.",
+ s:{
+    weirdml:[62.6,"ind"],weirdmlCost:[0.756,"ind"],lmarena:[1477,"ind"],webdev:[1501,"ind"]}},
+
+{name:"MiniMax M3", prov:"MiniMax", tier:"challenger", open:true, rel:"2026-06-01",
+ note:"Open-weight sparse-attention multimodal model. Strong claimed SWE-bench Verified, weak on OSWorld 2.0.",
+ s:{costTask:[0.51,"ind"],aaii:[29,"ind"],price:[0.22,"ind"],speed:[179,"ind"],ttft:[1.04,"ind"],ctx:[1000000,"ind"],
+    swebv:[80.5,"ven"],osworld2:[22.3,"ind"],webdev:[1487,"ind"]}},
+
+{name:"MiMo-V2.5-Pro", prov:"Xiaomi", tier:"legacy", open:true, rel:"2026-04-22",
+ note:"Xiaomi's open flagship. An Arena text Elo of 1468 puts it level with Baidu's ERNIE 5.1.",
+ s:{costTask:[0.05,"ind"],aaii:[26,"ind"],price:[0.18,"ind"],speed:[46,"ind"],ttft:[4.49,"ind"],ctx:[1000000,"ind"],
+    lmarena:[1468,"ind"],webdev:[1476,"ind"]}},
+
+{name:"Kimi K2.7 Code", prov:"Moonshot AI", tier:"challenger", open:true, rel:"2026-06-12",
+ note:"1T-parameter coding specialist, superseded by K3 five weeks later.",
+ s:{costTask:[0.54,"ind"],aaii:[26,"ind"],price:[0.72,"ind"],speed:[66,"ind"],ttft:[3.01,"ind"],ctx:[260000,"ind"],
+    weirdml:[54.1,"ind"],weirdmlCost:[0.232,"ind"],webdev:[1473,"ind"]}},
+
+{name:"Hy3", prov:"Tencent", tier:"challenger", open:true, rel:"2026-07-06",
+ note:"299B open MoE at eleven cents blended. Tencent's Hy4-preview, a 770B Apache-2.0 model, shipped 28 Aug and has an Arena WebDev score but no Index yet.",
+ s:{costTask:[0.07,"ind"],aaii:[25,"ind"],price:[0.11,"ind"],speed:[89,"ind"],ttft:[2.99,"ind"],ctx:[256000,"ind"],webdev:[1513,"ind"]}},
+
+{name:"Inkling", prov:"Thinking Machines", tier:"challenger", open:true, rel:"2026-07-15",
+ note:"Thinking Machines Lab's first open model, Apache 2.0.",
+ s:{costTask:[0.61,"ind"],aaii:[25,"ind"],price:[0.72,"ind"],speed:[166,"ind"],ttft:[1.87,"ind"],ctx:[1000000,"ind"],
+    arc1:[79.5,"ind"],arc2:[36.5,"ind"],webdev:[1408,"ind"]}},
+
+{name:"Inkling Small", prov:"Thinking Machines", tier:"challenger", open:true, rel:"2026-07-30",
+ note:"Beats its larger sibling on both ARC-AGI splits at a fraction of the cost per task.",
+ s:{aaii:[28,"ind"],speed:[208,"ind"],ttft:[2.59,"ind"],ctx:[1000000,"ind"],
+    arc1:[84.0,"ind"],arc2:[40.1,"ind"],webdev:[1403,"ind"]}},
+
+{name:"Hy4-preview", prov:"Tencent", tier:"challenger", open:true, rel:"2026-08-28",
+ note:"770B Apache-2.0 open weights, three days old at this snapshot. Fifth on WebDev Arena with no Index score yet.",
+ s:{ctx:[1000000,"ind"],webdev:[1631,"ind"]}},
+
+{name:"Kimi K2.6", prov:"Moonshot AI", tier:"legacy", open:true, rel:"2026-05",
+ note:"The general-purpose 1T model K3 replaced.",
+ s:{price:[0.72,"ind"],ctx:[262000,"ind"],weirdml:[55.9,"ind"],weirdmlCost:[0.350,"ind"],webdev:[1509,"ind"]}},
+
+{name:"Doubao Seed 2.1 Pro", prov:"ByteDance", tier:"challenger", open:false, rel:"2026-06-24",
+ note:"ByteDance's flagship, roughly $0.85/$4.15 per 1M on Volcano Engine. Little independent coverage outside China.",
+ s:{webdev:[1519,"ind"]}},
+
+{name:"ERNIE 5.1", prov:"Baidu", tier:"challenger", open:false, rel:"2026-05-09",
+ note:"Baidu claims it was pre-trained for 6% of the cost of comparable models. Pricing is not published in USD.",
+ s:{lmarena:[1468,"ind"]}},
+
+{name:"Mistral Large 4", prov:"Mistral", tier:"challenger", open:false, rel:"2026-10-06",
+ note:"Public preview from 6 Oct. It's a 1T-parameter mixture-of-experts model with 49B active, natively multimodal. Weights are promised for the end of October, so it's marked proprietary until they ship. Artificial Analysis scores it 38, Mistral's best by a wide margin but about 20 points behind the frontier, at $1.13 per index task. It's notably verbose: 200M output tokens to finish the index, against an 81M median. Price is $1.36/$4.18 per million tokens, with a 50% launch discount for the first two weeks. Mistral's own claims include AutomationBench 59.9%, which would top the board, DeepSWE 61.7% and Terminal-Bench 4.0 28.3%, all vendor-run.",
+ s:{webdev:[1534,"ind","872 votes"],aaii:[38,"ind"],costTask:[1.13,"ind"],price:[0.79,"ind"],speed:[116,"ind"],ttft:[1.46,"ind"],ctx:[1000000,"ven","Mistral docs say 1M; Artificial Analysis lists 524K as served"],deepswe:[61.7,"ven"],tb40:[28.3,"ven"],automationbench:[59.9,"ven"]}},
+
+{name:"Mistral Medium 3.5", prov:"Mistral", tier:"challenger", open:true, rel:"2026-04-29",
+ note:"Modified-MIT open weights. The strongest European model on the board, and roughly 25 Index points behind the frontier.",
+ s:{costTask:[0.44,"ind"],aaii:[14,"ind"],price:[1.16,"ind"],speed:[150,"ind"],ttft:[2.36,"ind"],ctx:[260000,"ind"],webdev:[1265,"ind"]}},
+
+{name:"Gemma 4 31B", prov:"Google", tier:"challenger", open:true, rel:"2026",
+ note:"Google's open family. 361 tokens per second and a τ²-Airline score inside ten points of the frontier — which says more about that benchmark than about Gemma.",
+ s:{aaii:[19,"ind"],speed:[35,"ind"],ttft:[1.02,"ind"],ctx:[256000,"ind"],
+    tau2air:[76.1,"ind"],webdev:[1362,"ind"]}},
+
+{name:"Step 3.7 Flash", prov:"StepFun", tier:"challenger", open:false, rel:"2026",
+ note:"Nine cents per index task.",
+ s:{aaii:[19,"ind"],speed:[193,"ind"],ttft:[2.51,"ind"],ctx:[262000,"ind"]}},
+
+{name:"Nemotron 3 Super", prov:"NVIDIA", tier:"challenger", open:true, rel:"2026",
+ note:"120B total / 12B active open MoE. NVIDIA also shipped Nemotron 3.5 Lightning (30B/3B) on 11 Aug for long-running agents.",
+ s:{aaii:[13,"ind"],costTask:[1.64,"ind"],speed:[169,"ind"],ttft:[1.45,"ind"]}},
+
+{name:"Nemotron 3.5 Lightning", prov:"NVIDIA", tier:"challenger", open:true, rel:"2026-08-11",
+ note:"30B/3B active, 1M context, 304 tokens per second — built as the fast execution layer under a slower planner.",
+ s:{aaii:[13,"ind"],costTask:[0.1,"ind"],speed:[276,"ind"],ttft:[0.6,"ind"],ctx:[1000000,"ind"]}},
+
+{name:"gpt-oss-120b", prov:"OpenAI", tier:"challenger", open:true, rel:"2025-08",
+ note:"OpenAI's open-weight release, now a year old and clearly behind the Chinese open models on every axis.",
+ s:{aaii:[12,"ind"],costTask:[0.11,"ind"],speed:[185,"ind"],ttft:[0.86,"ind"],ctx:[131000,"ind"],
+    swepro:[16.20,"ind"]}},
+
+{name:"Command A+", prov:"Cohere", tier:"challenger", open:false, rel:"2026-05-20",
+ note:"218B total / 25B active, aimed at sovereign and on-prem enterprise deployment. Token pricing is behind a sales conversation.",
+ s:{aaii:[13,"ind"],speed:[167,"ind"],ttft:[0.41,"ind"],ctx:[192000,"ind"]}},
+
+{name:"Amazon Nova 2 Pro", prov:"Amazon", tier:"challenger", open:false, rel:"2025-12-02",
+ note:"Still in preview on Bedrock nine months after announcement.",
+ s:{aaii:[14,"ind"],speed:[114,"ind"],ttft:[14.25,"ind"],ctx:[256000,"ind"]}},
+
+{name:"Mercury 2.5", prov:"Inception", tier:"challenger", open:false, rel:"2026-09-08",
+ note:"The diffusion model's second version, claiming 40% more intelligence than Mercury 2 and 1,107 tokens per second; Artificial Analysis measures 807. Launch promo is $0.04/$0.15, 80% off the $0.20/$0.75 list price.",
+ s:{aaii:[12,"ind"],costTask:[0.06,"ind"],speed:[807,"ind"],ttft:[3.08,"ind"],ctx:[260000,"ind"]}},
+
+{name:"Mistral Large 3", prov:"Mistral", tier:"challenger", open:true, rel:"2025-12-02",
+ note:"Apache 2.0, 675B/41B active, and 751 tokens per second.",
+ s:{aaii:[9,"ind"],costTask:[0.05,"ind"],speed:[76,"ind"],ttft:[1.05,"ind"],ctx:[256000,"ind"],webdev:[1229,"ind"]}},
+
+{name:"Llama 4 Maverick", prov:"Meta", tier:"challenger", open:true, rel:"2025-04",
+ note:"The last Llama. Meta has published nothing under the name since, and the Muse line replaced it.",
+ s:{aaii:[10,"ind"],speed:[116,"ind"],ttft:[0.91,"ind"],ctx:[1000000,"ind"],
+    swepro:[5.24,"ind"],hle:[5.68,"ind"]}},
+
+{name:"Olmo 3.1 32B Think", prov:"Ai2", tier:"challenger", open:true, rel:"2026",
+ note:"Fully open — weights, data and training checkpoints. The reference point for reproducible research, not for capability.",
+ s:{aaii:[7,"ind"],ctx:[65500,"ind"]}},
+
+/* ---------------------------------------------------------------- PREVIOUS */
+{name:"Claude Opus 4.8", prov:"Anthropic", tier:"legacy", open:false, rel:"2026-05-28",
+ note:"Superseded by Opus 5. Still holds the best independently-run OSWorld 2.0 result, because nobody has run the newer models on it.",
+ s:{swebv:[88.6,"ven"],tb21:[78.9,"ind","Snorkel · Claude Code"],osworld:[83.4,"ven"],osworld2:[54.8,"ind"],
+    hle:[49.8,"ven"],gpqa:[91.0,"ven"],weirdml:[82.89,"ind"],weirdmlCost:[2.35,"ind"],
+    lmarena:[1480,"ind"],webdev:[1555,"ind"]}},
+
+{name:"Claude Opus 4.7", prov:"Anthropic", tier:"legacy", open:false, rel:"2026-04",
+ s:{tb21:[68.9,"ind","Snorkel · Claude Code"],osworld2:[49.1,"ind"],hle:[36.20,"ind"],arc3:[0.18,"ind"],
+    weirdml:[75.45,"ind"],weirdmlCost:[7.95,"ind"],lmarena:[1502,"ind"],webdev:[1557,"ind"]}},
+
+{name:"Claude Opus 4.6", prov:"Anthropic", tier:"legacy", open:false, rel:"2026-02",
+ s:{swebv:[75.6,"ind"],swepro:[51.9,"ind"],sweproPriv:[47.1,"ind"],osworld:[72.7,"ven"],
+    hle:[34.44,"ind"],weirdml:[77.95,"ind"],weirdmlCost:[5.78,"ind"],lmarena:[1505,"ind"],webdev:[1547,"ind"]}},
+
+{name:"Claude Opus 4.5", prov:"Anthropic", tier:"legacy", open:false, rel:"2025-11-01",
+ note:"The most recent model with a published METR time horizon — 5.3 hours, measured January 2026.",
+ s:{swepro:[45.89,"ind"],sweproPriv:[23.44,"ind"],osworld:[66.3,"ven"],metr:[320,"ind"],
+    hle:[25.20,"ind"],lmarena:[1474,"ind"],webdev:[1468,"ind"]}},
+
+{name:"GPT-5.5", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-04-23",
+ s:{tb21:[83.1,"ind","Snorkel · Codex CLI"],tau3bank:[44.6,"ind"],osworld2:[49.5,"ind"],arc3:[0.43,"ind"],
+    hle:[41.4,"ven"],weirdml:[84.92,"ind"],weirdmlCost:[2.57,"ind"],matharena:[77.8,"ind"],
+    lmarena:[1481,"ind"],webdev:[1510,"ind"]}},
+
+{name:"GPT-5.4", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-03-05",
+ s:{swepro:[59.10,"ind"],sweproPriv:[43.40,"ind"],osworld:[75.0,"ven"],hle:[36.24,"ind"],
+    weirdml:[77.70,"ind"],weirdmlCost:[5.72,"ind"],lmarena:[1475,"ind"],webdev:[1463,"ind"]}},
+
+{name:"Gemini 3 Pro", prov:"Google", tier:"legacy", open:false, rel:"2025-11",
+ s:{swepro:[43.30,"ind"],tb21:[73.9,"ind","Snorkel · Terminus 2"],lcb:[91.7,"ind"],hle:[37.52,"ind"],
+    weirdml:[69.9,"ind"],weirdmlCost:[0.526,"ind"],lmarena:[1485,"ind"],webdev:[1438,"ind"]}},
+
+{name:"GPT-5", prov:"OpenAI", tier:"legacy", open:false, rel:"2025-08-07",
+ note:"METR horizon 3.6 hours, measured January 2026 — the reference point most time-horizon extrapolations start from.",
+ s:{swepro:[41.78,"ind"],metr:[214,"ind"],hle:[25.32,"ind"],weirdml:[60.7,"ind"],weirdmlCost:[0.593,"ind"]}},
+
+{name:"Claude Sonnet 4.5", prov:"Anthropic", tier:"legacy", open:false, rel:"2025-09-29",
+ s:{swebv:[72.8,"ind"],swepro:[43.60,"ind"],metr:[164,"ind"],osworld:[61.4,"ven"],
+    hle:[13.72,"ind"],webdev:[1392,"ind"]}},
+
+{name:"o3", prov:"OpenAI", tier:"legacy", open:false, rel:"2025-04",
+ s:{aaii:[20,"ind"],speed:[112,"ind"],ttft:[6.46,"ind"],ctx:[200000,"ind"],
+    metr:[121,"ind"],hle:[20.32,"ind"],weirdml:[52.4,"ind"],weirdmlCost:[0.226,"ind"]}}
+];
+
+/* Reasoning-effort variants, from the Artificial Analysis leaderboard on 26 Sep 2026 (Index v4.3.2).
+   [effort, Intelligence Index, $ per index task, output tokens/s, seconds to first token]; null = not published.
+   The first entry is the level shown everywhere else on the board. */
+const EFFORT = {
+ "Claude Opus 5.5":[["max",58,5.98,null,null],["xhigh",56,3.46,92,147.14],["high",54,1.82,86,33.45],["medium",51,1.34,81,12.82],["low",42,0.55,81,5.18]],
+ "Claude Fable 5.1":[["max",53,7.63,69,260.11],["xhigh",53,5.98,66,122.00],["high",51,3.91,59,15.40],["medium",49,2.98,58,7.96],["low",47,2.37,59,7.59]],
+ "GPT-6 Astra":[["max",53,3.26,58,348.28],["xhigh",52,2.31,58,119.06],["high",51,1.73,56,39.83],["medium",50,1.54,55,5.59],["low",46,0.82,53,3.15]],
+ "Muse Spark 1.3":[["max",48,1.60,22,324.72],["xhigh",45,1.37,23,221.81]],
+ "GPT-6 Sol":[["max",48,1.06,85,165.07],["xhigh",44,0.53,85,31.71],["high",43,0.37,83,9.21],["medium",40,0.25,null,null],["low",34,0.13,82,2.12],["none",28,0.33,76,1.13]],
+ "Grok 4.7":[["xhigh",46,3.74,49,1.52],["high",46,2.73,61,1.03]],
+ "GLM-5.3":[["max",45,2.01,69,3.49],["low",34,0.85,84,2.84]],
+ "Grok 4.6":[["xhigh",44,2.32,72,41.69],["high",44,1.86,66,40.81],["medium",43,1.50,68,26.24],["low",35,0.48,57,7.14]],
+ "Mistral Large 4":[["default",38,1.13,116,1.46]],
+ "Kimi K3":[["max",44,2.00,35,4.01],["low",34,null,null,null]],
+ "GPT-5.6 Terra":[["max",42,1.40,100,181.88],["xhigh",38,0.63,82,29.65],["high",34,0.34,81,3.49],["medium",30,0.18,83,2.27],["low",27,0.14,85,1.77],["none",21,0.14,85,0.93]],
+ "Gemini 3.8 Flash":[["high",41,1.24,330,18.95],["medium",40,0.93,null,null],["low",33,null,null,null]],
+ "DeepSeek V4.1 Flash":[["max",39,0.27,235,0.97],["none",25,0.15,272,1.17]],
+ "Claude Haiku 5.5":[["max",43,0.21,244,341.02],["xhigh",41,0.12,193,78.84],["high",38,0.08,178,26.69],["medium",34,0.05,155,13.40],["low",29,0.02,185,12.79]],
+ "Gemini 4 Argon":[["high",53,1.99,null,null]],
+ "GPT-6.1 Sol":[["max",52,0.72,65,281.94],["xhigh",51,0.39,63,107.76],["high",50,0.32,63,57.26],["medium",48,0.21,59,5.29],["low",42,0.13,60,2.61]],
+ "Claude Sonnet 5.5":[["max",56,7.67,139,null],["xhigh",52,2.75,103,null],["high",47,1.12,94,null],["medium",41,0.59,92,null],["low",36,0.41,null,null]],
+ "Claude Sonnet 5":[["max",38,5.09,77,124.72],["xhigh",34,2.87,74,15.50],["high",32,1.79,70,8.63],["medium",28,1.00,70,2.96],["low",24,0.51,64,1.58],["none",23,null,64,1.69]],
+ "GPT-6 Luna":[["max",37,0.07,144,135.83],["xhigh",34,0.04,137,19.20],["high",32,0.03,135,7.12],["medium",29,0.02,null,null],["low",21,0.004,126,2.23],["none",18,0.01,123,0.89]],
+ "Qwen3.8 27B":[["xhigh",34,1.01,44,3.90],["medium",28,1.13,53,3.81],["low",26,1.05,53,3.81]],
+ "MiMo-V2.5-Pro":[["reasoning",26,0.05,46,4.49],["none",18,null,40,2.95]],
+ "Gemma 4 31B":[["reasoning",19,null,35,1.02],["none",14,null,60,1.94]],
+ "Claude Haiku 4.5":[["reasoning",17,0.21,85,18.34],["none",15,null,81,0.65]],
+ "Amazon Nova 2 Pro":[["medium",14,null,114,14.25],["low",13,null,111,10.98],["none",10,null,97,1.02]],
+ "gpt-oss-120b":[["high",12,0.11,185,0.86],["low",10,null,182,0.85]]
+};
+
+/* List prices, USD per 1M tokens, from each vendor's pricing page as gathered 1–26 Sep 2026.
+   in / out / cr = cache read (null if not published). note = tiering, promos and scheduled changes. */
+const PRICES = {
+ "Claude Opus 5.5":{in:4,out:20,cr:0.20,note:"Batch 50% off. Fast mode (preview) $8/$40."},
+ "Claude Fable 5.1":{in:10,out:50,cr:0.25,note:"Cache reads cut from $1.00 to $0.25 at launch."},
+ "GPT-6 Astra":{in:10,out:50,cr:1.00,note:"Above 272K input: $20/$75. Gated at launch."},
+ "GPT-6.1 Sol":{in:2,out:10,cr:0.10,note:"Cache writes $2.50. Above 272K input: 2× input, 1.5× output for the whole request. Ultrafast tier 6× price. Batch/Flex 50% off."},
+ "GPT-6 Sol":{in:2,out:10,cr:0.20,note:"Any request above 272K input tokens bills 2× input and 1.5× output for the whole request."},
+ "GPT-6 Luna":{in:0.10,out:0.50,cr:0.01,note:"Same 272K surcharge as Sol."},
+ "Grok 4.7":{in:2,out:6,cr:0.50,note:"Above 200K tokens: $4/$12."},
+ "Muse Spark 1.3":{in:1.25,out:4.25,cr:null,note:"As listed by Artificial Analysis for the xhigh configuration."},
+ "Mistral Large 4":{in:1.36,out:4.18,note:"Public preview. 50% launch discount for the first two weeks; open weights due end of October."},
+ "Claude Haiku 5.5":{in:0.10,out:0.50,cr:0.01,note:"Prompts over 100K tokens: $0.50/$2.50, cache read $0.05. Batch 50% off."},
+ "Gemini 4 Argon":{in:2,out:10,cr:0.10,note:"Introductory price; rises to $4/$20 later (date not given). Cached input 95% off."},
+ "Gemini 3.8 Flash":{in:0.75,out:3.75,cr:0.075,note:"Doubles to $1.50/$7.50 on 1 Jan 2027."},
+ "Gemini 3.1 Pro":{in:2,out:12,cr:null,note:"Above 200K tokens: $4/$18."},
+ "GPT-5.6 Terra":{in:2,out:12,cr:null,note:"As listed by Artificial Analysis."},
+ "Claude Sonnet 5.5":{in:2,out:10,cr:0.20,note:"Same price as Sonnet 5. Cache writes $2.50."},
+ "Claude Sonnet 5":{in:2,out:10,cr:null,note:""},
+ "Claude Haiku 4.5":{in:1,out:5,cr:null,note:""},
+ "GPT-5.3 Codex":{in:1.75,out:14,cr:null,note:""},
+ "Kimi K3":{in:3,out:15,cr:0.30,note:""},
+ "GLM-5.3":{in:1.40,out:4.40,cr:null,note:""},
+ "GLM-5.3-Flash":{in:0.15,out:0.50,cr:null,note:"Z.ai ran 50% off through 9 Sep."},
+ "Qwen3.8 Max":{in:2,out:6,cr:null,note:""},
+ "Qwen3.8 Flash Next":{in:0.15,out:0.47,cr:null,note:""},
+ "Qwen3.8 27B":{in:0.50,out:3.00,cr:null,note:"Open weights — free to self-host."},
+ "DeepSeek V4.1 Flash":{in:0.30,out:1.20,cr:0.006,note:"Peak-hour price. Off-peak $0.15/$0.60 (cache $0.003)."},
+ "DeepSeek V4 Pro":{in:1.32,out:3.96,cr:null,note:"Peak-hour price. Off-peak $0.66/$1.98."},
+ "MiMo-V2.6-Pro":{in:0.435,out:0.87,cr:0.0036,note:"Open weights, MIT."},
+ "MiMo-V2.6-Flash":{in:0.14,out:0.28,cr:0.0028,note:"Open weights, MIT."},
+ "MiniMax M3":{in:0.30,out:1.20,cr:null,note:"Above 512K tokens: $0.60/$2.40."},
+ "Step 5 Preview":{in:1.00,out:2.70,cr:0.05,note:"Press-reported; weights promised 15 Oct."},
+ "Mercury 2.5":{in:0.20,out:0.75,cr:null,note:"Launch promo $0.04/$0.15."},
+ "Hy3":{in:0.14,out:0.55,cr:null,note:""},
+ "Inkling":{in:1.00,out:4.05,cr:null,note:""},
+ "Kimi K2.7 Code":{in:0.95,out:4.00,cr:0.19,note:""},
+ "Mistral Medium 3.5":{in:1.50,out:7.50,cr:null,note:""},
+ "Mistral Large 3":{in:0.50,out:1.50,cr:null,note:""},
+ "Claude Opus 5":{in:5,out:25,cr:0.50,note:""},
+ "Claude Fable 5":{in:10,out:50,cr:1.00,note:""},
+ "GPT-5.6 Sol":{in:4,out:20,cr:null,note:""},
+ "Grok 4.6":{in:2,out:6,cr:null,note:""}
+};
+
+/* What changed, newest first. tag: add | rescale | data | move | feature */
+const CHANGELOG = [
+ {d:"8 Oct 2026", items:[
+  ["data","Claude Haiku 5.5 on Artificial Analysis: 43 at max ($0.21/task), 41 xhigh ($0.12), 38 high ($0.08), 34 medium ($0.05), 29 low ($0.02). Even at max it costs under a third of GPT-6.1 Sol at max for nine fewer points, and it beats Mistral Large 4 (38, $1.13) at a fifth of the cost."],
+  ["data","WebDev Arena (7 Oct): Mistral Large 4 debuts at 1534 (#45). Sonnet 5.5 xhigh eased to 1773, and the other frontier rows moved 1–4 points. Haiku 5.5 is not listed yet."],
+  ["data","No change on Arena text (2 Oct), ARC Prize or OpenRouter τ²-Airline (last run 6 Oct)."]]},
+ {d:"7 Oct 2026", items:[
+  ["add","Claude Haiku 5.5 (7 Oct): $0.10/$0.50 per million tokens, a tenth of Haiku 4.5's price, with a 1M context window. Anthropic reports Terminal-Bench 4.0 39.2%, GDPval-AA v2.1 1620, FrontierCode 46.4% and HLE 45.9% without tools. All are vendor-run, and no independent evaluator had scored it on launch day. Haiku 4.5 moves to Previous gen."],
+  ["data","Added Anthropic's comparison figures for GPT-6 Luna (TB 4.0 16.4%, GDPval 2.1 1437, FrontierCode 42.4%) and Sonnet 5.5 HLE 56.9% without tools, all marked vendor-run."],
+  ["data","No other changes. Arena text (2 Oct), WebDev (1 Oct) and ARC Prize have no new rows. Artificial Analysis's last addition was Mistral Large 4 on 6 Oct."]]},
+ {d:"6 Oct 2026", items:[
+  ["add","Mistral Large 4 (public preview, 6 Oct): a 1T-parameter mixture-of-experts model, 49B active. Artificial Analysis scores it 38 at $1.13 per task, about 20 points below the frontier but Mistral's best yet. Price is $1.36/$4.18 per million tokens. Open weights are due at the end of October. Mistral's own AutomationBench 59.9% and DeepSWE 61.7% are marked vendor-run."],
+  ["data","No other changes. Arena text (2 Oct), WebDev (1 Oct) and ARC Prize have no new rows. Artificial Analysis re-ran Opus 5.5, Sonnet 5.5 and GPT-6.1 Sol on 5 Oct with identical scores, and has no HLE results yet for Sonnet 5.5, GPT-6.1 Sol or Gemini 4 Argon."]]},
+ {d:"4 Oct 2026", items:[
+  ["add","Gemini 4 Argon (Google, 30 Sep). Artificial Analysis scores it 53 at high for $1.99 per task. It debuts at #1 on Arena text (1525) and #9 on WebDev (1680). Price is an introductory $2/$10, rising to $4/$20. Google's own figures, DeepSWE 77.9% and AutomationBench 51.3%, are marked vendor-run."],
+  ["data","Arena text (2 Oct) now includes both new models: GPT-6.1 Sol at 1483 (#21) and Sonnet 5.5 xhigh at 1471 (#45). Opus 5.5 slipped from 1509 to 1504 and now sits behind Gemini 4 Argon. Gemini 3.8 Flash rose to 1495."],
+  ["data","τ²-bench Airline re-run on 4 Oct: GPT-6.1 Sol 70.0% (was 66.7%), Sonnet 5.5 74.7% (was 76.7%). OpenRouter re-runs this continuously, so expect a few points of drift."],
+  ["data","Sonnet 5.5's cost per index task was revised to $7.67 at max and $1.12 at high."]]},
+ {d:"1 Oct 2026", items:[
+  ["data","WebDev Arena (1 Oct) adds both new models: Sonnet 5.5 at xhigh 1786 (#3, 1715 at high) and GPT-6.1 Sol at max 1758 (#4). Opus 5.5 still leads at 1815, with GPT-6 Astra at 1788. Frontier rows were refreshed from the same snapshot."],
+  ["data","ARC Prize verified GPT-6.1 Sol: 98.5% on ARC-AGI-1 and 94.2% on ARC-AGI-2, ahead of Opus 5.5's 93.3% and just behind GPT-6 Astra's 95.0%. Its ARC-AGI-3 headline of 96.37% uses the Provider Adapter, so it isn't on the board; the standard-harness figure isn't published yet."],
+  ["data","Artificial Analysis speed: GPT-6.1 Sol runs at about 60–65 tokens/sec across effort levels, with 282 s time-to-first-token at max. Sonnet 5.5 runs at 139 tokens/sec at max. Sonnet's latency readings swing wildly between snapshots, so they're left blank."],
+  ["data","Still not run: Arena text (last updated 30 Sep), HLE and GPQA."]]},
+ {d:"30 Sep 2026 · evening", items:[
+  ["data","GPT-6.1 Sol: Artificial Analysis Intelligence Index 52 at max ($0.72/task), with a full effort ladder 52/51/50/48/42. That puts it one point behind GPT-6 Astra at roughly a quarter of the cost. Speed is left blank: the leaderboard grid's figures are unreliable."],
+  ["data","τ²-bench Airline (OpenRouter, 30 Sep run): GPT-6.1 Sol 66.7%; Sonnet 5.5 re-run at 76.7% (was 75.4%)."],
+  ["data","Still not run: Arena (last updated 25 Sep), ARC Prize, HLE, GPQA and Vals have neither model."]]},
+ {d:"30 Sep 2026", items:[
+  ["data","Sonnet 5.5: first independent result beyond Artificial Analysis — τ²-bench Airline 75.4% (OpenRouter), level with MiMo-V2.6-Pro and DeepSeek V4.1 Flash, above Opus 5.5's 73.3%."],
+  ["data","GPT-6.1 Sol: still no independent scores anywhere. Arena, ARC Prize, Vals, HLE and GPQA have not run either model yet."]]},
+ {d:"29 Sep 2026 · evening", items:[
+  ["add","GPT-6.1 Sol (DevDay, 29 Sep): $2/$10 with cached input at $0.10. OpenAI published only relative claims and image tables, and no independent evaluator had run it yet — so it is on the board with price and specs only."],
+  ["move","GPT-6 Sol moved to Previous gen."],
+  ["data","Sonnet 5.5 re-checked: still no Arena, ARC Prize, Vals, OpenRouter, HLE or GPQA results. Its Artificial Analysis scores are unchanged."],
+  ["data","Opus 5.5's Terminal-Bench 2.1 figure now notes Vals AI's stricter score: 79.8% when refusal fallbacks count as failures."]]},
+ {d:"29 Sep 2026", items:[
+  ["add","Claude Sonnet 5.5 (released 28 Sep, $2/$10). Anthropic's table puts it level with Opus 5.5 on GDPval-AA (1844 vs 1846) and ahead on Terminal-Bench 4.0 (70.6% vs 66.4%) at half the per-token price."],
+  ["data","Artificial Analysis scored it the next day: 56 at max effort, second only to Opus 5.5 — but $7.60 per index task at max, against $2.74 at extra-high for 52. All five effort levels are on the Charts tab. Arena and ARC Prize have not run it yet."],
+  ["move","Claude Sonnet 5 moved to Previous gen."]]},
+ {d:"27 Sep 2026", items:[
+  ["data","Opus 5.5 filled in from independent boards: Humanity's Last Exam 61.4% (the top score on the board), Terminal-Bench 2.1 87.6%, τ²-Airline 73.3%, MathArena 83.4%."],
+  ["data","Terminal-Bench 2.1 frontier rows moved onto one evaluator (Vals AI). Fable 5.1 now shows 85.0%, down from 91.4% under Artificial Analysis."],
+  ["move","14 saturated or superseded benchmarks moved to the Archive — SWE-bench Verified and Pro, METR, CursorBench 3.2, GDPval v2, τ³-Banking and others."],
+  ["feature","Added the model picks, list prices in each model's detail, and this changelog."]]},
+ {d:"26 Sep 2026", items:[
+  ["add","Claude Opus 5.5 takes #1 on the Intelligence Index at 58. Also added GPT-6 Sol and Luna, Grok 4.7, MiMo-V2.6-Pro and Flash, DeepSeek V4.1 Flash, Step 5 Preview, Mercury 2.5."],
+  ["rescale","Artificial Analysis moved to Index v4.3.2. Every score fell 8–15 points with no change to the models — Fable 5.1 went from 66 to 53 — so the whole column was replaced."],
+  ["move","15 superseded models moved to Previous gen, including Opus 5, Fable 5, GPT-5.6 Sol and Grok 4.6."],
+  ["feature","Charts tab with effort levels."]]},
+ {d:"3 Sep 2026", items:[
+  ["add","GPT-6 Astra (first model at OpenAI's Critical cyber threshold), Muse Spark 1.3, Gemini 3.8 Flash and Claude Fable 5.1."],
+  ["data","Seven vendor benchmark columns from the OpenAI and Anthropic launch tables."],
+  ["feature","Coverage grid on the Benchmarks tab."]]},
+ {d:"31 Aug 2026", items:[["feature","Board launched with 57 models across 29 benchmarks."]]}
+];
+
+/* ============================== rendering ================================ */
+const $=(s,r)=>(r||document).querySelector(s), $$=(s,r)=>[...(r||document).querySelectorAll(s)];
+const QL={ind:"Independently run",ven:"Vendor-run / self-reported",unv:"Unverified"};
+
+function fmt(v,f){
+  if(v==null) return "—";
+  switch(f){
+    case "pct": return v.toFixed(v>=100?0:1)+"%";
+    case "usd2": return "$"+v.toFixed(2);
+    case "usd3": return "$"+(v<0.1?v.toFixed(3):v.toFixed(2));
+    case "n0": return v>=1000?v.toLocaleString():String(Math.round(v*10)/10);
+    case "n1": return v.toFixed(1);
+    case "ctx": return v>=1e6?(v/1e6).toFixed(v%1e6?2:0)+"M":Math.round(v/1000)+"K";
+    case "min": return v>=60?(v/60).toFixed(1)+" h":Math.round(v)+" min";
+    default: return String(v);
+  }
+}
+const val=(m,b)=>m.s[b]?m.s[b][0]:null;
+const qual=(m,b)=>m.s[b]?m.s[b][1]:null;
+
+/* ---------------- filter state ---------------- */
+const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"]];
+const state={q:"",tiers:new Set(["frontier","challenger"]),weights:new Set(["open","closed"]),prov:"",
+             sort:"aaii",dir:-1,openRow:null};
+
+function buildChips(host,items,set,key){
+  host.innerHTML="";
+  items.forEach(([v,l])=>{
+    const b=document.createElement("button");
+    b.className="chip"; b.textContent=l; b.setAttribute("aria-pressed",set.has(v));
+    b.onclick=()=>{ set.has(v)?set.delete(v):set.add(v); b.setAttribute("aria-pressed",set.has(v)); render(); };
+    host.appendChild(b);
+  });
+}
+buildChips($("#tierchips"),TIERS,state.tiers);
+buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights);
+{
+  const provs=[...new Set(MODELS.map(m=>m.prov))].sort();
+  const sel=$("#provsel");
+  provs.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);});
+  sel.onchange=()=>{state.prov=sel.value;render();};
+}
+$("#q").oninput=e=>{state.q=e.target.value.toLowerCase();render();};
+
+function filtered(){
+  return MODELS.filter(m=>{
+    if(!state.tiers.has(m.tier)) return false;
+    if(!state.weights.has(m.open?"open":"closed")) return false;
+    if(state.prov && m.prov!==state.prov) return false;
+    if(state.q && !(m.name+" "+m.prov).toLowerCase().includes(state.q)) return false;
+    return true;
+  });
+}
+
+/* ---------------- board table ---------------- */
+const COLS=Object.keys(BENCH).filter(k=>BENCH[k].col&&!BENCH[k].arch);
+const isArch=k=>!!BENCH[k].arch;
+function renderBoard(rows){
+  const th=$("#board thead"), tb=$("#board tbody");
+  th.innerHTML="<tr><th class='l'></th><th class='l' data-k='name'>Model <span class='arw'>▾</span></th>"+
+    COLS.map(k=>`<th data-k="${k}" title="${BENCH[k].l}">${BENCH[k].s} <span class="arw">▾</span></th>`).join("")+"</tr>";
+  $$("#board thead th[data-k]").forEach(el=>{
+    if(el.dataset.k===state.sort){el.setAttribute("data-active","");
+      el.querySelector(".arw").textContent = state.dir<0?"▾":"▴";}
+    el.onclick=()=>{
+      if(state.sort===el.dataset.k) state.dir*=-1;
+      else {state.sort=el.dataset.k; state.dir = el.dataset.k==="name"?1:(BENCH[el.dataset.k]&&BENCH[el.dataset.k].hi?-1:1);}
+      render();
+    };
+  });
+  const k=state.sort;
+  rows=[...rows].sort((a,b)=>{
+    if(k==="name") return state.dir*a.name.localeCompare(b.name);
+    const av=val(a,k), bv=val(b,k);
+    if(av==null&&bv==null) return a.name.localeCompare(b.name);
+    if(av==null) return 1; if(bv==null) return -1;
+    return state.dir*(av-bv);
+  });
+  tb.innerHTML=rows.map((m,i)=>{
+    const cells=COLS.map(c=>{
+      const v=val(m,c), q=qual(m,c);
+      const et = c==="aaii"&&v!=null&&topEff(m) ? `<span class="eff">${topEff(m)}</span>` : "";
+      return `<td class="mono${v==null?" na":""}">${fmt(v,BENCH[c].f)}${et}${v!=null&&q!=="ind"?`<span class="q ${q}" title="${QL[q]}"></span>`:""}</td>`;
+    }).join("");
+    const on = state.openRow===m.name;
+    return `<tr data-m="${m.name}" class="${on?"open":""}">
+      <td class="l mono rk">${i+1}</td>
+      <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span>${m.name}<span class="prov">${m.prov}</span></span></td>
+      ${cells}</tr>`+(on?detailRow(m):"");
+  }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">Nothing matches those filters.</td></tr>`;
+  $$("#board tbody tr[data-m]").forEach(tr=>tr.onclick=()=>{
+    state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; render();
+  });
+}
+
+function detailRow(m){
+  const groups={headline:"Index, price & speed",speed:"Throughput",coding:"Coding",agentic:"Agentic & computer use",reasoning:"Reasoning, knowledge & preference"};
+  let out="";
+  for(const g in groups){
+    const keys=Object.keys(BENCH).filter(k=>BENCH[k].g===g && m.s[k] && !isArch(k));
+    if(!keys.length) continue;
+    out+=keys.map(k=>{
+      const [v,q,src]=m.s[k];
+      return `<div class="dline"><span class="k">${BENCH[k].l}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;
+    }).join("");
+  }
+  const archK=Object.keys(BENCH).filter(k=>isArch(k)&&m.s[k]);
+  if(archK.length) out+=`<p class="effh">Archived benchmarks</p>`+archK.map(k=>{const [v,q,src]=m.s[k];
+    return `<div class="dline" style="opacity:.7"><span class="k">${BENCH[k].l}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;}).join("");
+  out+=listPrice(m);
+  const miss=Object.keys(BENCH).filter(k=>!m.s[k]&&!isArch(k)).map(k=>BENCH[k].s);
+  return `<tr class="det"><td colspan="${COLS.length+2}"><div class="detbox">
+    <h3>${m.name}
+      <span class="badge ${m.open?"open":"pro"}">${m.open?"Open weights":"Proprietary"}</span>
+      <span class="prov" style="font-weight:400">${m.prov} · released ${m.rel||"—"}</span></h3>
+    ${m.note?`<p class="dnote">${m.note}</p>`:""}
+    ${out}
+    ${EFFORT[m.name]&&EFFORT[m.name].length>1?`<p class="effh">Effort levels · Artificial Analysis, 26 Sep</p>
+    <table class="efftab"><thead><tr><th>Effort</th><th>Index</th><th>$ / index task</th><th>Output tok/s</th><th>First token</th></tr></thead><tbody>
+    ${effRows(m).map(r=>`<tr><td><span class="dot" style="display:inline-block;margin-right:6px;border-radius:50%;background:${EFF_SHADE[r.e]}"></span>${EFF_NAME[r.e]}</td><td>${r.aaii}</td><td>${r.cost!=null?money(r.cost):"—"}</td><td>${r.speed??"—"}</td><td>${r.ttft!=null?r.ttft+" s":"—"}</td></tr>`).join("")}
+    </tbody></table>`:""}
+    <p class="dnote" style="color:var(--ink-3)">No published score for: ${miss.join(", ")||"nothing — full coverage"}.</p>
+  </div></td></tr>`;
+}
+
+/* ---------------- tooltip ---------------- */
+const tip=$("#tip");
+function showTip(html,e){tip.innerHTML=html;tip.classList.add("on");moveTip(e);}
+function moveTip(e){
+  const r=tip.getBoundingClientRect();
+  let x=e.clientX+14,y=e.clientY+14;
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-14;
+  if(y+r.height>innerHeight-8)y=e.clientY-r.height-14;
+  tip.style.left=x+"px";tip.style.top=y+"px";
+}
+function hideTip(){tip.classList.remove("on");}
+function wire(root){
+  $$("[data-tip]",root).forEach(el=>{
+    el.onmouseenter=e=>showTip(el.dataset.tip,e);
+    el.onmousemove=moveTip; el.onmouseleave=hideTip;
+  });
+}
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+
+/* ---------------- shared chart helpers ---------------- */
+const EFF_ORDER=["none","low","medium","high","reasoning","xhigh","max"];
+const EFF_SHADE={none:"var(--e0)",low:"var(--e1)",medium:"var(--e2)",high:"var(--e3)",reasoning:"var(--e3)",xhigh:"var(--e4)",max:"var(--e5)"};
+const EFF_NAME={none:"Non-reasoning",low:"Low",medium:"Medium",high:"High",reasoning:"Reasoning",xhigh:"Extra high",max:"Max"};
+const effRows=m=>(EFFORT[m.name]||[]).map(r=>({e:r[0],aaii:r[1],cost:r[2],speed:r[3],ttft:r[4]}));
+const topEff=m=>{const r=EFFORT[m.name];return r&&r.length>1?r[0][0]:null;};
+function niceTicks(a,b,n=5){
+  const span=b-a, raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/mag;
+  const step=(f<1.5?1:f<3?2:f<7?5:10)*mag, out=[];
+  for(let v=Math.ceil(a/step)*step; v<=b+1e-9; v+=step) out.push(+v.toFixed(6));
+  return out;
+}
+function logTicks(x0,x1){ // x0,x1 in log10 space
+  const t=[]; for(let e=Math.floor(x0);e<=Math.ceil(x1);e++) for(const m of [1,2,5]){
+    const v=m*Math.pow(10,e); const l=Math.log10(v); if(l>=x0&&l<=x1) t.push(v);} return t;
+}
+const money=v=>"$"+(v>=1?(+v.toFixed(2)).toString():v>=0.01?v.toFixed(2).replace(/0$/,""):v.toFixed(3));
+const plain=v=>v>=1000?(v/1000)+"k":String(v);
+function placeLabels(marks, bounds, maxN, textOf){
+  const boxes=marks.map(o=>({x0:o.x-o.r-2,x1:o.x+o.r+2,y0:o.y-o.r-2,y1:o.y+o.r+2}));
+  const hit=b=>boxes.some(q=>!(b.x1<q.x0||b.x0>q.x1||b.y1<q.y0||b.y0>q.y1))
+              || b.x0<bounds.x0-4 || b.x1>bounds.x1+2 || b.y0<bounds.y0 || b.y1>bounds.y1;
+  let out="", n=0;
+  marks.forEach(o=>{
+    if(n>=maxN||o.nolabel) return;
+    const txt=textOf(o), w=txt.length*6.35+4;
+    for(const c of [{x:o.x+o.r+6,y:o.y+4,a:"start"},{x:o.x-o.r-6,y:o.y+4,a:"end"},{x:o.x,y:o.y-o.r-7,a:"middle"},{x:o.x,y:o.y+o.r+15,a:"middle"},
+                    {x:o.x-o.r-2,y:o.y-o.r-6,a:"end"},{x:o.x+o.r+2,y:o.y-o.r-6,a:"start"},{x:o.x-o.r-2,y:o.y+o.r+14,a:"end"},{x:o.x+o.r+2,y:o.y+o.r+14,a:"start"}]){
+      const x0=c.a==="start"?c.x:c.a==="end"?c.x-w:c.x-w/2, b={x0:x0-2,x1:x0+w+2,y0:c.y-11,y1:c.y+3};
+      if(hit(b)) continue;
+      out+=`<text class="ptlab" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}" text-anchor="${c.a}">${esc(txt)}</text>`;
+      boxes.push(b); n++; return;
+    }
+  });
+  return out;
+}
+
+/* generic scatter: log x, linear y, median quadrants */
+function scatterSvg(pts,o){
+  const W=980,H=o.H||560,ml=62,mr=28,mt=22,mb=58, iw=W-ml-mr, ih=H-mt-mb;
+  const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), lx=Math.log10;
+  const x0=lx(Math.min(...xs))-0.12, x1=lx(Math.max(...xs))+0.12;
+  const yp=(Math.max(...ys)-Math.min(...ys))*0.09||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
+  const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
+  const med=a=>{const q=[...a].sort((p,r)=>p-r),n=q.length;return n%2?q[(n-1)/2]:(q[n/2-1]+q[n/2])/2;};
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+  logTicks(x0,x1).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.xfmt(v)}</text>`;});
+  niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${o.yfmt(v)}</text>`;});
+  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/>`;
+  if(o.quad){
+    const mx=med(xs),my=med(ys);
+    s+=`<line class="quadline" x1="${X(mx).toFixed(1)}" y1="${mt}" x2="${X(mx).toFixed(1)}" y2="${mt+ih}"/><line class="quadline" x1="${ml}" y1="${Y(my).toFixed(1)}" x2="${ml+iw}" y2="${Y(my).toFixed(1)}"/>`
+      +`<text class="qlab" x="${ml+8}" y="${mt+16}">${o.quad[0]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+16}" text-anchor="end">${o.quad[1]}</text>`
+      +`<text class="qlab" x="${ml+8}" y="${mt+ih-8}">${o.quad[2]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+ih-8}" text-anchor="end">${o.quad[3]}</text>`;
+  }
+  s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">${o.xtitle} — log scale</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
+  const marks=pts.map(p=>({...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p}));
+  marks.forEach(m=>{s+=`<circle class="pt" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`;});
+  s+=placeLabels([...marks].sort((a,b)=>b.raw.y-a.raw.y),{x0:ml,x1:ml+iw,y0:mt,y1:mt+ih},24,m=>m.label);
+  return s+"</svg>";
+}
+const modelTip=(m,lines)=>`<b>${esc(m.name)}</b><span class="tl"><span>${esc(m.prov)}</span><span>${m.open?"Open weights":"Proprietary"}</span></span>`
+  +lines.map(([k,v])=>`<span class="tl"><span>${k}</span><span>${v}</span></span>`).join("");
+const idFill=m=>m.open?"var(--open)":"var(--accent)";
+
+/* ---------------- quadrant scatter (price) ---------------- */
+function renderQuad(rows){
+  const xk=$("#xaxis").value, yk=$("#yaxis").value, host=$("#quad");
+  const ms=rows.filter(m=>val(m,xk)!=null&&val(m,yk)!=null&&val(m,xk)>0);
+  if(ms.length<3){host.innerHTML='<p class="empty">Not enough models with both measures under these filters.</p>';return;}
+  const rOf=m=>{const c=val(m,"ctx");return c?Math.max(4,Math.min(11,Math.sqrt(c/1e6)*8+3.5)):4.5;};
+  host.innerHTML=scatterSvg(ms.map(m=>({x:val(m,xk),y:val(m,yk),r:rOf(m),fill:idFill(m),label:m.name,
+      tip:modelTip(m,[[BENCH[yk].s,fmt(val(m,yk),BENCH[yk].f)+(yk==="aaii"&&topEff(m)?" · "+topEff(m):"")],[BENCH[xk].s,fmt(val(m,xk),BENCH[xk].f)],["Context",val(m,"ctx")?fmt(val(m,"ctx"),"ctx"):"—"]])})),
+    {aria:"Capability against price",xfmt:money,yfmt:v=>String(Math.round(v)),xtitle:BENCH[xk].l,ytitle:BENCH[yk].l,
+     quad:["Value zone","Premium","Budget","Overpriced"]});
+  wire(host);
+}
+
+/* ---------------- intelligence vs speed ---------------- */
+function renderSpeedQ(rows){
+  const host=$("#c-speedq"), ms=rows.filter(m=>val(m,"speed")&&val(m,"aaii")!=null);
+  if(ms.length<3){host.innerHTML='<p class="empty">Not enough models with both measures under these filters.</p>';return;}
+  host.innerHTML=scatterSvg(ms.map(m=>({x:val(m,"speed"),y:val(m,"aaii"),fill:idFill(m),label:m.name,
+      tip:modelTip(m,[["Index",val(m,"aaii")+(topEff(m)?" · "+topEff(m):"")],["Output speed",Math.round(val(m,"speed"))+" tok/s"],["Time to first token",val(m,"ttft")!=null?fmt(val(m,"ttft"),"n1")+" s":"—"]])})),
+    {aria:"Capability against output speed",H:520,xfmt:plain,yfmt:v=>String(Math.round(v)),xtitle:"Output speed — tokens per second",ytitle:"AA Intelligence Index",
+     quad:["Smart, slow","Smart and fast","Slow","Fast, less capable"]});
+  wire(host);
+}
+
+/* ---------------- generic ranked bars ---------------- */
+function hbarSvg(items,o){
+  if(!items.length) return '<p class="empty">No models in view have this measure.</p>';
+  const rowH=o.rowH||22, ml=o.ml||178, mr=o.mr||92, W=o.W||560, H=items.length*rowH+8, iw=W-ml-mr;
+  const max=Math.max(...items.map(i=>i.v));
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+  items.forEach((it,i)=>{
+    const y=i*rowH+4, w=Math.max(2,(o.log?Math.log10(it.v/o.logMin)/Math.log10(max/o.logMin):it.v/max)*iw);
+    s+=`<text class="barlab" x="${ml-10}" y="${y+12}" text-anchor="end">${esc(it.name)}</text>`
+      +`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="4" fill="${it.fill}"/>`
+      +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`;
+  });
+  return s+"</svg>";
+}
+function renderBarsets(rows){
+  const cur=rows;
+  // Intelligence Index — every model in view, top effort
+  const idx=cur.filter(m=>val(m,"aaii")!=null).sort((a,b)=>val(b,"aaii")-val(a,"aaii"));
+  $("#c-index").innerHTML=hbarSvg(idx.map(m=>({name:m.name,v:val(m,"aaii"),fill:idFill(m),
+      label:val(m,"aaii")+(topEff(m)?`  ${topEff(m)}`:""),
+      tip:modelTip(m,[["Index",val(m,"aaii")],["Effort level",topEff(m)?EFF_NAME[topEff(m)]:"single setting"],["Cost per index task",val(m,"costTask")!=null?fmt(val(m,"costTask"),"usd2"):"—"]])})),
+    {aria:"Intelligence Index ranked",W:980,ml:200,mr:110,rowH:21});
+  const set=(host,key,asc,lab,tipk,n=Infinity)=>{
+    const d=cur.filter(m=>val(m,key)!=null&&val(m,key)>0).sort((a,b)=>asc?val(a,key)-val(b,key):val(b,key)-val(a,key)).slice(0,n);
+    $(host).innerHTML=hbarSvg(d.map(m=>({name:m.name,v:val(m,key),fill:idFill(m),label:lab(val(m,key)),
+      tip:modelTip(m,[[tipk,lab(val(m,key))],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])})),
+      {aria:tipk,rowH:20});
+  };
+  set("#c-speed","speed",false,v=>Math.round(v)+" tok/s","Output speed");
+  set("#c-ttft","ttft",true,v=>(v>=10?Math.round(v):v.toFixed(2))+" s","Time to first token");
+  set("#c-blend","price",true,v=>"$"+v.toFixed(2),"Blended $/1M");
+  set("#c-ctx","ctx",false,v=>fmt(v,"ctx"),"Context window");
+  ["#c-index","#c-speed","#c-ttft","#c-blend","#c-ctx"].forEach(h=>wire($(h)));
+}
+
+/* ---------------- effort range (dumbbell) ---------------- */
+function effKey(host,levels){
+  $(host).innerHTML=levels.map(e=>`<span><i style="background:${EFF_SHADE[e]}"></i>${EFF_NAME[e]}</span>`).join("");
+}
+function renderEffort(rows){
+  const host=$("#c-effort");
+  const ms=rows.filter(m=>(EFFORT[m.name]||[]).length>1).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
+  const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>seen.add(r.e)));
+  effKey("#effkey",EFF_ORDER.filter(e=>seen.has(e)));
+  if(!ms.length){host.innerHTML='<p class="empty">No model in view has more than one effort level measured.</p>';return;}
+  const W=980,rowH=28,ml=200,mr=60,mt=26,H=ms.length*rowH+mt+30,iw=W-ml-mr;
+  const all=ms.flatMap(m=>effRows(m).map(r=>r.aaii)), lo=Math.floor((Math.min(...all)-2)/5)*5, hi=Math.ceil((Math.max(...all)+2)/5)*5;
+  const X=v=>ml+(v-lo)/(hi-lo)*iw;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Intelligence Index at each effort level">`;
+  niceTicks(lo,hi,8).forEach(v=>{s+=`<line class="gridline" x1="${X(v)}" y1="${mt-6}" x2="${X(v)}" y2="${H-26}"/><text class="axlab" x="${X(v)}" y="${mt-12}" text-anchor="middle">${v}</text>`;});
+  s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-6}" text-anchor="middle">AA Intelligence Index</text>`;
+  ms.forEach((m,i)=>{
+    const rs=effRows(m), y=mt+i*rowH+rowH/2, vs=rs.map(r=>r.aaii);
+    s+=`<text class="barlab" x="${ml-12}" y="${y+4}" text-anchor="end">${esc(m.name)}</text>`
+      +`<line class="dumbline" x1="${X(Math.min(...vs))}" y1="${y}" x2="${X(Math.max(...vs))}" y2="${y}"/>`;
+    const seenV={};
+    [...rs].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e)).forEach(r=>{
+      const k=seenV[r.aaii]=(seenV[r.aaii]||0)+1, dy=k===1?0:(k%2?1:-1)*5*Math.floor(k/2+0.5);
+      const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first token",r.ttft!=null?r.ttft+" s":"—"]]);
+      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r.aaii).toFixed(1)}" cy="${y+dy}" r="${r.e===rs[0].e?7:5.5}" fill="${EFF_SHADE[r.e]}"/>`;
+    });
+    s+=`<text class="barval" x="${X(Math.max(...vs))+12}" y="${y+4}">${Math.max(...vs)}</text>`;
+  });
+  host.innerHTML=s+"</svg>"; wire(host);
+}
+
+/* ---------------- intelligence vs cost, by effort (connected) ---------------- */
+const EFF_DEFAULT=["Claude Opus 5.5","Gemini 4 Argon","Claude Sonnet 5.5","Claude Fable 5.1","GPT-6 Astra","GPT-6.1 Sol","GPT-6 Luna","Gemini 3.8 Flash","GLM-5.3"];
+state.effSel=null;
+function renderEffCost(rows){
+  const host=$("#c-effcost");
+  const cand=rows.filter(m=>effRows(m).filter(r=>r.cost!=null).length>1).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
+  if(!state.effSel) state.effSel=new Set(EFF_DEFAULT);
+  $("#effsel").innerHTML=cand.map(m=>`<button class="chip" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}">${esc(m.name)}</button>`).join("");
+  $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffCost(filtered());});
+  const ms=cand.filter(m=>state.effSel.has(m.name));
+  const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>r.cost!=null&&seen.add(r.e)));
+  effKey("#effkey2",EFF_ORDER.filter(e=>seen.has(e)));
+  if(!ms.length){host.innerHTML='<p class="empty">Pick at least one model above.</p>';return;}
+  const W=980,H=560,ml=62,mr=120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
+  const pts=ms.flatMap(m=>effRows(m).filter(r=>r.cost!=null));
+  const x0=lx(Math.min(...pts.map(p=>p.cost)))-0.12, x1=lx(Math.max(...pts.map(p=>p.cost)))+0.12;
+  const ys=pts.map(p=>p.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
+  const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
+  let s=`<svg class="effsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Intelligence against cost per task at each effort level">`;
+  logTicks(x0,x1).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${money(v)}</text>`;});
+  niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${Math.round(v)}</text>`;});
+  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">Cost per Intelligence Index task — log scale</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
+  const ends=[];
+  ms.forEach(m=>{
+    const rs=effRows(m).filter(r=>r.cost!=null).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
+    s+=`<g class="effg"><polyline class="effline${m.open?" o":""}" points="${rs.map(r=>X(r.cost).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`;
+    rs.forEach(r=>{
+      const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",money(r.cost)],["Output speed",r.speed!=null?r.speed+" tok/s":"—"]]);
+      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r.cost).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="6" fill="${EFF_SHADE[r.e]}"/>`;
+    });
+    s+="</g>";
+    const top=effRows(m)[0]; if(top.cost!=null) ends.push({x:X(top.cost),y:Y(top.aaii),r:6,label:m.name,raw:{y:top.aaii}});
+  });
+  const dots=pts.map(p=>({x:X(p.cost),y:Y(p.aaii),r:6,nolabel:true}));
+  s+=placeLabels([...ends,...dots],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
+  host.innerHTML=s+"</svg>"; wire(host);
+}
+
+function renderCharts(rows){ renderBarsets(rows); renderEffort(rows); renderEffCost(rows); renderQuad(rows); renderSpeedQ(rows); renderPPP(rows); }
+
+/* ---------------- price per point ---------------- */
+function renderPPP(rows){
+  const d=rows.filter(m=>val(m,"price")!=null&&val(m,"aaii")!=null)
+    .map(m=>({m,v:val(m,"price")/val(m,"aaii")})).sort((a,b)=>a.v-b.v).slice(0,22);
+  const host=$("#ppp");
+  if(!d.length){host.innerHTML='<p class="empty">No models with both a price and an Index score.</p>';return;}
+  const rowH=25,ml=190,mr=64,W=980,H=d.length*rowH+34;
+  const max=Math.max(...d.map(o=>o.v)), iw=W-ml-mr;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Blended price per Intelligence Index point">`;
+  d.forEach((o,i)=>{
+    const y=i*rowH+8, w=Math.max(2,o.v/max*iw);
+    const t=`<b>${esc(o.m.name)}</b><span class="tl"><span>Per index point</span><span>$${o.v.toFixed(4)}</span></span>`
+      +`<span class="tl"><span>Blended price</span><span>$${val(o.m,"price").toFixed(2)}</span></span>`
+      +`<span class="tl"><span>Index</span><span>${val(o.m,"aaii")}</span></span>`;
+    s+=`<text class="barlab" x="${ml-12}" y="${y+14}" text-anchor="end">${esc(o.m.name)}</text>`
+      +`<rect data-tip="${esc(t)}" x="${ml}" y="${y+3}" width="${w.toFixed(1)}" height="14" rx="4" fill="${o.m.open?"var(--open)":"var(--accent)"}"/>`
+      +`<text class="barval" x="${ml+w+8}" y="${y+14}">$${o.v.toFixed(3)}</text>`;
+  });
+  s+="</svg>"; host.innerHTML=s; wire(host);
+}
+
+/* ---------------- per-benchmark ranked bars ---------------- */
+const BENCH_ORDER=["aaii","swebv","swepro","sweproPriv","tb40","tb21","tb30","deepswe","frontiercode","cursor4","cursorbench","lcb","webdev","lmarena",
+                   "tbsci","gdpval21","gdpval","tau3bank","tau2air","automationbench","exploitgym","ale","osw2ga","osw2strict","osworld2","osworld","metr",
+                   "hle","gpqa","arc2","arc3","arc1","weirdml","fmath4","frontiermath","matharena","healthbench","speed","ctx"];
+function covMatrix(rows){
+  const keys=BENCH_ORDER.filter(k=>(BENCH[k].g!=="speed"||k==="ctx")&&!isArch(k));
+  const withAny=rows.map(m=>({m,n:keys.filter(k=>m.s[k]).length})).filter(o=>o.n>0)
+                    .sort((a,b)=>b.n-a.n||a.m.name.localeCompare(b.m.name));
+  if(!withAny.length) return '<p class="empty">Nothing matches those filters.</p>';
+  let h='<div class="covwrap"><table class="cov"><thead><tr><th class="cm">Model</th><th class="covn">Scores</th>'
+    + keys.map(k=>`<th class="ch"><span>${BENCH[k].s}</span></th>`).join("") + '</tr></thead><tbody>';
+  withAny.forEach(o=>{
+    h+=`<tr><th class="cm">${esc(o.m.name)}</th><td class="covn">${o.n}/${keys.length}</td>`;
+    h+=keys.map(k=>{
+      const sc=o.m.s[k];
+      const t = sc
+        ? `<b>${esc(o.m.name)}</b><span class="tl"><span>${esc(BENCH[k].l)}</span><span>${fmt(sc[0],BENCH[k].f)}</span></span><span class="tl"><span>Provenance</span><span>${QL[sc[1]]}</span></span>${sc[2]?`<span class="tl"><span>Measured by</span><span>${esc(sc[2])}</span></span>`:""}`
+        : `<b>${esc(o.m.name)}</b><span class="tl"><span>${esc(BENCH[k].l)}</span><span>no published score</span></span>`;
+      return `<td><span class="cc ${o.m.open?"o ":""}${sc?sc[1]:""}" data-tip="${esc(t)}"></span></td>`;
+    }).join("");
+    h+="</tr>";
+  });
+  return h+"</tbody></table></div>";
+}
+
+function renderBench(rows){
+  const host=$("#benchhost");
+  const groups=[["coding","Coding & software engineering"],["agentic","Agents & computer use"],
+                ["reasoning","Reasoning, knowledge & human preference"],["headline","Index & throughput"]];
+  let out=`<div class="card" style="margin-bottom:22px">
+    <div class="cardhead"><div><h2>What has actually been measured</h2>
+      <p class="sub">One square per model per benchmark. Filled means a published score; empty means nobody has run it. Newly released models are mostly empty rows — two days after launch that is the honest picture, not a gap in this board.</p></div></div>
+    ${covMatrix(rows)}
+    <div class="covlegend">
+      <span><i style="background:var(--accent)"></i>Proprietary, independently run</span>
+      <span><i style="background:var(--open)"></i>Open weights, independently run</span>
+      <span><i style="background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 2px,var(--surface) 2px,var(--surface) 4px)"></i>Vendor-run</span>
+      <span><i style="background:var(--surface-3)"></i>Not run</span>
+    </div></div>`;
+  groups.forEach(([g,title])=>{
+    const keys=BENCH_ORDER.filter(k=>BENCH[k].g===g&&!isArch(k));
+    if(!keys.length) return;
+    out+=`<h2 style="font-family:Archivo;font-size:15px;margin:${out?"28px":"0"} 0 12px;letter-spacing:-.01em">${title}</h2><div class="bgrid">`+keys.map(k=>benchCard(k,rows)).join("")+"</div>";
+  });
+  const ak=BENCH_ORDER.filter(isArch);
+  out+=`<details class="archive"><summary><span>Archive</span> ${ak.length} benchmarks that are saturated, superseded or no longer updated — kept for reference, left out of the main table and coverage grid</summary>
+    <div class="bgrid" style="margin-top:14px">${ak.map(k=>benchCard(k,rows)).join("")}</div></details>`;
+  host.innerHTML=out; wire(host);
+}
+function benchCard(k,rows){
+  const B=BENCH[k];
+  const scored=rows.filter(m=>val(m,k)!=null).sort((a,b)=>B.hi?val(b,k)-val(a,k):val(a,k)-val(b,k));
+  const d=scored.slice(0,12), notable=rows.filter(m=>val(m,k)==null&&m.tier==="frontier").map(m=>m.name);
+  return `<div class="card"><div class="bhead"><h3>${B.l}</h3><span class="bmeta">${B.src} · ${B.asof}</span></div>
+    ${B.arch?`<p class="missing" style="margin:6px 0 8px"><b>Archived.</b> ${esc(B.arch)}</p>`:""}
+    <p class="bsub">${B.d}</p>
+    ${B.warn&&!B.arch?`<div class="warnbox"><b>Caveat.</b> ${B.warn}</div>`:""}
+    ${d.length?barSvg(d,k):`<p class="empty">None of the ${rows.length} models in view has a published score.</p>`}
+    <p class="cardmeta">${scored.length} of ${rows.length} models in view have a score${scored.length>12?` · showing the top 12`:""}.</p>
+    ${notable.length&&!B.arch?`<p class="missing">Not yet run on <b>${notable.slice(0,6).map(esc).join("</b>, <b>")}</b>${notable.length>6?` and ${notable.length-6} more`:""}.</p>`:""}
+    <p class="bmeta" style="margin-top:10px"><a href="${B.url}" target="_blank" rel="noopener">${B.url.replace(/^https:\/\//,"")}</a></p></div>`;
+}
+function barSvg(d,k){
+  const B=BENCH[k], rowH=24, ml=176, mr=76, W=560, H=d.length*rowH+8, iw=W-ml-mr;
+  const vals=d.map(m=>val(m,k)), max=Math.max(...vals);
+  const pid="hx"+k;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(B.l)} ranked"><defs>
+    <pattern id="${pid}p" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="var(--accent)"/><rect width="2.6" height="6" fill="var(--surface)" opacity=".55"/></pattern>
+    <pattern id="${pid}o" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="var(--open)"/><rect width="2.6" height="6" fill="var(--surface)" opacity=".55"/></pattern>
+    </defs>`;
+  d.forEach((m,i)=>{
+    const v=val(m,k), q=qual(m,k), y=i*rowH+4, w=Math.max(2,v/max*iw);
+    const t=`<b>${esc(m.name)}</b><span class="tl"><span>${esc(B.l)}</span><span>${fmt(v,B.f)}</span></span>`
+      +`<span class="tl"><span>Provenance</span><span>${QL[q]}</span></span>`
+      +(m.s[k][2]?`<span class="tl"><span>Measured by</span><span>${esc(m.s[k][2])}</span></span>`:"")
+      +`<span class="tl"><span>Provider</span><span>${esc(m.prov)}</span></span>`;
+    const base = m.open?"var(--open)":"var(--accent)";
+    const fill = q==="ind" ? base : `url(#${pid}${m.open?"o":"p"})`;
+    s+=`<text class="barlab" x="${ml-10}" y="${y+13}" text-anchor="end">${esc(m.name)}</text>`
+      +`<rect data-tip="${esc(t)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="13" rx="4" fill="${fill}"/>`
+      +`<text class="barval" x="${ml+w+7}" y="${y+13}">${fmt(v,B.f)}${q!=="ind"?"*":""}</text>`;
+  });
+  s+="</svg>";
+  const anyVen=d.some(m=>qual(m,k)!=="ind");
+  return s+(anyVen?`<p class="bmeta" style="margin-top:6px">Hatched bars marked * are vendor-reported or unverified rather than independently run — hover for which.</p>`:"");
+}
+
+/* ---------------- sources & caveats ---------------- */
+const CAVEATS=[
+ ["Six leaderboards can't be read at all","The official SWE-bench board, Terminal-Bench's own leaderboard, OSWorld, LiveCodeBench, Epoch AI and the ARC Prize leaderboard all render client-side and return nothing to a plain fetch. Their numbers here come from ARC Prize's per-model result pages, independent re-runs, and mirrors that cite their sources."],
+ ["Half the headline numbers are vendor-run","llm-stats lists 113 SWE-bench Verified entries, every one self-reported. The OSWorld table is mostly Anthropic system-card figures. Amber dots on this board mark those."],
+ ["The scaffold moves the score","Claude Fable 5 scores 83.8% on Terminal-Bench 2.1 under Claude Code and 80.4% under Terminus 2 — same model, 3.4 points from the harness alone. Cross-model comparisons on agentic benchmarks carry that noise."],
+ ["Benchmark versions are not comparable","Terminal-Bench 2.1 sits near 85% where 3.0 sits near 35% for the same tier of model. ARC-AGI-2 cost per task is not ARC-AGI-1 cost per task. Never read across a version boundary."],
+ ["Two different price columns exist","Artificial Analysis publishes blended dollars per million tokens on each model's page and dollars per index task on the leaderboard. Claude Opus 5 is $3.85 by the first and $2.34 by the second. Both are on this board; they answer different questions."],
+ ["Saturation is quietly breaking three benchmarks","SWE-bench Verified has seven models above 95%. τ²-bench Airline ranks Amazon Nova Micro second. GPQA is at 95%. When a benchmark compresses, small gaps at the top stop meaning anything."],
+ ["The two newest rows are days old, and it shows","Fable 5.1 (1 Sep) and Gemini 3.8 Flash (2 Sep) have numbers from only four independent evaluators between them. WeirdML, Vals SWE-bench, Snorkel, Scale, OpenRouter, taubench, MathArena and METR have run neither. Their Arena rows are flagged preliminary — Fable 5.1's WebDev Elo of 1765 rests on 1,106 votes against 640,806 board-wide, and a 77-point lead on that sample will move."],
+ ["The Intelligence Index changed underneath the board","Artificial Analysis moved from v4.1.1 to v4.3.2 in September, and every model's score fell by eight to fifteen points — not because the models got worse but because the test got harder. Scores from the two versions cannot share a column, so the whole column was replaced, and older models Artificial Analysis never re-ran now show a dash. If you compare a number here against a screenshot from August, it will look like a collapse. It isn't."],
+ ["The default view now hides superseded models","Opus 5, Fable 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash and ten others moved to Previous gen when their replacements shipped. Turn on the Previous gen chip to bring them back — useful when a new model's vendor table only compares against the old generation."],
+ ["Three labs launched inside four days","Claude Fable 5.1 on 1 Sep, Gemini 3.8 Flash and Muse Spark 1.3 on 2 Sep, GPT-6 Astra on 3 Sep. Most of the newest columns exist because each lab published a table benchmarking its rivals. Where those tables overlap they mostly agree — Terminal-Bench 4.0 matches exactly across OpenAI and Anthropic — which is the best available evidence that the numbers are being run honestly, even though none of them is independent."],
+ ["Vendors disagree when they run the same benchmark","xAI's August table scores Fable 5 at 1741 on GDPval-AA v2; Anthropic's September table scores it at 1723. Same benchmark, same model, two runs, 18 points apart. CursorBench is the counter-example — both vendors got 70.5% for Fable 5 and 67.2% for GPT-5.6 Sol — which is why Grok appears in that column and not in GDPval."],
+ ["A few models were left off deliberately","Apodex 1.1 and Agnes 2.5 Pro appear on the Artificial Analysis leaderboard but could not be traced to a real vendor announcement. They are excluded rather than shown with a caveat. Motif 3's Index score is 45 on the leaderboard and 47 on its own model page — also excluded until that resolves."],
+ ["Two model families have naming conflicts","Arena lists Grok under the org name SpaceXAI while ARC Prize says xAI. OpenAI's marketing page prices GPT-5.6 Sol at $5/$30 while its own developer docs say $2/$10. Both are noted where they appear."]
+];
+function renderSources(){
+  $("#caveats").innerHTML=CAVEATS.map(([h,p])=>`<div class="srccard"><h3>${h}</h3><p>${p}</p></div>`).join("");
+  const seen=new Set(); let out="";
+  BENCH_ORDER.forEach(k=>{
+    const B=BENCH[k]; const key=B.url; if(seen.has(key+B.l))return; seen.add(key+B.l);
+    out+=`<div class="srccard"><h3>${B.l}</h3><p>${B.d}</p>
+      <p style="font-size:11.5px;color:var(--ink-3)">${B.src} · snapshot ${B.asof}</p>
+      <a href="${B.url}" target="_blank" rel="noopener">${B.url.replace(/^https:\/\//,"")}</a></div>`;
+  });
+  $("#srclist").innerHTML=out;
+}
+
+/* ---------------- tabs ---------------- */
+$$(".tab").forEach(t=>t.onclick=()=>{
+  $$(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+  $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t.dataset.p));
+  render();
+});
+$("#xaxis").onchange=$("#yaxis").onchange=()=>renderQuad(filtered());
+
+
+/* ---------------- list price (detail panel) ---------------- */
+function listPrice(m){
+  const p=PRICES[m.name]; if(!p) return "";
+  const f=v=>v==null?"—":"$"+(v<0.1?v.toFixed(v<0.01?4:3):v.toFixed(2));
+  return `<p class="effh">List price per 1M tokens</p>
+   <div class="dline"><span class="k">Input</span><span class="v mono">${f(p.in)}</span></div>
+   <div class="dline"><span class="k">Output</span><span class="v mono">${f(p.out)}</span></div>
+   <div class="dline"><span class="k">Cache read</span><span class="v mono">${f(p.cr)}</span></div>
+   ${p.note?`<p class="dnote" style="grid-column:1/-1">${esc(p.note)}</p>`:""}`;
+}
+
+/* ---------------- model picks ---------------- */
+function openModel(name){
+  const m=MODELS.find(x=>x.name===name); if(!m) return;
+  state.tiers.add(m.tier); state.q=""; $("#q").value=""; state.prov=""; $("#provsel").value="";
+  state.weights.add(m.open?"open":"closed");
+  buildChips($("#tierchips"),TIERS,state.tiers); buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights);
+  $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p==="board"));
+  $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-board"));
+  state.openRow=name; render();
+  const tr=[...$$("#board tbody tr[data-m]")].find(r=>r.dataset.m===name);
+  if(tr) tr.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function renderPicks(){
+  const cur=MODELS.filter(m=>m.tier!=="legacy"), has=k=>cur.filter(m=>val(m,k)!=null);
+  const byDesc=(a,k)=>[...a].sort((x,y)=>val(y,k)-val(x,k)), byAsc=(a,k)=>[...a].sort((x,y)=>val(x,k)-val(y,k));
+  const idx=has("aaii"), top=byDesc(idx,"aaii")[0], medI=(()=>{const v=idx.map(m=>val(m,"aaii")).sort((a,b)=>a-b);return v[Math.floor(v.length/2)];})();
+  const P=[
+    ["Best overall", byDesc(idx,"aaii"), m=>`Index ${val(m,"aaii")}${topEff(m)?" · "+topEff(m):""}`, "Highest Artificial Analysis Intelligence Index"],
+    ["Coding & agents", byDesc(has("tb40"),"tb40"), m=>`Terminal-Bench 4.0 ${fmt(val(m,"tb40"),"pct")}`, "Highest Terminal-Bench 4.0 — vendor-run, but five vendors agree on it"],
+    ["Near the top for less", byAsc(idx.filter(m=>val(m,"price")!=null&&val(m,"aaii")>=val(top,"aaii")-10),"price"), m=>`Index ${val(m,"aaii")} · $${val(m,"price").toFixed(2)} blended`, `Cheapest model within 10 Index points of the leader`],
+    ["Best open weights", byDesc(idx.filter(m=>m.open),"aaii"), m=>`Index ${val(m,"aaii")} · $${val(m,"price")!=null?val(m,"price").toFixed(2):"—"} blended`, "Highest Index among models you can self-host"],
+    ["Fastest capable", byDesc(has("speed").filter(m=>val(m,"aaii")>=medI),"speed"), m=>`${Math.round(val(m,"speed"))} tok/s · Index ${val(m,"aaii")}`, `Fastest output among models at or above the median Index (${medI})`],
+    ["Cheapest capable", byAsc(idx.filter(m=>val(m,"price")!=null&&val(m,"aaii")>=medI),"price"), m=>`$${val(m,"price").toFixed(2)} blended · Index ${val(m,"aaii")}`, `Lowest blended price at or above the median Index (${medI})`]
+  ];
+  $("#picks").innerHTML=P.filter(p=>p[1].length).map(([lab,list,val1,rule])=>{const m=list[0],r=list[1];
+    return `<button class="pick" data-m="${esc(m.name)}" title="${esc(rule)}"><span class="pl">${lab}</span>
+      <span class="pm"><span class="dot ${m.open?"o":"p"}"></span>${esc(m.name)}</span><span class="pv">${val1(m)}</span>
+      <span class="pr">${r?`Next: ${esc(r.name)}`:""}</span></button>`;}).join("");
+  $$("#picks .pick").forEach(b=>b.onclick=()=>openModel(b.dataset.m));
+}
+
+/* ---------------- what changed ---------------- */
+function renderChanges(){
+  const T={add:"Added",rescale:"Rescaled",data:"Data",move:"Moved",feature:"Feature"};
+  const c=CHANGELOG[0];
+  $("#changes").innerHTML=`<summary><b>What changed</b> · ${c.d} — ${c.items.length} updates. Open for the full history.</summary>`+
+    CHANGELOG.map(e=>`<div class="chg"><h4>${e.d}</h4><ul>${e.items.map(([t,x])=>`<li><span class="ctag ${t}">${T[t]}</span><span>${esc(x)}</span></li>`).join("")}</ul></div>`).join("");
+}
+
+/* ---------------- light / dark toggle ---------------- */
+(function(){
+  const root=document.documentElement, KEY="fb-theme";
+  const host=root.getAttribute("data-theme");            // what the viewer's app stamped, if anything
+  let pick="system"; try{ pick=localStorage.getItem(KEY)||"system"; }catch(e){}
+  function apply(t){
+    pick=t;
+    if(t==="system"){ host?root.setAttribute("data-theme",host):root.removeAttribute("data-theme"); }
+    else root.setAttribute("data-theme",t);
+    $$(".themesw button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===t));
+    try{ localStorage.setItem(KEY,t); }catch(e){}
+  }
+  $$(".themesw button").forEach(b=>b.onclick=()=>apply(b.dataset.t));
+  apply(pick);
+})();
+
+/* ---------------- render ---------------- */
+function render(){
+  const rows=filtered();
+  $("#shown").textContent=rows.length;
+  const active=$('.tab[aria-selected="true"]').dataset.p;
+  if(active==="board") renderBoard(rows);
+  if(active==="quad") renderCharts(rows);
+  if(active==="bench") renderBench(rows);
+}
+$("#asof").textContent=ASOF;
+$("#asofnote").textContent=ASOF_NOTE;
+$("#nmodels").textContent=MODELS.length;
+$("#nbench").textContent=Object.keys(BENCH).filter(k=>!isArch(k)).length+" active (+"+Object.keys(BENCH).filter(isArch).length+" archived)";
+renderSources();
+renderPicks();
+renderChanges();
+render();
+addEventListener("resize",()=>{
+  const h=$(".top").offsetHeight; document.documentElement.style.setProperty("--topH",h+"px");
+});
+document.documentElement.style.setProperty("--topH",$(".top").offsetHeight+"px");
+</script>
+
+
+</body></html>
