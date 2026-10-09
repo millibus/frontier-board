@@ -46,9 +46,10 @@ const problems = [];
 try {
   const page = await browser.newPage();
   // Google Fonts may be blocked in sandboxes, and the browser asks for a favicon the site has never had; neither is a page bug.
-  const external = t => /fonts\.(googleapis|gstatic)\.com|net::ERR_|favicon\.ico/.test(t);
+  // Match on the failing request's URL, so any other failed request (same-origin or not) is still reported.
+  const ignorable = u => /^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u) || /\/favicon\.ico(\?|$)/.test(u);
   page.on("pageerror", e => problems.push(`pageerror: ${e.message}`));
-  page.on("console", m => { if (m.type() === "error" && !external(m.text() + " " + (m.location()?.url || ""))) problems.push(`console: ${m.text()}`); });
+  page.on("console", m => { const u = m.location()?.url || ""; if (m.type() === "error" && !ignorable(u)) problems.push(`console: ${m.text()}${u ? ` (${u})` : ""}`); });
   await page.goto(url, { waitUntil: "load" });
 
   const rows = await page.locator("#board tbody tr[data-m]").count();

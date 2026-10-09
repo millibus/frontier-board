@@ -441,7 +441,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
 </main>
 <footer class="foot">
   <div class="foot-in">
-    <p><b>Data sources.</b> Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), Steel, and Håvard Tveit Ihle (WeirdML), plus the model vendors whose own comparison tables are marked vendor-run. Each source is linked on the <a href="#" id="foot-src">Sources &amp; caveats</a> tab — check the original before relying on a number. This board is not affiliated with any of them.</p>
+    <p><b>Data sources.</b> Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), Steel, and Håvard Tveit Ihle (WeirdML), plus the model vendors whose own comparison tables are marked vendor-run. Each benchmark's primary source is linked on the <a href="#" id="foot-src">Sources &amp; caveats</a> tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Check the original before relying on a number. This board is not affiliated with any of them.</p>
     <p>© 2026 millibus. All rights reserved. This covers the compilation, text and design of this page, not the third-party results it reports.</p>
   </div>
 </footer>
@@ -509,8 +509,8 @@ const BENCH = {
     src:"Arena (formerly LMArena)",url:"https://arena.ai/leaderboard/code/webdev",asof:"7 Oct 2026",
     d:"Human pairwise votes on generated web apps. 846,326 votes across 141 models. Preference, not correctness — but the one benchmark measuring whether output is nice to use."},
 
-  tau3bank:{arch:"No new models since July; Artificial Analysis dropped it from its index.",l:"τ³-Banking",s:"τ³-Bank",g:"agentic",f:"pct",hi:1,
-    src:"Sierra / taubench.com",url:"https://taubench.com/leaderboard",asof:"Aug 2026",
+  tau3bank:{arch:"Artificial Analysis dropped it from its index; Gemini 3.8 Flash (2 Sep) is the only row added since July.",l:"τ³-Banking",s:"τ³-Bank",g:"agentic",f:"pct",hi:1,
+    src:"Sierra / taubench.com",url:"https://taubench.com/leaderboard",asof:"Sep 2026",
     d:"Pass@1 on multi-turn banking support with tool use and policy constraints. The current tau-bench generation; τ² is largely saturated."},
   tau2air:{l:"τ²-bench Airline",s:"τ²-Air",g:"agentic",f:"pct",hi:1,
     src:"OpenRouter",url:"https://openrouter.ai/benchmarks/tau2-bench-airline",asof:"6 Oct 2026",
@@ -1092,6 +1092,7 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"9 Oct 2026", items:[
+  ["data","τ³-Banking source date corrected to Sep 2026, to cover Gemini 3.8 Flash's row. The footer now says the Sources tab links each benchmark's primary source, not every vendor table."],
   ["data","Corrections only, no new results. Model notes, benchmark descriptions and caveats rewritten to match the scores on the board — several notes still quoted Index scores from before the September rescale (Kimi K3, GLM-5.3, Muse Spark 1.3, GPT-6 Astra and others). A caveat citing an aggregator site was replaced with figures from this board."],
   ["data","Context windows and the three blended prices computed from list prices are now marked vendor-reported rather than independent. Source dates updated to the newest data in each column, e.g. Artificial Analysis to 8 Oct and ARC Prize to 1 Oct."],
   ["move","Gemini 3.1 Pro moved to Previous gen; Gemini 4 Argon replaced it as Google's flagship on 30 Sep."]]},

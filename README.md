@@ -8,6 +8,6 @@ Frontier Board — single-page LLM benchmark aggregator (AA Intelligence Index, 
 
 ## Data sources
 
-Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), Steel, and Håvard Tveit Ihle (WeirdML), plus model vendors' own comparison tables, which are marked vendor-run. Every source is linked on the site's Sources & caveats tab. This project is not affiliated with any of them.
+Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), Steel, and Håvard Tveit Ihle (WeirdML), plus model vendors' own comparison tables, which are marked vendor-run. Each benchmark's primary source is linked on the site's Sources & caveats tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. This project is not affiliated with any of them.
 
 © 2026 millibus. All rights reserved.
