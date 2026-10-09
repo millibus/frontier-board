@@ -6,7 +6,7 @@ Single-page LLM benchmark aggregator, published with GitHub Pages from `main` (r
 
 - `ASOF` / `ASOF_NOTE`: snapshot date shown in the header. Bump on every update. `ASOF` must equal the newest `CHANGELOG` date. If an update only corrects text, say so in `ASOF_NOTE` ("Corrections only … data last refreshed …").
 - `BENCH`: one entry per benchmark (label, source, url, `asof`, format, `hi` = higher is better, description, optional `warn`/`arch`). Add a `BENCH` entry before using a new benchmark id, and add the id to `BENCH_ORDER`.
-  - `asof` is the date of the newest data in that column, not the date the column was created. Bump it whenever you add or change a row from a newer source, e.g. a vendor's launch table or a new Artificial Analysis run. Use `"D Mon YYYY"` so the checker can read it.
+  - `asof` is the date of the newest data in that column, not the date the column was created. Bump it whenever you add or change a row from a newer source, e.g. a vendor's launch table or a new Artificial Analysis run. Use `"D Mon YYYY"`, or `"Mon YYYY"` (read as the last day of that month) when the day is unknown, or `"undated"` if the source publishes no date. Anything else fails the check.
   - When a column starts mixing several vendors' tables, change `src` to "Vendor comparison tables".
 - `MODELS`: one entry per model: `name`, `prov`, `tier` (frontier/challenger/legacy), `open`, `rel` (YYYY-MM-DD), `note`, and `s`, the scores map.
 - `EFFORT`: per-model reasoning-effort rows: `[level, index, cost per task, tok/s, TTFT s]`. The first row must match the model's `aaii` and `costTask`.
@@ -38,6 +38,10 @@ Model notes, `BENCH` descriptions/warnings and `CAVEATS` go stale faster than th
 5. Verify before pushing (below).
 6. Commit and push to `main`. Pages redeploys automatically.
 
+## Merging a PR
+
+When a change goes through a pull request, the Codex review bot reviews it automatically. Wait for that review to finish before merging: it reacts 👍 when it has no findings, or leaves review threads. Fix or answer each thread first. GitHub won't let the account that opened a PR approve it.
+
 ## Verifying
 
 ```
@@ -49,7 +53,7 @@ node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, he
   - malformed tuples, unknown ids, `BENCH_ORDER` gaps;
   - names that don't match across `MODELS`/`EFFORT`/`PRICES`, or an EFFORT first row that disagrees with the model's scores;
   - `ASOF` ≠ newest changelog date;
-  - a model released after its column's `asof`;
+  - an unreadable `asof`, or a model released after its column's `asof`;
   - a note quoting an Index score the model doesn't have;
   - `ctx` not marked `ven`;
   - any banned aggregator name;

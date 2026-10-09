@@ -33,12 +33,15 @@ const EFF_ORDER = listConst("EFF_ORDER");
 /* ---------- dates ---------- */
 const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
 // Latest "D Mon [YYYY]" date mentioned in a free-text asof; a missing year borrows the first one given.
+// With no day given ("Aug 2026", "Jun–Jul 2026"), use the last day of the last month named.
 function latestDate(text) {
-  const ms = [...String(text).matchAll(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?: (\d{4}))?\b/g)];
-  if (!ms.length) return null;
-  const year = +(ms.find(m => m[3]) || [])[3];
+  const t = String(text), year = +(t.match(/\b(\d{4})\b/) || [])[1];
   if (!year) return null;
-  return new Date(Math.max(...ms.map(m => Date.UTC(m[3] ? +m[3] : year, MON[m[2]], +m[1]))));
+  const ms = [...t.matchAll(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?: (\d{4}))?\b/g)];
+  if (ms.length) return new Date(Math.max(...ms.map(m => Date.UTC(m[3] ? +m[3] : year, MON[m[2]], +m[1]))));
+  const mons = [...t.matchAll(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g)];
+  if (!mons.length) return null;
+  return new Date(Date.UTC(year, MON[mons[mons.length - 1][1]] + 1, 0));
 }
 const relDate = r => /^\d{4}-\d{2}-\d{2}$/.test(r) ? new Date(r + "T00:00:00Z") : null;
 
@@ -52,6 +55,7 @@ for (const [k, B] of Object.entries(BENCH)) {
   if (!FORMATS.includes(B.f)) err(`BENCH.${k}: unknown format "${B.f}"`);
   if (B.hi !== 0 && B.hi !== 1) err(`BENCH.${k}: hi must be 0 or 1`);
   if (!BENCH_ORDER.includes(k) && !NOT_IN_ORDER.includes(k)) err(`BENCH.${k}: not listed in BENCH_ORDER`);
+  if (B.asof !== "undated" && !latestDate(B.asof)) err(`BENCH.${k}: asof "${B.asof}" is unreadable — use "D Mon YYYY", "Mon YYYY" or "undated"`);
 }
 for (const k of BENCH_ORDER) if (!BENCH[k]) err(`BENCH_ORDER: "${k}" has no BENCH entry`);
 
