@@ -1381,7 +1381,7 @@ function paretoFront(pts,xDir){
   return out.sort((a,b)=>a.x-b.x);
 }
 function frontText(front,xfmt,yfmt,xDir){
-  if(front.length<2) return "";
+  if(!front.length) return "";
   const f=xDir==="max"?[...front].reverse():front;
   return "<b>On the frontier"+(xDir==="max"?", fastest first":", cheapest first")+":</b> "
     +f.map(p=>`${esc(p.label)} (${yfmt(p.y)} · ${xfmt(p.x)})`).join(" → ");
@@ -1408,7 +1408,7 @@ function scatterSvg(pts,o){
   s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">${o.xtitle} — log scale</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
   const front=o.front?new Set(paretoFront(pts,o.front)):new Set();
   if(front.size>1) s+=`<polyline class="frontline" points="${[...front].map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join(" ")}"/>`;
-  const marks=pts.map(p=>({...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.size>1&&front.has(p)}));
+  const marks=pts.map(p=>({...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)}));
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`;});
   s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:ml+iw,y0:mt,y1:mt+ih},24,m=>m.label);
   return s+"</svg>";
