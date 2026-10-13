@@ -461,7 +461,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
    ========================================================================= */
 
 const ASOF = "12 Oct 2026";
-const ASOF_NOTE = "Artificial Analysis, ARC Prize, OpenRouter τ²-Airline, WebDev Arena, Vals AI Terminal-Bench 2.1 and MathArena refreshed on 12 Oct 2026; Arena text unchanged since its 8 Oct snapshot. Open What changed, below, for the history of each update.";
+const ASOF_NOTE = "12 Oct 2026 evening: Meta Muse Wonder / Wonder Full added from Artificial Analysis and Meta Model API pricing. Muse Spark 1.3 moved to legacy. Terminal-Bench 2.1 archived. Arena text and WebDev still on their 8 Oct snapshots. Open What changed, below, for the history of each update.";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
@@ -475,10 +475,10 @@ const BENCH = {
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/leaderboards/models",asof:"12 Oct 2026",
     d:"What one task of the v4.3.2 Intelligence Index costs, at the same effort level as the Index score. Reasoning-heavy models can be cheap per token and expensive per task."},
   speed:{l:"Output speed",s:"tok/s",g:"speed",f:"n0",hi:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"8 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
     d:"Output tokens per second from the Artificial Analysis leaderboard, measured at the same effort level as the model's Index score. One source for every row, so speeds are comparable across models."},
   ttft:{l:"Time to first token",s:"TTFT s",g:"speed",f:"n1",hi:0,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"8 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
     d:"Seconds to the first answer token, at the same effort level as the Index score. For reasoning models on high effort this includes thinking time, which is why the heavy tiers run to minutes. The Effort levels detail on each model shows how much faster the lower settings respond."},
   ctx:{l:"Context window",s:"Context",g:"speed",f:"ctx",hi:1,
     src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
@@ -495,10 +495,10 @@ const BENCH = {
   sweproPriv:{arch:"Scale has not added a frontier model since spring.",l:"SWE-bench Pro (held-out)",s:"SWE-Pro·P",g:"coding",f:"pct",hi:1,
     src:"Scale AI",url:"https://labs.scale.com/leaderboard/swe_bench_pro_private",asof:"undated",
     d:"The private split. Roughly ten points below the public set for the same model — the gap is the contamination estimate."},
-  tb21:{l:"Terminal-Bench 2.1",s:"TB 2.1",g:"coding",f:"pct",hi:1,col:1,
-    src:"Vals AI & Snorkel AI",url:"https://snorkel.ai/leaderboard/terminal-bench-2-1/",asof:"28 Sep 2026",
+  tb21:{arch:"Superseded by Terminal-Bench 4.0; Vals AI stopped running it after its 28 Sep 2026 update.",l:"Terminal-Bench 2.1",s:"TB 2.1",g:"coding",f:"pct",hi:1,col:1,
+    src:"Vals AI & Snorkel AI",url:"https://vals.ai/benchmarks/terminal-bench-2-1",asof:"28 Sep 2026",
     d:"Real terminal tasks in a sandboxed container. The agent scaffold moves the result three to four points on its own — Fable 5 scores 83.8% under Claude Code and 80.4% under Terminus 2.",
-    warn:"Never compare across Terminal-Bench versions. Within this column, every current frontier and challenger row is from Vals AI so those models compare on one evaluator; older rows come from Snorkel, whose scores depend on the agent harness. Hover a bar to see who measured it. Artificial Analysis scores the same models three to six points higher, and dropped Terminal-Bench 2.1 from its index in September. Vals AI stopped running it on new releases after its 28 Sep update, so later models have no row here."},
+    warn:"Never compare across Terminal-Bench versions. Within this column, every current frontier and challenger row is from Vals AI so those models compare on one evaluator; older rows come from Snorkel, whose scores depend on the agent harness. Hover a bar to see who measured it. Artificial Analysis scores the same models three to six points higher, and dropped Terminal-Bench 2.1 from its index in September."},
   tb30:{arch:"Superseded by Terminal-Bench 4.0.",l:"Terminal-Bench 3.0",s:"TB 3.0",g:"coding",f:"pct",hi:1,
     src:"Vendor comparison tables",url:"https://x.ai/news/grok-4-6",asof:"10 Sep 2026",
     d:"The de-saturated rebuild, released 30 Jul 2026. xAI published the first cross-vendor table; later rows come from other vendors' launch tables. Version 4.0 shipped 28 Aug 2026 with an empty leaderboard."},
@@ -672,8 +672,16 @@ const MODELS = [
     gpqa:[96.3,"ind"],arc1:[98.5,"ind"],arc2:[95.0,"ind"],arc3:[62.71,"ind"],
     fmath4:[97.6,"ven"],healthbench:[63.4,"ven"]}},
 
-{name:"Muse Spark 1.3", prov:"Meta", tier:"frontier", open:false, rel:"2026-09-02",
- note:"Meta's third Muse Spark in five months. Artificial Analysis scores it 48 at max effort for $1.60 per index task, and 45 at xhigh. It is slow, at 22 tokens per second. The list price shown is the one Artificial Analysis gives for the xhigh configuration.",
+{name:"Muse Wonder Full", prov:"Meta", tier:"frontier", open:false, rel:"2026-10-12",
+ note:"Meta's higher Muse Wonder tier, Muse Code subscription only (no per-token API price). Artificial Analysis scores it 56 at max — tied with Sonnet 5.5, four points behind Opus 5.5, and eight above Muse Spark 1.3. AA has no speed or cost measurements because there is no public API.",
+ s:{aaii:[56,"ind"],ctx:[1000000,"ven"]}},
+
+{name:"Muse Wonder", prov:"Meta", tier:"frontier", open:false, rel:"2026-10-12",
+ note:"Meta's API Muse Wonder (muse-wonder-1.0), launched 12 Oct at $4/$20 per million tokens with $0.20 cached input — the same list price as Claude Opus 5.5. Artificial Analysis scores it 52 at max for $4.52 per index task, four points above Muse Spark 1.3, at 85 tokens per second with a 37.41 s TTFT. Multimodal input (text, image, video, audio); 1M context; Standard mode only.",
+ s:{aaii:[52,"ind"],costTask:[4.52,"ind"],price:[2.94,"ind"],speed:[85,"ind"],ttft:[37.41,"ind"],ctx:[1000000,"ven"]}},
+
+{name:"Muse Spark 1.3", prov:"Meta", tier:"legacy", open:false, rel:"2026-09-02",
+ note:"Superseded by Muse Wonder on 12 Oct. Artificial Analysis still scores it 48 at max for $1.60 per index task, and 45 at xhigh. It is slow, at 22 tokens per second. The list price shown is the one Artificial Analysis gives for the xhigh configuration.",
  s:{matharena:[46.6,"ind"],tb21:[79.03,"ind","Vals AI, max effort"],hle:[48.7,"ind","Artificial Analysis"],lmarena:[1494,"ind"],costTask:[1.6,"ind"],aaii:[48,"ind"],price:[0.78,"ind"],speed:[22,"ind"],ttft:[324.72,"ind"],ctx:[1000000,"ven"],
     webdev:[1657,"ind"]}},
 
@@ -1017,13 +1025,14 @@ const MODELS = [
     metr:[121,"ind"],hle:[20.32,"ind"],weirdml:[52.4,"ind"],weirdmlCost:[0.226,"ind"]}}
 ];
 
-/* Reasoning-effort variants, from the Artificial Analysis leaderboard, 26 Sep – 8 Oct 2026 (Index v4.3.2).
+/* Reasoning-effort variants, from the Artificial Analysis leaderboard, 26 Sep – 12 Oct 2026 (Index v4.3.2).
    [effort, Intelligence Index, $ per index task, output tokens/s, seconds to first token]; null = not published.
    The first entry is the level shown everywhere else on the board. */
 const EFFORT = {
  "Claude Opus 5.5":[["max",58,5.98,null,null],["xhigh",56,3.46,92,147.14],["high",54,1.82,86,33.45],["medium",51,1.34,81,12.82],["low",42,0.55,81,5.18]],
  "Claude Fable 5.1":[["max",53,7.63,69,260.11],["xhigh",53,5.98,66,122.00],["high",51,3.91,59,15.40],["medium",49,2.98,58,7.96],["low",47,2.37,59,7.59]],
  "GPT-6 Astra":[["max",53,3.26,58,348.28],["xhigh",52,2.31,58,119.06],["high",51,1.73,56,39.83],["medium",50,1.54,55,5.59],["low",46,0.82,53,3.15]],
+ "Muse Wonder":[["max",52,4.52,85,37.41]],
  "Muse Spark 1.3":[["max",48,1.60,22,324.72],["xhigh",45,1.37,23,221.81]],
  "GPT-6 Sol":[["max",48,1.04,85,165.07],["xhigh",44,0.52,85,31.71],["high",42,0.37,83,9.21],["medium",40,0.25,null,null],["low",34,0.13,82,2.12],["none",29,0.33,76,1.13]],
  "Grok 4.7":[["xhigh",46,3.74,49,1.52],["high",46,2.73,61,1.03],["low",42,1.25,null,null]],
@@ -1048,7 +1057,7 @@ const EFFORT = {
  "gpt-oss-120b":[["high",12,0.11,185,0.86],["low",10,null,182,0.85]]
 };
 
-/* List prices, USD per 1M tokens, from each vendor's pricing page as gathered 1 Sep – 7 Oct 2026.
+/* List prices, USD per 1M tokens, from each vendor's pricing page as gathered 1 Sep – 12 Oct 2026.
    in / out / cr = cache read (null if not published). note = tiering, promos and scheduled changes. */
 const PRICES = {
  "Claude Opus 5.5":{in:4,out:20,cr:0.20,note:"Batch 50% off. Fast mode (preview) $8/$40."},
@@ -1058,7 +1067,8 @@ const PRICES = {
  "GPT-6 Sol":{in:2,out:10,cr:0.20,note:"Any request above 272K input tokens bills 2× input and 1.5× output for the whole request."},
  "GPT-6 Luna":{in:0.10,out:0.50,cr:0.01,note:"Same 272K surcharge as Sol."},
  "Grok 4.7":{in:2,out:6,cr:0.50,note:"Above 200K tokens: $4/$12."},
- "Muse Spark 1.3":{in:1.25,out:4.25,cr:null,note:"As listed by Artificial Analysis for the xhigh configuration."},
+ "Muse Wonder":{in:4,out:20,cr:0.20,note:"Standard mode only; Contributor mode not offered. No long-context premium. From Meta Model API pricing."},
+ "Muse Spark 1.3":{in:1.25,out:4.25,cr:0.15,note:"Standard mode. Contributor mode $0.10/$0.20 (cache $0.002). From Meta Model API pricing."},
  "Mistral Large 4":{in:1.36,out:4.18,note:"Public preview. 50% launch discount for the first two weeks; open weights due end of October."},
  "Claude Haiku 5.5":{in:0.10,out:0.50,cr:0.01,note:"Prompts over 100K tokens: $0.50/$2.50, cache read $0.05. Batch 50% off."},
  "Gemini 4 Argon":{in:2,out:10,cr:0.10,note:"Introductory price; rises to $4/$20 later (date not given). Cached input 95% off."},
@@ -1097,6 +1107,9 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"12 Oct 2026", items:[
+  ["add","Muse Wonder and Muse Wonder Full (Meta, 12 Oct). Artificial Analysis scores Wonder Full 56 at max (Muse Code only, no API price) and Wonder 52 for $4.52 per index task at $4/$20 list ($0.20 cached) — 85 tok/s, 37.41 s TTFT, 1M context. Muse Spark 1.3 moved to legacy."],
+  ["move","Muse Spark 1.3 → legacy after Muse Wonder."],
+  ["data","Terminal-Bench 2.1 archived: Vals AI superseded it with Terminal-Bench 4.0 and stopped running 2.1 after its 28 Sep update; prior scores stay in the Archive section."],
   ["add","Ling 3.1 Flash (InclusionAI / Ant Group, 30 Sep): 560B total / 25B active. Artificial Analysis scores it 41 for $1.00 per index task at 19 cents blended, HLE 39.4%. Free on Vercel AI Gateway through 13 Oct; open weights promised after the trial."],
   ["data","Artificial Analysis: GPT-6 Luna's Index rose from 37 to 38, with every rung but non-reasoning up a point. MiMo-V2.6-Flash gets its first Index score, 38 for six cents a task. Step 5 Preview now has a model page: 54 cents blended, $1.03 per task (was $0.72). Cost per task revised for Sonnet 5.5 ($5.46 at max, was $7.67; $2.01 at xhigh), GPT-6 Sol ($1.04) and Grok 4.6 ($1.75 at xhigh, was $2.32). New ladder rungs: Grok 4.7 low 42, Kimi K3 low 30. Qwen3.8 27B blended price 47 cents."],
   ["data","Humanity's Last Exam: Artificial Analysis now covers the new frontier — Gemini 4 Argon 57.1%, Sonnet 5.5 55.0%, GPT-6 Astra 54.7%, GPT-6.1 Sol 52.9%, Haiku 5.5 44.4% and 17 more. Vendor rows for Sonnet 5.5, Haiku 5.5, Kimi K3 and DeepSeek V4.1 Flash were replaced by the independent figures; each vendor claim is kept in the hover note."],
