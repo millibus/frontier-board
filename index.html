@@ -468,7 +468,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
    ========================================================================= */
 
 const ASOF = "13 Oct 2026";
-const ASOF_NOTE = "13 Oct 2026: no new scores. The Charts tab now draws the Pareto frontier on the intelligence-vs-price and intelligence-vs-speed charts. Data last refreshed 12 Oct 2026 evening (Muse Wonder / Wonder Full added). Arena text and WebDev still on their 8 Oct snapshots. Open What changed, below, for the history of each update";
+const ASOF_NOTE = "13 Oct 2026: Artificial Analysis speed and TTFT refresh across the board (Muse Wonder 104 tok/s / 19.73 s; Opus 5.5 max now measured at 95 tok/s / 683.90 s; Muse Spark 1.3 127 tok/s). First speed/TTFT for Ling 3.1 Flash. Arena text and WebDev still on their 8 Oct snapshots. Open What changed, below, for the history of each update";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
@@ -482,10 +482,10 @@ const BENCH = {
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/leaderboards/models",asof:"12 Oct 2026",
     d:"What one task of the v4.3.2 Intelligence Index costs, at the same effort level as the Index score. Reasoning-heavy models can be cheap per token and expensive per task."},
   speed:{l:"Output speed",s:"tok/s",g:"speed",f:"n0",hi:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"13 Oct 2026",
     d:"Output tokens per second from the Artificial Analysis leaderboard, measured at the same effort level as the model's Index score. One source for every row, so speeds are comparable across models."},
   ttft:{l:"Time to first token",s:"TTFT s",g:"speed",f:"n1",hi:0,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"13 Oct 2026",
     d:"Seconds to the first answer token, at the same effort level as the Index score. For reasoning models on high effort this includes thinking time, which is why the heavy tiers run to minutes. The Effort levels detail on each model shows how much faster the lower settings respond."},
   ctx:{l:"Context window",s:"Context",g:"speed",f:"ctx",hi:1,
     src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
@@ -640,40 +640,40 @@ const MODELS = [
 
 {name:"GPT-6.1 Sol", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-29",
  note:"Launched 29 Sep at DevDay at GPT-6 Sol's $2/$10 price, with cached input cut to $0.10 — a 95% discount. Artificial Analysis now scores it 52 at max effort, four points above GPT-6 Sol and one behind GPT-6 Astra, for $0.72 per index task — about an eighth of Opus 5.5's $5.98. Even at medium (48, $0.21) it matches GPT-6 Sol at max. OpenRouter's τ²-bench Airline re-run puts it at 70.0%, up from 66.7% on its first run and above GPT-6 Sol's 69.3%. ARC Prize scores it 52.7% on ARC-AGI-3 under the standard harness, against 96.4% with its Provider Adapter. OpenAI's own comparison tables are still images only, so no vendor numbers are on the board. An Ultrafast tier (up to 300 tokens/sec, 6× the price) is coming.",
- s:{matharena:[90.1,"ind","max effort"],hle:[52.9,"ind","Artificial Analysis"],arc3:[52.73,"ind","standard harness — 96.37% with the Provider Adapter"],lmarena:[1484,"ind","max variant; 4,512 votes"],ttft:[281.94,"ind"],speed:[65,"ind"],arc2:[94.2,"ind"],arc1:[98.5,"ind"],webdev:[1755,"ind","max variant"],tau2air:[70.0,"ind"],costTask:[0.72,"ind"],aaii:[52,"ind"],price:[1.47,"ven","computed with Artificial Analysis's 7:2:1 blend from OpenAI list prices"],ctx:[1050000,"ven"]}},
+ s:{matharena:[90.1,"ind","max effort"],hle:[52.9,"ind","Artificial Analysis"],arc3:[52.73,"ind","standard harness — 96.37% with the Provider Adapter"],lmarena:[1484,"ind","max variant; 4,512 votes"],ttft:[330.58,"ind"],speed:[65,"ind"],arc2:[94.2,"ind"],arc1:[98.5,"ind"],webdev:[1755,"ind","max variant"],tau2air:[70.0,"ind"],costTask:[0.72,"ind"],aaii:[52,"ind"],price:[1.47,"ven","computed with Artificial Analysis's 7:2:1 blend from OpenAI list prices"],ctx:[1050000,"ven"]}},
 
 {name:"Claude Haiku 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-10-07",
  note:"Released 7 Oct at $0.10/$0.50 per million tokens for prompts under 100K tokens, and $0.50/$2.50 above that. That's a tenth of Haiku 4.5's price, with a 1M context window and adjustable effort. Anthropic's own table puts it far ahead of Haiku 4.5 and GPT-6 Luna: Terminal-Bench 4.0 39.2% against Luna's 16.4%, GDPval-AA v2.1 1620 against 1437, and HLE 45.9% without tools. Artificial Analysis scored it a day later: 43 at max for $0.21 per task, or 38 at high for eight cents, which beats Mistral Large 4 at a fraction of its cost. Its own HLE run gives 44.4% without tools. WebDev Arena has it at 1587 (high) on its first 978 votes.",
- s:{webdev:[1587,"ind","high variant; 978 votes"],tau2air:[75.3,"ind","single run so far"],ttft:[341.02,"ind"],speed:[244,"ind"],costTask:[0.21,"ind"],aaii:[43,"ind"],price:[0.08,"ven","computed with Artificial Analysis's 7:2:1 blend from Anthropic's under-100K list prices"],ctx:[1000000,"ven"],tb40:[39.2,"ven"],gdpval21:[1620,"ven"],frontiercode:[46.4,"ven"],hle:[44.4,"ind","Artificial Analysis — Anthropic reports 45.9% without tools, 57.4% with"]}},
+ s:{webdev:[1587,"ind","high variant; 978 votes"],tau2air:[75.3,"ind","single run so far"],ttft:[314.69,"ind"],speed:[236,"ind"],costTask:[0.21,"ind"],aaii:[43,"ind"],price:[0.08,"ven","computed with Artificial Analysis's 7:2:1 blend from Anthropic's under-100K list prices"],ctx:[1000000,"ven"],tb40:[39.2,"ven"],gdpval21:[1620,"ven"],frontiercode:[46.4,"ven"],hle:[44.4,"ind","Artificial Analysis — Anthropic reports 45.9% without tools, 57.4% with"]}},
 
 {name:"Claude Sonnet 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-09-28",
  note:"Released 28 Sep at Sonnet 5's $2/$10 price, and Artificial Analysis scores it 56 at max effort, two points behind Opus 5.5 (58), at about half Opus 5.5's per-token price. It thinks longer at max, so it costs $5.46 per index task there — revised down from $7.67, now just under Opus 5.5's $5.98. At extra-high it drops to 52 for $2.01. Anthropic's own table puts it ahead of Opus 5.5 on Terminal-Bench 4.0 (70.6% against 66.4%). Arena has it at 1476 on text and 1774 on WebDev, both at xhigh; ARC Prize has not run it yet.",
- s:{tb21:[83.15,"ind","Vals AI"],hle:[55.0,"ind","Artificial Analysis — Anthropic reports 56.9% without tools, 64.5% with"],lmarena:[1476,"ind","xhigh variant; 4,838 votes"],speed:[139,"ind"],webdev:[1774,"ind","xhigh variant — 1715 at high"],tau2air:[78.0,"ind"],price:[1.54,"ven","computed with Artificial Analysis's 7:2:1 blend from Anthropic list prices"],costTask:[5.46,"ind"],aaii:[56,"ind"],ctx:[1000000,"ven"],tb40:[70.6,"ven"],cursor4:[55.5,"ven"],frontiercode:[46.2,"ven","max effort — 52.1% at xhigh"],gdpval21:[1844,"ven"]}},
+ s:{tb21:[83.15,"ind","Vals AI"],hle:[55.0,"ind","Artificial Analysis — Anthropic reports 56.9% without tools, 64.5% with"],lmarena:[1476,"ind","xhigh variant; 4,838 votes"],speed:[136,"ind"],ttft:[441.68,"ind"],webdev:[1774,"ind","xhigh variant — 1715 at high"],tau2air:[78.0,"ind"],price:[1.54,"ven","computed with Artificial Analysis's 7:2:1 blend from Anthropic list prices"],costTask:[5.46,"ind"],aaii:[56,"ind"],ctx:[1000000,"ven"],tb40:[70.6,"ven"],cursor4:[55.5,"ven"],frontiercode:[46.2,"ven","max effort — 52.1% at xhigh"],gdpval21:[1844,"ven"]}},
 
 {name:"Claude Opus 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-09-22",
  note:"Top of the Intelligence Index at 58 — five clear of Fable 5.1 and GPT-6 Astra — at $4/$20, which is cheaper per token than the Opus 5 it replaces. Anthropic says it matches Fable 5.1 on most work and costs 40% less to run than Opus 5. It scores 1813 on WebDev Arena; on Arena text it sits at 1507, behind Gemini 4 Argon's 1525. Sonnet 5.5 followed on 28 Sep and Haiku 5.5 on 7 Oct.",
- s:{frontiercode:[54.4,"ven"],ttft:[147.14,"ind","xhigh — max not yet measured"],speed:[92,"ind","xhigh — max not yet measured"],matharena:[83.3,"ind","high effort"],tau2air:[75.8,"ind"],tb21:[87.64,"ind","Vals AI — 79.8% counting refusal fallbacks as failures"],hle:[61.4,"ind","Artificial Analysis"],aaii:[58,"ind"],price:[2.94,"ind"],costTask:[5.98,"ind"],ctx:[1000000,"ven"],
+ s:{frontiercode:[54.4,"ven"],ttft:[683.90,"ind"],speed:[95,"ind"],matharena:[83.3,"ind","high effort"],tau2air:[75.8,"ind"],tb21:[87.64,"ind","Vals AI — 79.8% counting refusal fallbacks as failures"],hle:[61.4,"ind","Artificial Analysis"],aaii:[58,"ind"],price:[2.94,"ind"],costTask:[5.98,"ind"],ctx:[1000000,"ven"],
     tb40:[66.4,"ven"],cursor4:[57.8,"ven"],tbsci:[58.7,"ven"],gdpval21:[1846,"ven"],automationbench:[40.0,"ven"],
     arc1:[98.5,"ind"],arc2:[93.3,"ind"],lmarena:[1507,"ind"],webdev:[1813,"ind"]}},
 
 {name:"GPT-6 Sol", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-09-22",
  note:"Superseded by GPT-6.1 Sol on 29 Sep at the same $2/$10 price.",
- s:{tb21:[83.15,"ind","Vals AI"],hle:[47.9,"ind","Artificial Analysis"],arc3:[4.62,"ind","standard harness"],arc2:[89.6,"ind"],arc1:[95.5,"ind"],lmarena:[1456,"ind","max variant"],frontiercode:[49.3,"ven"],matharena:[84.9,"ind","max effort"],tau2air:[69.3,"ind"],aaii:[48,"ind"],price:[1.54,"ind"],costTask:[1.04,"ind"],speed:[85,"ind"],ttft:[165.07,"ind"],ctx:[1050000,"ven"],
+ s:{tb21:[83.15,"ind","Vals AI"],hle:[47.9,"ind","Artificial Analysis"],arc3:[4.62,"ind","standard harness"],arc2:[89.6,"ind"],arc1:[95.5,"ind"],lmarena:[1456,"ind","max variant"],frontiercode:[49.3,"ven"],matharena:[84.9,"ind","max effort"],tau2air:[69.3,"ind"],aaii:[48,"ind"],price:[1.54,"ind"],costTask:[1.04,"ind"],speed:[123,"ind"],ttft:[150.57,"ind"],ctx:[1050000,"ven"],
     deepswe:[68.8,"ven"],automationbench:[33.2,"ven"],ale:[56.4,"ven"],webdev:[1688,"ind"]}},
 
 {name:"Grok 4.7", prov:"xAI", tier:"frontier", open:false, rel:"2026-09-21",
  note:"Two Index points over Grok 4.6 at the same $2/$6 list price. xAI's launch chart is the one table that disagrees with the others on a shared row — it labels Claude Fable 5.1 at 57.9% on Terminal-Bench 4.0, which is the figure every other vendor gives GPT-6 Astra. Arena text has it at 1443 (xhigh). ARC Prize puts it at 61.4% on ARC-AGI-2, below Grok 4.6's 67.1%.",
- s:{matharena:[46.7,"ind","xhigh effort"],tb21:[73.41,"ind","Vals AI"],hle:[43.1,"ind","Artificial Analysis"],arc3:[1.82,"ind","standard harness"],arc2:[61.4,"ind"],arc1:[90.2,"ind"],lmarena:[1443,"ind","xhigh variant"],aaii:[46,"ind"],price:[1.35,"ind"],costTask:[3.74,"ind"],speed:[49,"ind"],ttft:[1.52,"ind"],ctx:[500000,"ven"],
+ s:{matharena:[46.7,"ind","xhigh effort"],tb21:[73.41,"ind","Vals AI"],hle:[43.1,"ind","Artificial Analysis"],arc3:[1.82,"ind","standard harness"],arc2:[61.4,"ind"],arc1:[90.2,"ind"],lmarena:[1443,"ind","xhigh variant"],aaii:[46,"ind"],price:[1.35,"ind"],costTask:[3.74,"ind"],speed:[86,"ind"],ttft:[94.15,"ind"],ctx:[500000,"ven"],
     tb40:[37.6,"ven"],deepswe:[71.0,"ven"],cursor4:[46.3,"ven"],gdpval21:[1695,"ven"],webdev:[1639,"ind"]}},
 
 {name:"GPT-6 Luna", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-22",
  note:"Eight cents per million blended tokens and seven cents per index task. OpenAI puts its DeepSWE score within five points of Claude Opus 5 at about 93% less cost; the one independent reasoning check, ARC-AGI-2 at 59.3%, lands level with the GPT-5.6 Luna it replaces.",
- s:{tb21:[73.03,"ind","Vals AI"],hle:[38.5,"ind","Artificial Analysis"],arc3:[0.19,"ind","standard harness"],lmarena:[1443,"ind","max variant"],frontiercode:[42.4,"ven","Anthropic's Haiku 5.5 comparison table"],tb40:[16.4,"ven","Anthropic's Haiku 5.5 comparison table"],gdpval21:[1437,"ven","Anthropic's Haiku 5.5 comparison table"],tau2air:[67.3,"ind"],aaii:[38,"ind"],price:[0.08,"ind"],costTask:[0.07,"ind"],speed:[144,"ind"],ttft:[135.83,"ind"],ctx:[1050000,"ven"],
+ s:{tb21:[73.03,"ind","Vals AI"],hle:[38.5,"ind","Artificial Analysis"],arc3:[0.19,"ind","standard harness"],lmarena:[1443,"ind","max variant"],frontiercode:[42.4,"ven","Anthropic's Haiku 5.5 comparison table"],tb40:[16.4,"ven","Anthropic's Haiku 5.5 comparison table"],gdpval21:[1437,"ven","Anthropic's Haiku 5.5 comparison table"],tau2air:[67.3,"ind"],aaii:[38,"ind"],price:[0.08,"ind"],costTask:[0.07,"ind"],speed:[135,"ind"],ttft:[101.14,"ind"],ctx:[1050000,"ven"],
     deepswe:[66.6,"ven"],arc1:[86.7,"ind"],arc2:[59.3,"ind"],webdev:[1581,"ind"]}},
 
 {name:"GPT-6 Astra", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-03",
  note:"Shipped 3 Sep, gated at launch to OpenAI's Trusted Access Program. The first model OpenAI has classified as meeting the Critical cybersecurity threshold under its Preparedness Framework — it leads ExploitGym by twelve points and scores 100% on ExploitBench. Artificial Analysis scores it 53 on the Intelligence Index, level with Fable 5.1 and Gemini 4 Argon and five behind Opus 5.5. Its ARC-AGI-3 result of 99.95% comes from ARC Prize's Provider Adapter harness; under the standard harness every other model here was run on, it scores 62.7%.",
- s:{hle:[54.7,"ind","Artificial Analysis"],matharena:[88.0,"ind","max effort"],tau2air:[68.0,"ind"],tb21:[87.27,"ind","Vals AI"],gdpval21:[1542,"ven"],webdev:[1786,"ind"],lmarena:[1475,"ind"],ttft:[348.28,"ind"],speed:[58,"ind"],costTask:[3.26,"ind"],aaii:[53,"ind"],price:[7.70,"ind"],ctx:[1050000,"ven"],
+ s:{hle:[54.7,"ind","Artificial Analysis"],matharena:[88.0,"ind","max effort"],tau2air:[68.0,"ind"],tb21:[87.27,"ind","Vals AI"],gdpval21:[1542,"ven"],webdev:[1786,"ind"],lmarena:[1475,"ind"],ttft:[373.48,"ind"],speed:[64,"ind"],costTask:[3.26,"ind"],aaii:[53,"ind"],price:[7.70,"ind"],ctx:[1050000,"ven"],
     tb40:[57.9,"ven"],deepswe:[74.1,"ven"],frontiercode:[53.3,"ven"],
     tbsci:[64.6,"ven"],automationbench:[41.4,"ven"],exploitgym:[42.4,"ven"],ale:[59.3,"ven"],osw2ga:[72.6,"ven"],
     gpqa:[96.3,"ind"],arc1:[98.5,"ind"],arc2:[95.0,"ind"],arc3:[62.71,"ind"],
@@ -684,12 +684,12 @@ const MODELS = [
  s:{aaii:[56,"ind"],ctx:[1000000,"ven"]}},
 
 {name:"Muse Wonder", prov:"Meta", tier:"frontier", open:false, rel:"2026-10-12",
- note:"Meta's API Muse Wonder (muse-wonder-1.0), launched 12 Oct at $4/$20 per million tokens with $0.20 cached input — the same list price as Claude Opus 5.5. Artificial Analysis scores it 52 at max for $4.52 per index task, four points above Muse Spark 1.3, at 85 tokens per second with a 37.41 s TTFT. Multimodal input (text, image, video, audio); 1M context; Standard mode only.",
- s:{aaii:[52,"ind"],costTask:[4.52,"ind"],price:[2.94,"ind"],speed:[85,"ind"],ttft:[37.41,"ind"],ctx:[1000000,"ven"]}},
+ note:"Meta's API Muse Wonder (muse-wonder-1.0), launched 12 Oct at $4/$20 per million tokens with $0.20 cached input — the same list price as Claude Opus 5.5. Artificial Analysis scores it 52 at max for $4.52 per index task, four points above Muse Spark 1.3, at 104 tokens per second with a 19.73 s TTFT. Multimodal input (text, image, video, audio); 1M context; Standard mode only.",
+ s:{aaii:[52,"ind"],costTask:[4.52,"ind"],price:[2.94,"ind"],speed:[104,"ind"],ttft:[19.73,"ind"],ctx:[1000000,"ven"]}},
 
 {name:"Muse Spark 1.3", prov:"Meta", tier:"legacy", open:false, rel:"2026-09-02",
- note:"Superseded by Muse Wonder on 12 Oct. Artificial Analysis still scores it 48 at max for $1.60 per index task, and 45 at xhigh. It is slow, at 22 tokens per second. The list price shown is the one Artificial Analysis gives for the xhigh configuration.",
- s:{matharena:[46.6,"ind"],tb21:[79.03,"ind","Vals AI, max effort"],hle:[48.7,"ind","Artificial Analysis"],lmarena:[1494,"ind"],costTask:[1.6,"ind"],aaii:[48,"ind"],price:[0.78,"ind"],speed:[22,"ind"],ttft:[324.72,"ind"],ctx:[1000000,"ven"],
+ note:"Superseded by Muse Wonder on 12 Oct. Artificial Analysis still scores it 48 at max for $1.60 per index task, and 45 at xhigh. Artificial Analysis now measures 127 tokens per second at max (was 22 on the prior snapshot). The list price shown is the one Artificial Analysis gives for the xhigh configuration.",
+ s:{matharena:[46.6,"ind"],tb21:[79.03,"ind","Vals AI, max effort"],hle:[48.7,"ind","Artificial Analysis"],lmarena:[1494,"ind"],costTask:[1.6,"ind"],aaii:[48,"ind"],price:[0.78,"ind"],speed:[127,"ind"],ttft:[41.68,"ind"],ctx:[1000000,"ven"],
     webdev:[1657,"ind"]}},
 
 {name:"Claude Fable 5.1", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-09-01",
@@ -812,13 +812,13 @@ const MODELS = [
 /* ------------------------------------------------------------- CHALLENGERS */
 {name:"MiMo-V2.6-Pro", prov:"Xiaomi", tier:"challenger", open:true, rel:"2026-09-22",
  note:"1T total / 42B active, MIT-licensed. Ties Grok 4.7 on the Intelligence Index at 46 for 18 cents blended — about a seventh of Grok's price — which makes it the highest-scoring open-weights model on the board.",
- s:{hle:[49.4,"ind","Artificial Analysis"],tau2air:[74.2,"ind"],aaii:[46,"ind"],price:[0.18,"ind"],costTask:[0.13,"ind"],speed:[45,"ind"],ttft:[3.53,"ind"],ctx:[1000000,"ven"],
+ s:{hle:[49.4,"ind","Artificial Analysis"],tau2air:[74.2,"ind"],aaii:[46,"ind"],price:[0.18,"ind"],costTask:[0.13,"ind"],speed:[48,"ind"],ttft:[3.94,"ind"],ctx:[1000000,"ven"],
     tb40:[34.9,"ven"],tb21:[67.79,"ind","Vals AI — Xiaomi reports 89.9%"],deepswe:[71.9,"ven"],gdpval21:[1673,"ven"],exploitgym:[17.8,"ven"],
     lmarena:[1480,"ind"],webdev:[1629,"ind"]}},
 
 {name:"DeepSeek V4.1 Flash", prov:"DeepSeek", tier:"challenger", open:true, rel:"2026-09-10",
- note:"Replaced V4 Flash on 10 Sep; the old model IDs now route here. Outscores DeepSeek's own V4 Pro on the Intelligence Index (39 against 36) at about a quarter of the blended price, and runs at 235 tokens per second with a sub-second first token. DeepSeek's table puts its DeepSWE above Claude Opus 5 — vendor-run, and the widest claimed lead on the board.",
- s:{matharena:[43.3,"ind","max effort"],arc2:[72.9,"ind"],arc1:[94.5,"ind"],tau2air:[76.8,"ind"],aaii:[39,"ind"],price:[0.18,"ind"],costTask:[0.27,"ind"],speed:[235,"ind"],ttft:[0.97,"ind"],ctx:[1000000,"ven"],
+ note:"Replaced V4 Flash on 10 Sep; the old model IDs now route here. Outscores DeepSeek's own V4 Pro on the Intelligence Index (39 against 36) at about a quarter of the blended price, and runs at 195 tokens per second with a ~1 s first token. DeepSeek's table puts its DeepSWE above Claude Opus 5 — vendor-run, and the widest claimed lead on the board.",
+ s:{matharena:[43.3,"ind","max effort"],arc2:[72.9,"ind"],arc1:[94.5,"ind"],tau2air:[76.8,"ind"],aaii:[39,"ind"],price:[0.18,"ind"],costTask:[0.27,"ind"],speed:[195,"ind"],ttft:[1.02,"ind"],ctx:[1000000,"ven"],
     tb40:[31.2,"ven"],tb30:[30.0,"ven"],tb21:[74.53,"ind","Vals AI — DeepSeek reports 90.6%"],deepswe:[74.2,"ven"],exploitgym:[15.3,"ven"],
     gpqa:[90.9,"ven"],hle:[39.3,"ind","Artificial Analysis — DeepSeek reports 36.8%"],lmarena:[1475,"ind"],webdev:[1619,"ind"]}},
 
@@ -827,27 +827,27 @@ const MODELS = [
  s:{webdev:[1564,"ind","high variant"],hle:[46.5,"ind","Artificial Analysis"],price:[0.54,"ind"],aaii:[44,"ind"],costTask:[1.03,"ind"],speed:[77,"ind"],ttft:[2.92,"ind"],ctx:[1000000,"ven"],deepswe:[67.7,"ven"]}},
 
 {name:"Ling 3.1 Flash", prov:"InclusionAI", tier:"challenger", open:false, rel:"2026-09-30",
- note:"Ant Group's InclusionAI launched it on 30 Sep: 560B total / 25B active, built for agents and tool use. Artificial Analysis scores it 41 for $1.00 per index task at 19 cents blended. Free on Vercel's AI Gateway through 13 Oct; InclusionAI says open weights and the full 1M context follow the trial, so it's marked proprietary until they ship.",
- s:{aaii:[41,"ind"],costTask:[1.00,"ind"],price:[0.19,"ind"],ctx:[1000000,"ven","1M by design; the free trial serves 256K–262K"],hle:[39.4,"ind","Artificial Analysis"]}},
+ note:"Ant Group's InclusionAI launched it on 30 Sep: 560B total / 25B active, built for agents and tool use. Artificial Analysis scores it 41 for $1.00 per index task at 19 cents blended, 210 tok/s and 1.90 s TTFT. The Vercel AI Gateway free trial ended 13 Oct; Ant has not published post-trial list prices (OpenRouter still shows $0). InclusionAI says open weights and the full 1M context follow the trial, so it's marked proprietary until they ship. AA still lists $0.30/$0.90.",
+ s:{aaii:[41,"ind"],costTask:[1.00,"ind"],price:[0.19,"ind"],speed:[210,"ind"],ttft:[1.90,"ind"],ctx:[1000000,"ven","1M by design; served context on free routes is 256K–262K"],hle:[39.4,"ind","Artificial Analysis"]}},
 
 {name:"MiMo-V2.6-Flash", prov:"Xiaomi", tier:"challenger", open:true, rel:"2026-09-22",
  note:"309B total / 15B active, MIT, listed at $0.14/$0.28. Artificial Analysis scores it 38 for six cents per index task, level with Mistral Large 4 at about a twentieth of the cost.",
- s:{tb21:[76.40,"ind","Vals AI"],webdev:[1637,"ind"],hle:[35.1,"ind","Artificial Analysis"],price:[0.06,"ind"],costTask:[0.06,"ind"],aaii:[38,"ind"],tau2air:[79.7,"ind"],ctx:[1000000,"ven"],tb40:[28.8,"ven"],deepswe:[67.9,"ven"],exploitgym:[6.0,"ven"],lmarena:[1451,"ind"]}},
+ s:{tb21:[76.40,"ind","Vals AI"],webdev:[1637,"ind"],hle:[35.1,"ind","Artificial Analysis"],price:[0.06,"ind"],costTask:[0.06,"ind"],aaii:[38,"ind"],speed:[63,"ind"],ttft:[3.20,"ind"],tau2air:[79.7,"ind"],ctx:[1000000,"ven"],tb40:[28.8,"ven"],deepswe:[67.9,"ven"],exploitgym:[6.0,"ven"],lmarena:[1451,"ind"]}},
 
 {name:"Kimi K3", prov:"Moonshot AI", tier:"challenger", open:true, rel:"2026-07-16",
  note:"2.8T-parameter open-weight MoE. An Index score of 44, two points behind MiMo-V2.6-Pro, the highest-scoring open-weights model on the board, and one behind GLM-5.3.",
- s:{tb21:[80.90,"ind","Vals AI"],tau2air:[72.5,"ind"],tb30:[17.7,"ven"],tb40:[12.6,"ven"],deepswe:[67.5,"ven"],aaii:[44,"ind"],price:[2.31,"ind"],costTask:[2.0,"ind"],speed:[35,"ind"],ttft:[4.01,"ind"],ctx:[1050000,"ven"],
+ s:{tb21:[80.90,"ind","Vals AI"],tau2air:[72.5,"ind"],tb30:[17.7,"ven"],tb40:[12.6,"ven"],deepswe:[67.5,"ven"],aaii:[44,"ind"],price:[2.31,"ind"],costTask:[2.0,"ind"],speed:[44,"ind"],ttft:[3.18,"ind"],ctx:[1050000,"ven"],
     hle:[46.9,"ind","Artificial Analysis — Moonshot reports 43.5%"],gpqa:[93.5,"ven"],arc1:[94.5,"ind"],arc2:[60.4,"ind"],arc2cost:[1.59,"ind"],
     weirdml:[82.57,"ind"],weirdmlCost:[2.05,"ind"],matharena:[50.5,"ind"],lmarena:[1488,"ind"],webdev:[1654,"ind"]}},
 
 {name:"GLM-5.3", prov:"Z.ai", tier:"challenger", open:true, rel:"2026-08-14",
  note:"753B open MoE, post-trained from the same base as GLM-5.2 with no retraining. An Index score of 45 at 90 cents blended.",
- s:{tb21:[71.54,"ind","Vals AI"],hle:[42.3,"ind","Artificial Analysis"],exploitgym:[15.0,"ven"],gpqa:[88.1,"ven"],tb30:[28.3,"ven"],tb40:[37.9,"ven"],deepswe:[66.9,"ven"],costTask:[2.01,"ind"],aaii:[45,"ind"],price:[0.90,"ind"],speed:[69,"ind"],ttft:[3.49,"ind"],ctx:[1000000,"ven"],
+ s:{tb21:[71.54,"ind","Vals AI"],hle:[42.3,"ind","Artificial Analysis"],exploitgym:[15.0,"ven"],gpqa:[88.1,"ven"],tb30:[28.3,"ven"],tb40:[37.9,"ven"],deepswe:[66.9,"ven"],costTask:[2.01,"ind"],aaii:[45,"ind"],price:[0.90,"ind"],speed:[67,"ind"],ttft:[3.32,"ind"],ctx:[1000000,"ven"],
     tau2air:[76.9,"ind"],lmarena:[1478,"ind"],webdev:[1622,"ind"]}},
 
 {name:"Qwen3.8 Max", prov:"Alibaba", tier:"challenger", open:false, rel:"2026-08-03",
  note:"2.4T total / 95B active. The Index score is the 2 Sep snapshot (0902), which Artificial Analysis rates at 45; the WebDev and text Arena scores are the original August release, still on the board separately. Held the τ³-Banking lead before Artificial Analysis dropped that benchmark from its index.",
- s:{matharena:[56.1,"ind","original August release"],tb21:[67.42,"ind","Vals AI"],hle:[43.1,"ind","Artificial Analysis"],aaii:[45,"ind"],price:[1.18,"ind"],costTask:[5.41,"ind"],speed:[39,"ind"],ttft:[3.04,"ind"],ctx:[1000000,"ven"],
+ s:{matharena:[56.1,"ind","original August release"],tb21:[67.42,"ind","Vals AI"],hle:[43.1,"ind","Artificial Analysis"],aaii:[45,"ind"],price:[1.18,"ind"],costTask:[5.41,"ind"],speed:[42,"ind"],ttft:[2.89,"ind"],ctx:[1000000,"ven"],
     tau3bank:[55.2,"ind"],lmarena:[1483,"ind"],webdev:[1672,"ind","preliminary"]}},
 
 {name:"GLM-5.3-Flash", prov:"Z.ai", tier:"challenger", open:true, rel:"2026-08-26",
@@ -1036,26 +1036,26 @@ const MODELS = [
    [effort, Intelligence Index, $ per index task, output tokens/s, seconds to first token]; null = not published.
    The first entry is the level shown everywhere else on the board. */
 const EFFORT = {
- "Claude Opus 5.5":[["max",58,5.98,null,null],["xhigh",56,3.46,92,147.14],["high",54,1.82,86,33.45],["medium",51,1.34,81,12.82],["low",42,0.55,81,5.18]],
+ "Claude Opus 5.5":[["max",58,5.98,95,683.90],["xhigh",56,3.46,92,147.14],["high",54,1.82,86,33.45],["medium",51,1.34,81,12.82],["low",42,0.55,81,5.18]],
  "Claude Fable 5.1":[["max",53,7.63,69,260.11],["xhigh",53,5.98,66,122.00],["high",51,3.91,59,15.40],["medium",49,2.98,58,7.96],["low",47,2.37,59,7.59]],
- "GPT-6 Astra":[["max",53,3.26,58,348.28],["xhigh",52,2.31,58,119.06],["high",51,1.73,56,39.83],["medium",50,1.54,55,5.59],["low",46,0.82,53,3.15]],
- "Muse Wonder":[["max",52,4.52,85,37.41]],
- "Muse Spark 1.3":[["max",48,1.60,22,324.72],["xhigh",45,1.37,23,221.81]],
- "GPT-6 Sol":[["max",48,1.04,85,165.07],["xhigh",44,0.52,85,31.71],["high",42,0.37,83,9.21],["medium",40,0.25,null,null],["low",34,0.13,82,2.12],["none",29,0.33,76,1.13]],
- "Grok 4.7":[["xhigh",46,3.74,49,1.52],["high",46,2.73,61,1.03],["low",42,1.25,null,null]],
- "GLM-5.3":[["max",45,2.01,69,3.49],["low",34,0.85,84,2.84]],
+ "GPT-6 Astra":[["max",53,3.26,64,373.48],["xhigh",52,2.31,58,119.06],["high",51,1.73,56,39.83],["medium",50,1.54,55,5.59],["low",46,0.82,53,3.15]],
+ "Muse Wonder":[["max",52,4.52,104,19.73]],
+ "Muse Spark 1.3":[["max",48,1.60,127,41.68],["xhigh",45,1.37,23,221.81]],
+ "GPT-6 Sol":[["max",48,1.04,123,150.57],["xhigh",44,0.52,85,31.71],["high",42,0.37,83,9.21],["medium",40,0.25,null,null],["low",34,0.13,82,2.12],["none",29,0.33,76,1.13]],
+ "Grok 4.7":[["xhigh",46,3.74,86,94.15],["high",46,2.73,61,1.03],["low",42,1.25,null,null]],
+ "GLM-5.3":[["max",45,2.01,67,3.32],["low",34,0.85,84,2.84]],
  "Grok 4.6":[["xhigh",44,1.75,72,41.69],["high",44,1.48,66,40.81],["medium",43,1.14,68,26.24],["low",35,0.38,57,7.14]],
  "Mistral Large 4":[["default",38,1.13,116,1.46]],
- "Kimi K3":[["max",44,2.00,35,4.01],["low",30,1.15,null,null]],
+ "Kimi K3":[["max",44,2.00,44,3.18],["low",30,1.15,null,null]],
  "GPT-5.6 Terra":[["max",42,1.40,100,181.88],["xhigh",38,0.63,82,29.65],["high",34,0.34,81,3.49],["medium",30,0.18,83,2.27],["low",27,0.14,85,1.77],["none",21,0.14,85,0.93]],
  "Gemini 3.8 Flash":[["high",41,1.24,330,18.95],["medium",40,0.93,null,null],["low",33,null,null,null]],
- "DeepSeek V4.1 Flash":[["max",39,0.27,235,0.97],["none",25,0.15,272,1.17]],
- "Claude Haiku 5.5":[["max",43,0.21,244,341.02],["xhigh",41,0.12,193,78.84],["high",38,0.08,178,26.69],["medium",34,0.05,155,13.40],["low",29,0.02,185,12.79]],
+ "DeepSeek V4.1 Flash":[["max",39,0.27,195,1.02],["none",25,0.15,272,1.17]],
+ "Claude Haiku 5.5":[["max",43,0.21,236,314.69],["xhigh",41,0.12,193,78.84],["high",38,0.08,178,26.69],["medium",34,0.05,155,13.40],["low",29,0.02,185,12.79]],
  "Gemini 4 Argon":[["high",53,1.99,null,null]],
- "GPT-6.1 Sol":[["max",52,0.72,65,281.94],["xhigh",51,0.39,63,107.76],["high",50,0.32,63,57.26],["medium",48,0.21,59,5.29],["low",42,0.13,60,2.61]],
- "Claude Sonnet 5.5":[["max",56,5.46,139,null],["xhigh",52,2.01,103,null],["high",47,0.88,94,null],["medium",41,0.48,92,null],["low",36,0.35,null,null]],
+ "GPT-6.1 Sol":[["max",52,0.72,65,330.58],["xhigh",51,0.39,63,107.76],["high",50,0.32,63,57.26],["medium",48,0.21,59,5.29],["low",42,0.13,60,2.61]],
+ "Claude Sonnet 5.5":[["max",56,5.46,136,441.68],["xhigh",52,2.01,103,null],["high",47,0.88,94,null],["medium",41,0.48,92,null],["low",36,0.35,null,null]],
  "Claude Sonnet 5":[["max",38,5.09,77,124.72],["xhigh",34,2.87,74,15.50],["high",32,1.79,70,8.63],["medium",28,1.00,70,2.96],["low",24,0.51,64,1.58],["none",23,null,64,1.69]],
- "GPT-6 Luna":[["max",38,0.07,144,135.83],["xhigh",35,0.04,137,19.20],["high",33,0.03,135,7.12],["medium",30,0.02,null,null],["low",22,0.005,126,2.23],["none",18,0.01,123,0.89]],
+ "GPT-6 Luna":[["max",38,0.07,135,101.14],["xhigh",35,0.04,137,19.20],["high",33,0.03,135,7.12],["medium",30,0.02,null,null],["low",22,0.005,126,2.23],["none",18,0.01,123,0.89]],
  "Qwen3.8 27B":[["xhigh",34,1.01,44,3.90],["medium",28,1.13,53,3.81],["low",26,1.05,53,3.81]],
  "MiMo-V2.5-Pro":[["reasoning",26,0.05,46,4.49],["none",18,null,40,2.95]],
  "Gemma 4 31B":[["reasoning",19,null,35,1.02],["none",14,null,60,1.94]],
@@ -1064,7 +1064,7 @@ const EFFORT = {
  "gpt-oss-120b":[["high",12,0.11,185,0.86],["low",10,null,182,0.85]]
 };
 
-/* List prices, USD per 1M tokens, from each vendor's pricing page as gathered 1 Sep – 12 Oct 2026.
+/* List prices, USD per 1M tokens, from each vendor's pricing page as gathered 1 Sep – 13 Oct 2026.
    in / out / cr = cache read (null if not published). note = tiering, promos and scheduled changes. */
 const PRICES = {
  "Claude Opus 5.5":{in:4,out:20,cr:0.20,note:"Batch 50% off. Fast mode (preview) $8/$40."},
@@ -1098,7 +1098,7 @@ const PRICES = {
  "MiMo-V2.6-Flash":{in:0.14,out:0.28,cr:0.0028,note:"Open weights, MIT."},
  "MiniMax M3":{in:0.30,out:1.20,cr:null,note:"Above 512K tokens: $0.60/$2.40."},
  "Step 5 Preview":{in:1.00,out:2.70,cr:0.05,note:"Press-reported; weights promised 15 Oct."},
- "Ling 3.1 Flash":{in:0.30,out:0.90,cr:0.06,note:"As listed by Artificial Analysis. Free on Vercel AI Gateway through 13 Oct 2026."},
+ "Ling 3.1 Flash":{in:0.30,out:0.90,cr:0.06,note:"As listed by Artificial Analysis ($0.30/$0.90). Vercel AI Gateway free trial ended 13 Oct; Ant has not published post-trial rates; OpenRouter still $0."},
  "Mercury 2.5":{in:0.20,out:0.75,cr:null,note:"Launch promo $0.04/$0.15."},
  "Hy3":{in:0.14,out:0.55,cr:null,note:""},
  "Inkling":{in:1.00,out:4.05,cr:null,note:""},
@@ -1114,7 +1114,9 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"13 Oct 2026", items:[
-  ["feature","Pareto frontier on the Charts tab, as Artificial Analysis draws on its Intelligence vs Cost per Task chart. A line joins the models that no cheaper model in view matches or beats (or, on the speed chart, no faster one), and the models on it are listed under each chart. It follows the axis and filter choices. No scores changed."]]},
+  ["data","Artificial Analysis speed and TTFT refresh (FAQ figures on each model page). Muse Wonder 85→104 tok/s and 37.41→19.73 s; Muse Spark 1.3 22→127 tok/s and 324.72→41.68 s; Claude Opus 5.5 max now measured at 95 tok/s / 683.90 s (was xhigh-only 92 / 147.14); Sonnet 5.5 139→136 tok/s with first TTFT 441.68 s; Haiku 5.5 244→236 / 341.02→314.69; GPT-6 Astra 58→64 / 348.28→373.48; GPT-6.1 Sol TTFT 281.94→330.58; GPT-6 Sol 85→123 / 165.07→150.57; GPT-6 Luna 144→135 / 135.83→101.14; Grok 4.7 49→86 / 1.52→94.15; DeepSeek V4.1 Flash 235→195 / 0.97→1.02; MiMo-V2.6-Pro 45→48 / 3.53→3.94; first speed/TTFT for MiMo-V2.6-Flash (63 / 3.20) and Ling 3.1 Flash (210 / 1.90); Kimi K3 35→44 / 4.01→3.18; GLM-5.3 69→67 / 3.49→3.32; Qwen3.8 Max 39→42 / 3.04→2.89."],
+  ["data","Ling 3.1 Flash: Vercel AI Gateway free trial ended 13 Oct. Ant has not published post-trial list prices; OpenRouter still shows $0; Artificial Analysis still lists $0.30/$0.90."],
+  ["feature","Pareto frontier on the Charts tab, as Artificial Analysis draws on its Intelligence vs Cost per Task chart. A line joins the models that no cheaper model in view matches or beats (or, on the speed chart, no faster one), and the models on it are listed under each chart. It follows the axis and filter choices."]]},
  {d:"12 Oct 2026", items:[
   ["add","Muse Wonder and Muse Wonder Full (Meta, 12 Oct). Artificial Analysis scores Wonder Full 56 at max (Muse Code only, no API price) and Wonder 52 for $4.52 per index task at $4/$20 list ($0.20 cached) — 85 tok/s, 37.41 s TTFT, 1M context. Muse Spark 1.3 moved to legacy."],
   ["move","Muse Spark 1.3 → legacy after Muse Wonder."],
