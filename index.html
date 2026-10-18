@@ -467,8 +467,8 @@ details.changes summary b{color:var(--ink);font-weight:600}
    whichever models have a score.  Check with: node scripts/check-data.mjs
    ========================================================================= */
 
-const ASOF = "16 Oct 2026";
-const ASOF_NOTE = "16 Oct 2026: Step 5 Preview and Ling 3.1 Flash open weights; Arena text to 15 Oct and WebDev to 16 Oct; Mistral Large 4 still on 50% launch pricing with weights due end of October.";
+const ASOF = "17 Oct 2026";
+const ASOF_NOTE = "17 Oct 2026: DeepSeek V4.1 Flash 1017 added with DeepSeek-reported scores only (no independent results yet). 16 Oct 2026: Step 5 Preview and Ling 3.1 Flash open weights; Arena text to 15 Oct and WebDev to 16 Oct; Mistral Large 4 still on 50% launch pricing with weights due end of October.";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
@@ -488,7 +488,7 @@ const BENCH = {
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"14 Oct 2026",
     d:"Seconds to the first answer token, at the same effort level as the Index score. For reasoning models on high effort this includes thinking time, which is why the heavy tiers run to minutes. The Effort levels detail on each model shows how much faster the lower settings respond."},
   ctx:{l:"Context window",s:"Context",g:"speed",f:"ctx",hi:1,
-    src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"12 Oct 2026",
+    src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"17 Oct 2026",
     d:"Maximum input tokens per provider documentation. A vendor-published spec rather than a measurement, so every row is marked vendor."},
 
   swebv:{arch:"Saturated — seven models above 95% and the labs stopped reporting it.",l:"SWE-bench Verified",s:"SWE-V",g:"coding",f:"pct",hi:1,col:1,
@@ -535,7 +535,7 @@ const BENCH = {
     warn:"Four months stale. No frontier model released since April 2026 has a published horizon."},
 
   tb40:{l:"Terminal-Bench 4.0",s:"TB 4.0",g:"coding",f:"pct",hi:1,col:1,
-    src:"Vendor comparison tables",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"7 Oct 2026",
+    src:"Vendor comparison tables",url:"https://www.anthropic.com/claude-fable-and-mythos-5-1",asof:"17 Oct 2026",
     d:"The current Terminal-Bench generation, released 28 Aug 2026 with an eight-hour agent timeout and the saturated tasks removed. Anthropic published the first cross-vendor table four days later; the official leaderboard is still empty.",
     warn:"Every row is vendor-run, and several vendors now publish it. They agree closely on shared models — Claude Opus 5 is 52.3% from Anthropic, 51.8% from DeepSeek and 49.0% from Xiaomi — with one exception: xAI's Grok 4.7 chart gives Fable 5.1 57.9%, the figure everyone else assigns GPT-6 Astra. Mythos 5.1 scores 60.9% against Fable 5.1's 55.8%, so about five points is refusal behaviour, not capability."},
   tbsci:{l:"Terminal-Bench Science 0.1",s:"TB-Sci",g:"agentic",f:"pct",hi:1,col:1,
@@ -558,7 +558,7 @@ const BENCH = {
     warn:"Anthropic-run, and a different metric from the partial-credit OSWorld 2.0 column. Do not read the two side by side."},
 
   deepswe:{l:"DeepSWE v1.1",s:"DeepSWE",g:"coding",f:"pct",hi:1,col:1,
-    src:"Vendor comparison tables",url:"https://openai.com/index/gpt-6-astra/",asof:"6 Oct 2026",
+    src:"Vendor comparison tables",url:"https://openai.com/index/gpt-6-astra/",asof:"17 Oct 2026",
     d:"Long-horizon software engineering. The most widely-published vendor benchmark on the board — most labs now report it, and they agree within about a point on shared models (Claude Opus 5: 73.7 from OpenAI, 74.0 from DeepSeek and Xiaomi). Every row is still vendor-run.",
     warn:"Still vendor-run in every row. No independent evaluator has published DeepSWE numbers."},
   frontiercode:{l:"FrontierCode 1.1 (main)",s:"FrontCode",g:"coding",f:"pct",hi:1,
@@ -594,7 +594,7 @@ const BENCH = {
     warn:"Vendor-run. Not comparable with the GDPval-AA v2 column."},
 
   hle:{l:"Humanity's Last Exam",s:"HLE",g:"reasoning",f:"pct",hi:1,col:1,
-    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"12 Oct 2026",
+    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"17 Oct 2026",
     d:"Expert-written questions across 100+ subjects, no tools. Scores here are without tool use; with search and code execution most models gain 10–15 points.",
     warn:"The official leaderboard at lastexam.ai is abandoned — it still tops out at Gemini 3 Pro on 38.3%. Scale AI is five months behind. Only Artificial Analysis covers the current frontier."},
   gpqa:{l:"GPQA Diamond",s:"GPQA",g:"reasoning",f:"pct",hi:1,col:1,
@@ -825,6 +825,11 @@ const MODELS = [
  s:{matharena:[43.4,"ind","max effort"],arc2:[72.9,"ind"],arc1:[94.5,"ind"],tau2air:[76.8,"ind"],aaii:[39,"ind"],price:[0.18,"ind"],costTask:[0.27,"ind"],speed:[185,"ind"],ttft:[1.04,"ind"],ctx:[1000000,"ven"],
     tb40:[31.2,"ven"],tb30:[30.0,"ven"],tb21:[74.53,"ind","Vals AI — DeepSeek reports 90.6%"],deepswe:[74.2,"ven"],exploitgym:[15.3,"ven"],
     gpqa:[90.9,"ven"],hle:[39.3,"ind","Artificial Analysis — DeepSeek reports 36.8%"],lmarena:[1475,"ind"],webdev:[1619,"ind"],arc3:[0.85,"ind","standard harness — 3.26% with the Provider Adapter (low effort)"],weirdml:[5.83,"ind","high effort, Codex CLI via Novita — 5.95% in OpenCode"],weirdmlCost:[0.512,"ind","$0.737 in OpenCode"]}},
+
+{name:"DeepSeek V4.1 Flash 1017", prov:"DeepSeek", tier:"challenger", open:true, rel:"2026-10-17",
+ note:"Announced by DeepSeek on 17 Oct with MIT-licensed open weights on Hugging Face (deepseek-ai/DeepSeek-V4.1-Flash-1017). 763B parameters, 1M context. OpenRouter ID deepseek/deepseek-v4.1-flash-1017 at $0.15/$0.60 per 1M. Every score here is DeepSeek's own; Artificial Analysis and Arena had not listed it as of 17 Oct.",
+ s:{ctx:[1000000,"ven","DeepSeek announcement, 17 Oct"],
+    hle:[42.6,"ven","DeepSeek-reported, no tools (17 Oct announcement)"],tb40:[42.3,"ven","DeepSeek-reported (17 Oct announcement)"],deepswe:[77.0,"ven","DeepSeek-reported (17 Oct announcement)"]}},
 
 {name:"Step 5 Preview", prov:"StepFun", tier:"challenger", open:true, rel:"2026-09-20",
  note:"Open weights published 15 Oct on Hugging Face under the StepFun Model License 1.0 (Apache-2.0-style with attribution and commercial-license conditions — not plain Apache). 600B total / 27B active, listed at $1.00/$2.70 per 1M. An Index score of 44 puts it level with Kimi K3 and Grok 4.6. Artificial Analysis lists it at 54 cents blended and $1.03 per index task.",
@@ -1097,6 +1102,7 @@ const PRICES = {
  "Qwen3.8 Flash Next":{in:0.15,out:0.47,cr:null,note:""},
  "Qwen3.8 27B":{in:0.50,out:3.00,cr:null,note:"Open weights — free to self-host."},
  "DeepSeek V4.1 Flash":{in:0.30,out:1.20,cr:0.006,note:"Peak-hour price. Off-peak $0.15/$0.60 (cache $0.003)."},
+ "DeepSeek V4.1 Flash 1017":{in:0.15,out:0.60,cr:null,note:"OpenRouter listing (deepseek/deepseek-v4.1-flash-1017), 17 Oct. Cache-read price not published."},
  "DeepSeek V4 Pro":{in:1.32,out:3.96,cr:null,note:"Peak-hour price. Off-peak $0.66/$1.98."},
  "MiMo-V2.6-Pro":{in:0.435,out:0.87,cr:0.0036,note:"Open weights, MIT."},
  "MiMo-V2.6-Flash":{in:0.14,out:0.28,cr:0.0028,note:"Open weights, MIT."},
@@ -1117,6 +1123,8 @@ const PRICES = {
 
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
+ {d:"17 Oct 2026", items:[
+  ["add","DeepSeek V4.1 Flash 1017 (released 17 Oct; MIT open weights, 763B parameters, 1M context). DeepSeek-reported only, all marked vendor: HLE (no tools) 42.6%, Terminal-Bench 4.0 42.3%, DeepSWE 77.0%. OpenRouter $0.15/$0.60 per 1M. No Artificial Analysis or Arena results yet, so no Index, blended price, speed or effort rows. DeepSeek's NL2Repo figure is not shown because the board has no NL2Repo column."]]},
  {d:"16 Oct 2026", items:[
   ["data","Step 5 Preview open weights published 15 Oct on Hugging Face under StepFun Model License 1.0 (Apache-2.0-style with attribution and commercial-license conditions). Marked open:true."],
   ["data","Ling 3.1 Flash open weights published mid-Oct on Hugging Face under MIT. Marked open:true. Ant's hosted API still serves 256K of the designed 1M context; list $0.30/$0.90 with 75% promo unchanged."],
