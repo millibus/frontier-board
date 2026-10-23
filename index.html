@@ -468,15 +468,15 @@ details.changes summary b{color:var(--ink);font-weight:600}
    ========================================================================= */
 
 const ASOF = "23 Oct 2026";
-const ASOF_NOTE = "23 Oct 2026: Full audit. GPT-6.1 Sol gains OpenAI's launch-chart and system-card figures plus Vals AI's Terminal-Bench 4.0 and Science runs. Terminal-Bench 4.0 and Science now come from Vals AI's independent runs, with vendor figures in the notes. Blanks filled from Vals AI (SWE-bench Verified, Terminal-Bench 2.1, GPQA), ARC Prize, Arena, OpenRouter τ²-bench and METR; Artificial Analysis speed and TTFT refreshed.";
+const ASOF_NOTE = "23 Oct 2026: Full audit. GPT-6.1 Sol gains OpenAI's launch-chart and system-card figures plus Vals AI's Terminal-Bench 4.0 and Science runs. Terminal-Bench 4.0 and Science now come from Vals AI's independent runs, with vendor figures in the notes. Blanks filled from Vals AI (SWE-bench Verified, Terminal-Bench 2.1, GPQA), ARC Prize, Arena, OpenRouter τ²-bench and METR; Artificial Analysis speed and TTFT refreshed. Added Kimi K3.1 Pro, Ember-1 and Qwen3.8 2.4T A95B.";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"22 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"23 Oct 2026",
     d:"Composite of ten evals — AA-Briefcase v1.1, GDPval-AA v2.1, AutomationBench-AA, Terminal-Bench 4.0, SciCode, HLE, GDP.pdf, CritPt, AA-Omniscience and AA-LCR v1.1. Version 4.3.2. Each model's highest-effort configuration is shown.",
     warn:"Rescaled on 7 Sep. Version 4.3 swapped τ³-Banking for AutomationBench and Terminal-Bench 2.1 for 4.0, and every score dropped — Claude Fable 5.1 went from 66 to 53 with no change to the model. Only models Artificial Analysis has re-run on v4.3.2 carry a score here; anything only ever measured on the old version shows a dash rather than a number on a different scale."},
   price:{l:"Blended price",s:"$/1M",g:"headline",f:"usd2",hi:0,col:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"22 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
     d:"Dollars per million tokens, blended 7:2:1 across cache-hit, input and output. That weighting is why some blended rates sit below the model's own input rate."},
   costTask:{l:"Cost per index task",s:"$/task",g:"headline",f:"usd2",hi:0,
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/leaderboards/models",asof:"23 Oct 2026",
@@ -488,7 +488,7 @@ const BENCH = {
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
     d:"Seconds to the first answer token, at the same effort level as the Index score. For reasoning models on high effort this includes thinking time, which is why the heavy tiers run to minutes. The Effort levels detail on each model shows how much faster the lower settings respond."},
   ctx:{l:"Context window",s:"Context",g:"speed",f:"ctx",hi:1,
-    src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"21 Oct 2026",
+    src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
     d:"Maximum input tokens per provider documentation. A vendor-published spec rather than a measurement, so every row is marked vendor."},
 
   swebv:{arch:"Saturated — seven models at or above 95%, the labs stopped reporting it, and Vals AI stopped running it on new models after 1 Sep 2026.",l:"SWE-bench Verified",s:"SWE-V",g:"coding",f:"pct",hi:1,col:1,
@@ -559,7 +559,7 @@ const BENCH = {
     warn:"Anthropic-run, and a different metric from the partial-credit OSWorld 2.0 column. Do not read the two side by side."},
 
   deepswe:{l:"DeepSWE v1.1",s:"DeepSWE",g:"coding",f:"pct",hi:1,col:1,
-    src:"Vendor comparison tables",url:"https://openai.com/index/gpt-6-astra/",asof:"19 Oct 2026",
+    src:"Vendor comparison tables",url:"https://openai.com/index/gpt-6-astra/",asof:"23 Oct 2026",
     d:"Long-horizon software engineering. The most widely-published vendor benchmark on the board — most labs now report it, and they agree within about a point on shared models (Claude Opus 5: 73.7 from OpenAI, 74.0 from DeepSeek and Xiaomi). Every row is still vendor-run.",
     warn:"Still vendor-run in every row. No independent evaluator has published DeepSWE numbers."},
   frontiercode:{l:"FrontierCode 1.1 (main)",s:"FrontCode",g:"coding",f:"pct",hi:1,
@@ -596,11 +596,11 @@ const BENCH = {
     warn:"Vendor-run. Not comparable with the GDPval-AA v2 column."},
 
   hle:{l:"Humanity's Last Exam",s:"HLE",g:"reasoning",f:"pct",hi:1,col:1,
-    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"22 Oct 2026",
+    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"23 Oct 2026",
     d:"Expert-written questions across 100+ subjects, no tools. Scores here are without tool use; with search and code execution most models gain 10–15 points.",
     warn:"The official leaderboard at lastexam.ai is abandoned — it still tops out at Gemini 3 Pro on 38.3%. Scale AI is five months behind. Only Artificial Analysis covers the current frontier."},
   gpqa:{l:"GPQA Diamond",s:"GPQA",g:"reasoning",f:"pct",hi:1,col:1,
-    src:"Artificial Analysis / Vals AI",url:"https://www.vals.ai/benchmarks/gpqa",asof:"16 Oct 2026 · older rows Aug–Sep",
+    src:"Artificial Analysis / Vals AI",url:"https://www.vals.ai/benchmarks/gpqa",asof:"23 Oct 2026 · Vals AI 16 Oct, older rows Aug–Sep",
     d:"Graduate-level physics, chemistry and biology written to be Google-proof.",
     warn:"Scoring methods diverge. Vals AI found Claude Fable 5's published 93.18% counts refusal-triggered fallbacks as successes; scored strictly it is 55.56%. Cross-vendor GPQA figures are probably not comparable."},
   arc1:{arch:"Saturated — the flagships score 95–99%. Claude Haiku 5.5 reaches 89%, and Grok 4.7 and GPT-6 Luna score 90.2% and 86.7%.",l:"ARC-AGI-1",s:"ARC-1",g:"reasoning",f:"pct",hi:1,
@@ -867,6 +867,16 @@ const MODELS = [
  note:"309B total / 15B active, MIT, listed at $0.14/$0.28. Artificial Analysis scores it 38 for six cents per index task, level with Mistral Large 4 at about a twentieth of the cost.",
  s:{tb21:[76.40,"ind","Vals AI"],webdev:[1635,"ind"],hle:[35.1,"ind","Artificial Analysis"],price:[0.06,"ind"],costTask:[0.06,"ind"],aaii:[38,"ind"],speed:[60,"ind"],ttft:[4.19,"ind"],tau2air:[78.7,"ind"],ctx:[1000000,"ven"],tb40:[24.24,"ind","Vals AI — vendor-reported 28.8%"],deepswe:[67.9,"ven"],exploitgym:[6.0,"ven"],lmarena:[1448,"ind"],tbsci:[4.29,"ind","Vals AI"],osworld:[80.8,"ven","Xiaomi-reported, via Steel"]}},
 
+{name:"Kimi K3.1 Pro", prov:"Moonshot AI", tier:"challenger", open:false, rel:"2026-10-23",
+ note:"Kimi K3 post-trained with far more reinforcement-learning compute; 2.8T total / 104B active per Artificial Analysis, 1M context, text and image input. An Index score of 55, eleven points above Kimi K3 and fourth on the board. Moonshot says full weights will be released by 4 Nov 2026, so it is listed as proprietary until they ship. Not yet in Vals AI's Terminal-Bench runs, and Arena's WebDev snapshot that lists it predates the launch.",
+ s:{aaii:[55,"ind"],price:[1.54,"ind"],costTask:[2.11,"ind"],speed:[77,"ind"],ttft:[3.08,"ind"],ctx:[1000000,"ven"],
+    hle:[52.5,"ind","Artificial Analysis — Moonshot reports 51.1%"],gpqa:[94.2,"ven","Moonshot-reported"],deepswe:[75.5,"ven","Moonshot-reported, Claude Code harness"]}},
+
+{name:"Ember-1", prov:"Fireworks AI", tier:"challenger", open:false, rel:"2026-09-23",
+ note:"Fireworks' own post-train of Kimi K3, tuned to keep K3's quality with about 40% fewer reasoning tokens (Fireworks' figure). A research preview on Fireworks serverless; weights not released. Not yet on Artificial Analysis or Arena. Vals AI's Terminal-Bench 4.0 run scores it 20.71%, against 17.17% for Kimi K3.",
+ s:{tb40:[20.71,"ind","Vals AI"],tbsci:[5.71,"ind","Vals AI"],deepswe:[75.2,"ven","Fireworks-reported — its own Kimi K3 max run scores 66.4%"],
+    price:[2.31,"ven","computed by the board from Fireworks list prices at Artificial Analysis's 7:2:1 weighting"],ctx:[1048576,"ven"]}},
+
 {name:"Kimi K3", prov:"Moonshot AI", tier:"challenger", open:true, rel:"2026-07-16",
  note:"2.8T-parameter open-weight MoE. An Index score of 44, two points behind MiMo-V2.6-Pro, the highest-scoring open-weights model on the board, and one behind GLM-5.3.",
  s:{tb21:[80.90,"ind","Vals AI"],tau2air:[72.8,"ind"],tb30:[17.7,"ven"],tb40:[17.17,"ind","Vals AI — vendor-reported 12.6%"],deepswe:[67.5,"ven"],aaii:[44,"ind"],price:[2.31,"ind"],costTask:[2.0,"ind"],speed:[38,"ind"],ttft:[3.61,"ind"],ctx:[1050000,"ven"],
@@ -879,9 +889,13 @@ const MODELS = [
     tau2air:[77.5,"ind"],lmarena:[1481,"ind"],webdev:[1623,"ind"],tbsci:[5.71,"ind","Vals AI"],swebv:[95.4,"ind","Vals AI"]}},
 
 {name:"Qwen3.8 Max", prov:"Alibaba", tier:"challenger", open:false, rel:"2026-08-03",
- note:"2.4T total / 95B active. The Index score is the 2 Sep snapshot (0902), which Artificial Analysis rates at 45; the WebDev and text Arena scores are the original August release, still on the board separately. Held the τ³-Banking lead before Artificial Analysis dropped that benchmark from its index.",
+ note:"2.4T total / 95B active. The Index score is the 2 Sep snapshot (0902), which Artificial Analysis rates at 45; the WebDev and text Arena scores are the original August release, still on the board separately. Held the τ³-Banking lead before Artificial Analysis dropped that benchmark from its index. The open weights it is based on are listed separately as Qwen3.8 2.4T A95B.",
  s:{matharena:[51.6,"ind","original August release"],tb21:[67.42,"ind","Vals AI"],hle:[43.1,"ind","Artificial Analysis"],aaii:[45,"ind"],price:[1.18,"ind"],costTask:[5.41,"ind"],speed:[42,"ind"],ttft:[3.02,"ind"],ctx:[1000000,"ven"],
     tau3bank:[55.2,"ind"],lmarena:[1483,"ind"],webdev:[1673,"ind","preliminary"],tb40:[34.34,"ind","Vals AI, original release — the 0902 checkpoint scores 38.89%"],tbsci:[12.86,"ind","Vals AI"],swebv:[85.6,"ind","Vals AI"],gpqa:[93.69,"ind","Vals AI"],osworld:[86.1,"ven","Alibaba-reported, via Steel"]}},
+
+{name:"Qwen3.8 2.4T A95B", prov:"Alibaba", tier:"challenger", open:true, rel:"2026-08-12",
+ note:"The open-weight checkpoint behind Qwen3.8 Max: 2.4T total / 95B active, text only, under the Qwen3.8-Max License, with 262K native context (extensible to about 1M). Alibaba's API version adds vision input and a 1M default context. Artificial Analysis rates this checkpoint at 40, five below Qwen3.8 Max (0902).",
+ s:{aaii:[40,"ind"],price:[1.18,"ind"],costTask:[2.16,"ind"],speed:[42,"ind"],ttft:[2.98,"ind"],ctx:[262144,"ven"],tau2air:[75.6,"ind"]}},
 
 {name:"GLM-5.3-Flash", prov:"Z.ai", tier:"challenger", open:true, rel:"2026-08-26",
  note:"321B open weights. An Index score of 42 for ten cents blended, three points behind the full GLM-5.3 at a ninth of the price. Z.ai ran 50% off through 9 Sep 2026.",
@@ -1083,7 +1097,9 @@ const EFFORT = {
  "GLM-5.3":[["max",45,2.01,85,3],["low",34,0.85,90,3.16]],
  "DeepSeek V4.1 Flash 1017":[["max",45,0.26,198,1.09]],
  "Grok 4.6":[["xhigh",44,1.75,77,29.88],["high",44,1.48,82,26.74],["medium",43,1.14,76,25.80],["low",35,0.38,69,7.27]],
+ "Qwen3.8 2.4T A95B":[["default",40,2.16,42,2.98]],
  "Mistral Large 4":[["default",38,1.13,93,3.14]],
+ "Kimi K3.1 Pro":[["default",55,2.11,77,3.08]],
  "Kimi K3":[["max",44,2.00,38,3.61],["low",30,1.15,37,3.68]],
  "GPT-5.6 Terra":[["max",42,1.4,124,91.62],["xhigh",38,0.63,107,7.49],["high",34,0.34,103,2.03],["medium",30,0.18,109,1.57],["low",27,0.14,108,1.39],["none",21,0.14,114,0.72]],
  "Gemini 3.8 Flash":[["high",41,1.24,141,24.31],["medium",40,0.93,null,null],["low",33,null,null,null]],
@@ -1125,10 +1141,13 @@ const PRICES = {
  "Claude Sonnet 5":{in:2,out:10,cr:null,note:""},
  "Claude Haiku 4.5":{in:1,out:5,cr:null,note:""},
  "GPT-5.3 Codex":{in:1.75,out:14,cr:null,note:""},
+ "Kimi K3.1 Pro":{in:2,out:10,cr:0.20,note:"Kimi API. Cache writes $2. The Highspeed variant, 2–3× faster, is $4/$20."},
  "Kimi K3":{in:3,out:15,cr:0.30,note:""},
+ "Ember-1":{in:3,out:15,cr:0.30,note:"Fireworks serverless research-preview rate, the same as Kimi K3."},
  "GLM-5.3":{in:1.40,out:4.40,cr:null,note:""},
  "GLM-5.3-Flash":{in:0.15,out:0.50,cr:null,note:"Z.ai ran 50% off through 9 Sep."},
  "Qwen3.8 Max":{in:2,out:6,cr:null,note:""},
+ "Qwen3.8 2.4T A95B":{in:2,out:6,cr:null,note:"As listed by Artificial Analysis. Open weights — free to self-host."},
  "Qwen3.8 Flash Next":{in:0.15,out:0.47,cr:null,note:""},
  "Qwen3.8 27B":{in:0.50,out:3.00,cr:null,note:"Open weights — free to self-host."},
  "DeepSeek V4.1 Flash":{in:0.30,out:1.20,cr:0.006,note:"Peak-hour price. Off-peak $0.15/$0.60 (cache $0.003)."},
@@ -1158,6 +1177,9 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"23 Oct 2026", items:[
+  ["add", "Kimi K3.1 Pro (Moonshot AI, 23 Oct): Kimi K3 with much larger post-training, 2.8T total / 104B active, 1M context, $2/$10 list ($0.20 cache hit). Weights promised by 4 Nov, so marked proprietary for now. Artificial Analysis scores it 55, fourth on the board, for $2.11 per index task at $1.54 blended, 77 tok/s and a 3.08 s first token; HLE 52.5% (Moonshot reports 51.1%). Moonshot's table: DeepSWE 75.5% and GPQA Diamond 94.2%."],
+  ["add", "Ember-1 (Fireworks AI, 23 Sep): a research-preview post-train of Kimi K3 on Fireworks serverless, $3/$15 ($0.30 cached), 1M context, weights not released. Vals AI: Terminal-Bench 4.0 20.71% and Terminal-Bench Science 5.71%. Fireworks reports DeepSWE 75.2%. Blended price $2.31 computed by the board from list prices (not on Artificial Analysis)."],
+  ["add", "Qwen3.8 2.4T A95B (Alibaba, 12 Aug): the open-weight checkpoint behind Qwen3.8 Max, 2.4T total / 95B active, 262K native context, text only. Artificial Analysis scores it 40 for $2.16 per index task at $1.18 blended, 42 tok/s and a 2.98 s first token. OpenRouter τ²-bench Airline 75.6%."],
   ["data", "Full audit of every model and column; 273 blank cells filled and 196 existing scores updated, each from the source named below."],
   ["data", "GPT-6.1 Sol. OpenAI's 29 Sep launch charts (read from the chart data): DeepSWE 75.2% at high effort (71.9% at max), AutomationBench 36.1%, OSWorld 2.0 offline set 71.4%, all vendor-run. Its system card: HealthBench Professional 64.2% (length-adjusted) and ExploitGym 35.1%. Vals AI: Terminal-Bench 4.0 55.05% and Terminal-Bench Science 52.86% (OpenAI reports 57.0%). Arena text 1479→1480 (8,305 votes); ARC-AGI-2 cost $0.25 per task at max. Artificial Analysis speed 55→54 tok/s and TTFT 248.29→236.01 s at max; xhigh TTFT 81.96→76.57 s, high 49→51 tok/s, medium 47→48 tok/s and 4.41→4.02 s, low 45→48 tok/s and 2.60→1.99 s. Its note no longer says OpenAI publishes no numbers."],
   ["data", "Other OpenAI vendor rows from the 22 and 29 Sep posts and the GPT-6.1 Sol system card: GPT-6 Sol OSWorld 2.0 64.4%, HealthBench 60.8%, ExploitGym 22.1%; GPT-6 Luna AutomationBench 20.7%, ALE 50.9%, OSWorld 2.0 52.7%, HealthBench 60.8%, ExploitGym 11.6%; GPT-5.6 Luna AutomationBench 17.0%, ALE 50.4%, FrontierCode 39.8%, DeepSWE 62.2%, OSWorld 2.0 52.7%, HealthBench 55.7%; HealthBench for GPT-5.6 Terra 57.7% and GPT-5.5 51.8%. Revised: GPT-6 Astra OSWorld 2.0 72.6→73.5% and HealthBench 63.4→64.7% (length-adjusted, system card); GPT-5.6 Sol OSWorld 2.0 65.7→66.2%."],
@@ -1777,7 +1799,7 @@ const CAVEATS=[
  ["Benchmark versions are not comparable","Terminal-Bench 2.1 sits near 85% where 3.0 sits near 35% for the same tier of model. ARC-AGI-2 cost per task is not ARC-AGI-1 cost per task. Never read across a version boundary."],
  ["Two different price columns exist","Artificial Analysis publishes blended dollars per million tokens on each model's page and dollars per index task on the leaderboard. Claude Sonnet 5.5 is $1.47 by the first and $5.46 by the second; GPT-6.1 Sol is $1.47 and $0.72. Same $2/$10 list price and the same blended rate, but a more than sevenfold gap per task, because Sonnet thinks far longer at max effort. Both columns are on this board; they answer different questions."],
  ["Saturation is quietly breaking three benchmarks","SWE-bench Verified has seven models above 95%. τ²-bench Airline puts Amazon Nova Micro at 78.0%, about two points below the best score of 80.2%. GPQA is at 95%. When a benchmark compresses, small gaps at the high end stop meaning anything."],
- ["The newest rows are thin, and it shows","MiniMax M3.1 Flash (19 Oct) has Artificial Analysis, Vals AI's Terminal-Bench 4.0 and a preliminary WebDev Elo of 1589 on 2,212 votes against 923,854 board-wide. DeepSeek V4.1 Flash 1017 (17 Oct) has Artificial Analysis, WeirdML, Vals AI and a WebDev Elo of 1665 on 2,500 votes, but no Arena text score. Claude Haiku 5.5 (7 Oct) now has Artificial Analysis, ARC Prize, Vals AI, both Arenas and OpenRouter τ²-Airline at 76.0%; GDPval-AA v2.1 and FrontierCode are still Anthropic's own table. Gemini 4 Argon's Arena text and WebDev scores are both flagged preliminary. These rows can still move as Arena votes accumulate and other evaluators catch up."],
+ ["The newest rows are thin, and it shows","Kimi K3.1 Pro (23 Oct) has only Artificial Analysis and Moonshot's own table so far — no Vals AI run and no Arena score dated after its launch. MiniMax M3.1 Flash (19 Oct) has Artificial Analysis, Vals AI's Terminal-Bench 4.0 and a preliminary WebDev Elo of 1589 on 2,212 votes against 923,854 board-wide. DeepSeek V4.1 Flash 1017 (17 Oct) has Artificial Analysis, WeirdML, Vals AI and a WebDev Elo of 1665 on 2,500 votes, but no Arena text score. Claude Haiku 5.5 (7 Oct) now has Artificial Analysis, ARC Prize, Vals AI, both Arenas and OpenRouter τ²-Airline at 76.0%; GDPval-AA v2.1 and FrontierCode are still Anthropic's own table. Gemini 4 Argon's Arena text and WebDev scores are both flagged preliminary. These rows can still move as Arena votes accumulate and other evaluators catch up."],
  ["The Intelligence Index changed underneath the board","Artificial Analysis moved from v4.1.1 to v4.3.2 in September, and every model's score fell by eight to fifteen points — not because the models got worse but because the test got harder. Scores from the two versions cannot share a column, so the whole column was replaced, and older models Artificial Analysis never re-ran now show a dash. If you compare a number here against a screenshot from August, it will look like a collapse. It isn't."],
  ["The default view hides superseded models","Opus 5, Fable 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash and others moved to Previous gen when their replacements shipped. Turn on the Previous gen chip to bring them back — useful when a new model's vendor table only compares against the old generation."],
  ["Three labs launched inside four days","Claude Fable 5.1 on 1 Sep, Gemini 3.8 Flash and Muse Spark 1.3 on 2 Sep, GPT-6 Astra on 3 Sep. Most of the newest columns exist because each lab published a table benchmarking its rivals. Where those tables overlap they mostly agree — Terminal-Bench 4.0 matched exactly across OpenAI and Anthropic — which was the best available evidence that the numbers were being run honestly. Vals AI's independent Terminal-Bench 4.0 run, now on the board, lands within a few points of most vendor figures but well below some, such as Claude Sonnet 5.5 (64.14% against Anthropic's 70.6%)."],
