@@ -1192,7 +1192,8 @@ const CHANGELOG = [
   ["data", "Artificial Analysis speed, TTFT and cost per task re-read for every listed model and effort level; index scores unchanged. Notable: Step 5 Preview 95→220 tok/s, GPT-6 Luna max 122→136 tok/s and 95.73→64.91 s, Claude Fable 5.1 max TTFT 243.07→164.48 s, Mistral Large 4 78→93 tok/s, Muse Wonder $4.52→$4.54 per task, Mercury 2.5 802→742 tok/s."],
   ["data", "OpenRouter τ²-bench Airline: 21 blanks filled (e.g. Claude Opus 4.8 76.9%, GPT-5.6 Sol 74.7%, GPT-5.5 75.1%, MiniMax M3.1 Flash 70.0% from a single run) and six revised — Muse Spark Open 72.7→72.0% (OpenRouter's headline, the median across three endpoints), DeepSeek V4.1 Flash 1017 76.7→76.3%, MiniMax M3 74.8→75.2%, Kimi K2.7 Code 73.4→73.3%, Gemma 4 31B 76.6→75.5%, gpt-oss-120b 64.7→65.0%."],
   ["data", "METR Time Horizon 1.1 (page frozen 8 Sep): Claude Opus 4.5 320→293 min, GPT-5 214→203 and o3 121→120 after METR's 3 Mar correction; Claude Sonnet 4.5 164→117 min, METR's Time Horizon 1.0 figure (116.5), since 1.1 doesn't list it and 164 isn't in METR's data; filled Claude Opus 4.6 719, Gemini 3.1 Pro 384, GPT-5.3 Codex 350, GPT-5.4 342 and Gemini 3 Pro 224. WeirdML v3 (20 Oct data): Gemini 4 Argon 20.22→20.10% and $17.84→$16.27 per run; four cost roundings corrected. OSWorld Verified via Steel: vendor-reported Qwen3.8 Max 86.1%, MiMo-V2.6-Pro 82.0% and MiMo-V2.6-Flash 80.8%."],
-  ["data", "Notes and caveats updated where they quoted changed numbers. Checked with no change: Artificial Analysis Intelligence Index and HLE, MathArena, Scale SWE-bench Pro, τ³-Banking."]]},
+  ["data", "Notes and caveats updated where they quoted changed numbers. Checked with no change: Artificial Analysis Intelligence Index and HLE, MathArena, Scale SWE-bench Pro, τ³-Banking."],
+  ["feature", "Benchmark bar charts no longer break (NaN widths, missing labels) when every visible score in a column is zero, e.g. when the search is filtered to Mercury 2.5 on Terminal-Bench 4.0 and Science."]]},
  {d:"22 Oct 2026", items:[
   ["add", "Ling 3.1 Flash 1019 (InclusionAI / Ant Ling, 22 Oct): an updated Ling 3.1 Flash checkpoint; API access and open weights are announced as coming, so it is marked proprietary for now. Artificial Analysis scores it 44 (Ling 3.1 Flash: 41) for $1.49 per index task, $0.19 blended at Ling 3.1 Flash's $0.30/$0.90 list price; HLE 43.5%. No speed or TTFT yet."],
   ["data", "ARC Prize. Claude Sonnet 5.5 verified (21 Oct): ARC-AGI-1 96.5% (xhigh and max), ARC-AGI-2 83.9% at xhigh for $0.55 per task, ARC-AGI-3 24.3% under the standard harness at xhigh (72.4% with the Provider Adapter); its note no longer says ARC Prize hasn't run it. New results also posted for DeepSeek V4.1 Flash 1017 (ARC-AGI-1 94.5% at high, ARC-AGI-2 78.1% at max), Muse Spark Open (89.0% / 57.5% at xhigh) and Nemotron 3.5 Super VL (22.7% at high / 1.9% at medium). Beam 1.0 gains its ARC-AGI-2 cost, $0.61 per task."],
@@ -1775,7 +1776,7 @@ function barSvg(d,k){
       <rect width="6" height="6" fill="var(--open)"/><rect width="2.6" height="6" fill="var(--surface)" opacity=".55"/></pattern>
     </defs>`;
   d.forEach((m,i)=>{
-    const v=val(m,k), q=qual(m,k), y=i*rowH+4, w=Math.max(2,v/max*iw);
+    const v=val(m,k), q=qual(m,k), y=i*rowH+4, w=max>0?Math.max(2,v/max*iw):2;
     const t=`<b>${esc(m.name)}</b><span class="tl"><span>${esc(B.l)}</span><span>${fmt(v,B.f)}</span></span>`
       +`<span class="tl"><span>Provenance</span><span>${QL[q]}</span></span>`
       +(m.s[k][2]?`<span class="tl"><span>Measured by</span><span>${esc(m.s[k][2])}</span></span>`:"")
