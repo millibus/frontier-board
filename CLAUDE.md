@@ -46,7 +46,7 @@ When a change goes through a pull request, the Codex review bot reviews it autom
 
 ```
 node scripts/check-data.mjs    # data consistency, no dependencies
-node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, header matches data
+node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, header matches data (CHROMIUM_PATH=/usr/bin/google-chrome on the box)
 ```
 
 - `check-data.mjs` fails on:
@@ -60,7 +60,7 @@ node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, he
   - a missing copyright line.
 
   It warns on speed claims in notes that differ from the measured speed.
-- `smoke.mjs` uses the pre-installed playwright and `/opt/pw-browsers/chromium`; do not run `playwright install`. It serves the repo over local HTTP and ignores blocked Google Fonts requests.
+- `smoke.mjs` uses the pre-installed playwright; do not run `playwright install`. It looks for `/opt/pw-browsers/chromium`, which doesn't exist on the shared box, so set `CHROMIUM_PATH` there: `CHROMIUM_PATH=/usr/bin/google-chrome node scripts/smoke.mjs`. It serves the repo over local HTTP and ignores blocked Google Fonts requests.
 - Both must pass. For visual changes, also screenshot the page in light and dark themes.
 
 ## Conventions
