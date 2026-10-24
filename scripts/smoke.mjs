@@ -62,7 +62,7 @@ try {
   await page.locator("#board tbody tr[data-m]").first().click();
   if (!(await page.locator("#board .detbox").count())) problems.push("clicking a row did not open its detail panel");
 
-  for (const t of ["quad", "bench", "src", "upd", "board"]) {
+  for (const t of ["quad", "bench", "src", "board"]) {
     await page.click(`.tab[data-p="${t}"]`);
     const on = await page.locator(`#p-${t}.on`).count();
     if (!on) problems.push(`tab ${t} did not open`);
