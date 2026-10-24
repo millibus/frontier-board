@@ -297,7 +297,6 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <button class="tab" role="tab" data-p="quad" aria-selected="false">Charts</button>
       <button class="tab" role="tab" data-p="bench" aria-selected="false">Benchmarks</button>
       <button class="tab" role="tab" data-p="src" aria-selected="false">Sources &amp; caveats</button>
-      <button class="tab" role="tab" data-p="upd" aria-selected="false">How to update</button>
     </nav>
   </div>
 </header>
@@ -421,29 +420,6 @@ details.changes summary b{color:var(--ink);font-weight:600}
     <div class="srcgrid" id="caveats" style="margin-bottom:26px"></div>
     <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Benchmark sources</h2>
     <div class="srcgrid" id="srclist"></div>
-  </section>
-
-  <section class="panel" id="p-upd">
-    <div class="prose">
-      <h2>Refreshing the board</h2>
-      <p>Ask Claude to update it — "add Gemini 4 to the board", "refresh the arena numbers", "Kimi K4 just shipped". It re-runs the research, edits the data blocks in this page's <code>index.html</code>, runs the checks, and pushes to <code>main</code>. GitHub Pages redeploys to this same URL, so the link never changes, and every earlier version stays in the repository's git history.</p>
-      <h2>What lives in the data block</h2>
-      <p>Everything on this page is driven by five blocks in the page's script. <code>BENCH</code> defines each benchmark — its label, source URL, source date, unit, and whether higher is better. <code>EFFORT</code> holds each model's reasoning-effort levels, <code>PRICES</code> its list prices, and <code>CHANGELOG</code> the history shown under What changed. <code>MODELS</code> is one entry per model:</p>
-      <ul>
-        <li><code>name</code>, <code>prov</code> (provider), <code>tier</code> (<code>frontier</code>, <code>challenger</code>, or <code>legacy</code>), <code>open</code> (true for open weights), <code>rel</code> (release date), <code>note</code>.</li>
-        <li><code>s</code> — the scores map. Each entry is <code>benchId: [value, quality, note]</code> where quality is <code>ind</code>, <code>ven</code>, or <code>unv</code> and the note (who measured it, which variant) is optional. Adding a benchmark to a model is one line; adding a whole benchmark means one <code>BENCH</code> entry plus the scores.</li>
-      </ul>
-      <h2>Checks before publishing</h2>
-      <p><code>node scripts/check-data.mjs</code> checks the data for consistency: score shapes, model names across blocks, source dates against release dates, and notes that quote an Index score the model no longer has. <code>node scripts/smoke.mjs</code> opens the page in headless Chromium and clicks through every tab.</p>
-      <h2>What to refresh, and how often</h2>
-      <ul>
-        <li><b>On a release</b> — the new model plus whatever it has on day one, which is usually vendor-run only. Independent numbers land one to three weeks later.</li>
-        <li><b>Monthly</b> — Arena Elo and Artificial Analysis move continuously; ARC Prize and WeirdML add models as they test them.</li>
-        <li><b>Rarely</b> — SWE-bench Pro and METR update in bursts and are currently months behind the frontier.</li>
-      </ul>
-      <h2>Where the gaps are right now</h2>
-      <p>Six benchmark pages render entirely in JavaScript and return nothing to a plain fetch: the official SWE-bench board, Terminal-Bench's own leaderboard, OSWorld, LiveCodeBench, Epoch AI's dashboards, and the ARC Prize leaderboard. Their data here came from mirrors, per-model result pages, or independent re-runs. Reading them directly needs a headless browser — worth adding if you want this to refresh itself on a schedule rather than on request.</p>
-    </div>
   </section>
 </main>
 <footer class="foot">
@@ -1177,6 +1153,7 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"23 Oct 2026", items:[
+  ["feature", "Removed the How to update tab. The board, Charts, Benchmarks and Sources & caveats tabs are unchanged."],
   ["add", "Kimi K3.1 Pro (Moonshot AI, 23 Oct): Kimi K3 with much larger post-training, 2.8T total / 104B active, 1M context, $2/$10 list ($0.20 cache hit). Weights promised by 4 Nov, so marked proprietary for now. Artificial Analysis scores it 55, fourth on the board, for $2.11 per index task at $1.54 blended, 77 tok/s and a 3.08 s first token; HLE 52.5% (Moonshot reports 51.1%). Moonshot's table: DeepSWE 75.5% and GPQA Diamond 94.2%."],
   ["add", "Ember-1 (Fireworks AI, 23 Sep): a research-preview post-train of Kimi K3 on Fireworks serverless, $3/$15 ($0.30 cached), 1M context, weights not released. Vals AI: Terminal-Bench 4.0 20.71% and Terminal-Bench Science 5.71%. Fireworks reports DeepSWE 75.2%. Blended price $2.31 computed by the board from list prices (not on Artificial Analysis)."],
   ["add", "Qwen3.8 2.4T A95B (Alibaba, 12 Aug): the open-weight checkpoint behind Qwen3.8 Max, 2.4T total / 95B active, 262K native context, text only. Artificial Analysis scores it 40 for $2.16 per index task at $1.18 blended, 42 tok/s and a 2.98 s first token; HLE 42.4%. List price $2/$6 with $0.25 cache reads. OpenRouter τ²-bench Airline 75.6%."],
