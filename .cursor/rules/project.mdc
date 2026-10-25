@@ -1,0 +1,24 @@
+---
+description: frontier-board - single-page LLM benchmark aggregator (index.html only, GitHub Pages from main)
+alwaysApply: true
+---
+# frontier-board
+
+Single-page LLM benchmark aggregator. Everything the site serves is in `index.html` (HTML, CSS, JS and the BENCH / MODELS / EFFORT / PRICES / CHANGELOG data blocks). No build step, no dependencies; `.nojekyll` must stay. `CLAUDE.md` defines the data formats, quality tags (`ind` / `ven` / `unv`) and update checklist; follow it.
+
+## Local checks
+- `node scripts/check-data.mjs` - validates the data blocks (no dependencies). Run it before every PR.
+- `node scripts/smoke.mjs` - loads the page in headless Chromium and clicks every tab (needs playwright or playwright-core).
+- Preview: open `index.html` in a browser or serve the folder with any static server.
+
+## Deploys: never
+- GitHub Pages publishes `main` (root), so merging is deploying. Agents must never push to `main` or deploy; CLAUDE.md's "commit and push to `main`" step does not apply to agents - open a draft PR instead. Deploys, merges and DNS changes need potac's explicit OK.
+
+## Branches and PRs
+- Small, focused draft PRs from a feature branch; never merge or close PRs. Keep `check-data.mjs` passing.
+
+## How to work
+- Reproduce a data or rendering bug before fixing it. Reuse and delete before adding.
+- Every score needs a source; vendor numbers are always `ven`. Never invent or estimate a benchmark value. Keep `ASOF` equal to the newest CHANGELOG date.
+- Never commit secrets or print them.
+- No personal names in code, data notes or commits (benchmark authors' names in source credits are fine).
