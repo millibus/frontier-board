@@ -465,27 +465,27 @@ details.changes summary b{color:var(--ink);font-weight:600}
    ========================================================================= */
 
 const ASOF = "27 Oct 2026";
-const ASOF_NOTE = "27 Oct 2026: no new scores. The Charts tab adds three effort-level charts — Index against waiting time and against output speed at each effort setting, and a ranking of every model at one chosen setting — and GPT-6 Luna's non-reasoning rung is dropped from the effort charts. Data last refreshed 23 Oct 2026 (full audit). Open What changed, below, for the history of each update.";
+const ASOF_NOTE = "27 Oct 2026: GPT-6.1 Terra added (Artificial Analysis 48 at max, Vals AI Terminal-Bench 4.0 49.49%) and GPT-5.6 Terra moved to legacy. Kimi K3.1 Pro gains Vals AI Terminal-Bench 4.0 and Science runs and a first WebDev score. The Charts tab adds three effort-level charts, and GPT-6 Luna's non-reasoning rung is dropped from the effort data. Other models' figures were last refreshed 23 Oct 2026. Open What changed, below, for the history of each update.";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"23 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"27 Oct 2026",
     d:"Composite of ten evals — AA-Briefcase v1.1, GDPval-AA v2.1, AutomationBench-AA, Terminal-Bench 4.0, SciCode, HLE, GDP.pdf, CritPt, AA-Omniscience and AA-LCR v1.1. Version 4.3.2. Each model's highest-effort configuration is shown.",
     warn:"Rescaled on 7 Sep. Version 4.3 swapped τ³-Banking for AutomationBench and Terminal-Bench 2.1 for 4.0, and every score dropped — Claude Fable 5.1 went from 66 to 53 with no change to the model. Only models Artificial Analysis has re-run on v4.3.2 carry a score here; anything only ever measured on the old version shows a dash rather than a number on a different scale."},
   price:{l:"Blended price",s:"$/1M",g:"headline",f:"usd2",hi:0,col:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"27 Oct 2026",
     d:"Dollars per million tokens, blended 7:2:1 across cache-hit, input and output. That weighting is why some blended rates sit below the model's own input rate."},
   costTask:{l:"Cost per index task",s:"$/task",g:"headline",f:"usd2",hi:0,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/leaderboards/models",asof:"23 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/leaderboards/models",asof:"27 Oct 2026",
     d:"What one task of the v4.3.2 Intelligence Index costs, at the same effort level as the Index score. Reasoning-heavy models can be cheap per token and expensive per task."},
   speed:{l:"Output speed",s:"tok/s",g:"speed",f:"n0",hi:1,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"27 Oct 2026",
     d:"Output tokens per second from the Artificial Analysis leaderboard, measured at the same effort level as the model's Index score. One source for every row, so speeds are comparable across models."},
   ttft:{l:"Time to first token",s:"TTFT s",g:"speed",f:"n1",hi:0,
-    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
+    src:"Artificial Analysis",url:"https://artificialanalysis.ai/models",asof:"27 Oct 2026",
     d:"Seconds to the first answer token, at the same effort level as the Index score. For reasoning models on high effort this includes thinking time, which is why the heavy tiers run to minutes. The Effort levels detail on each model shows how much faster the lower settings respond."},
   ctx:{l:"Context window",s:"Context",g:"speed",f:"ctx",hi:1,
-    src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"23 Oct 2026",
+    src:"Provider docs (as listed by Artificial Analysis)",url:"https://artificialanalysis.ai/models",asof:"27 Oct 2026",
     d:"Maximum input tokens per provider documentation. A vendor-published spec rather than a measurement, so every row is marked vendor."},
 
   swebv:{arch:"Saturated — seven models at or above 95%, the labs stopped reporting it, and Vals AI stopped running it on new models after 1 Sep 2026.",l:"SWE-bench Verified",s:"SWE-V",g:"coding",f:"pct",hi:1,col:1,
@@ -510,8 +510,8 @@ const BENCH = {
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/livecodebench",asof:"31 Aug 2026",
     d:"Contamination-controlled competitive programming. Only the top three rows were machine-readable."},
   webdev:{l:"WebDev Arena",s:"WebDev",g:"coding",f:"n0",hi:1,col:1,
-    src:"Arena (formerly LMArena)",url:"https://arena.ai/leaderboard/code/webdev",asof:"22 Oct 2026",
-    d:"Human pairwise votes on generated web apps. 923,854 votes across 151 models. Preference, not correctness — but the one benchmark measuring whether output is nice to use."},
+    src:"Arena (formerly LMArena)",url:"https://arena.ai/leaderboard/code/webdev",asof:"23 Oct 2026",
+    d:"Human pairwise votes on generated web apps, across 150 models on the 23 Oct snapshot. Preference, not correctness — but the one benchmark measuring whether output is nice to use."},
 
   tau3bank:{arch:"Artificial Analysis dropped it from its index; Gemini 3.8 Flash (2 Sep) is the only row added since July.",l:"τ³-Banking",s:"τ³-Bank",g:"agentic",f:"pct",hi:1,
     src:"Sierra / taubench.com",url:"https://taubench.com/leaderboard",asof:"Sep 2026",
@@ -532,11 +532,11 @@ const BENCH = {
     warn:"No frontier model released since April 2026 has a published horizon. Rows use METR's Time Horizon 1.1 suite after its 3 Mar 2026 correction, except Claude Sonnet 4.5, which Time Horizon 1.1 doesn't list; its row is METR's Time Horizon 1.0 figure."},
 
   tb40:{l:"Terminal-Bench 4.0",s:"TB 4.0",g:"coding",f:"pct",hi:1,col:1,
-    src:"Vals AI",url:"https://www.vals.ai/benchmarks/terminal-bench-4",asof:"22 Oct 2026",
+    src:"Vals AI",url:"https://www.vals.ai/benchmarks/terminal-bench-4",asof:"26 Oct 2026",
     d:"The current Terminal-Bench generation, released 28 Aug 2026 with an eight-hour agent timeout and the saturated tasks removed: 66 new tasks across software, science, ML, operations, hardware, security and media, graded pass-or-zero on the full verifier.",
     warn:"Every row is Vals AI's independent run on one harness (mini-swe-agent, average of three runs). Vendor tables, kept in each note, use their own agents and mostly score higher — Claude Sonnet 5.5 is 70.6% in Anthropic's table and 64.14% on Vals. Never compare across Terminal-Bench versions."},
   tbsci:{l:"Terminal-Bench Science 0.1",s:"TB-Sci",g:"agentic",f:"pct",hi:1,col:1,
-    src:"Vals AI",url:"https://www.vals.ai/benchmarks/terminal-bench-science",asof:"21 Oct 2026",
+    src:"Vals AI",url:"https://www.vals.ai/benchmarks/terminal-bench-science",asof:"25 Oct 2026",
     d:"Agentic scientific research in a terminal, released 27 Aug 2026. One of the widest spreads on this board — the current frontier (GPT-6 Astra, Opus 5.5, Fable 5.1) scores roughly double the summer generation.",
     warn:"Every row is Vals AI's run: one general-purpose harness (mini-swe-agent; Hy4-preview still on Terminus 2) and a single run per model, pass/fail on all 70 tasks. Vendor tables and the official leaderboard use each vendor's own agent and three trials, and mostly score higher — GPT-6 Astra is 62.86% on Vals, 64.6% in Anthropic's table and 68.1% in OpenAI's. Vendor figures are kept in each note."},
   gdpval:{arch:"Superseded by GDPval-AA v2.1, and vendor runs of v2 disagreed.",l:"GDPval-AA v2",s:"GDPval",g:"agentic",f:"n0",hi:1,
@@ -593,7 +593,7 @@ const BENCH = {
     warn:"Vendor-run. Not comparable with the GDPval-AA v2 column."},
 
   hle:{l:"Humanity's Last Exam",s:"HLE",g:"reasoning",f:"pct",hi:1,col:1,
-    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"23 Oct 2026",
+    src:"Artificial Analysis / Scale AI",url:"https://artificialanalysis.ai/evaluations/humanitys-last-exam",asof:"27 Oct 2026",
     d:"Expert-written questions across 100+ subjects, no tools. Scores here are without tool use; with search and code execution most models gain 10–15 points.",
     warn:"The official leaderboard at lastexam.ai is abandoned — it still tops out at Gemini 3 Pro on 38.3%. Scale AI is five months behind. Only Artificial Analysis covers the current frontier."},
   gpqa:{l:"GPQA Diamond",s:"GPQA",g:"reasoning",f:"pct",hi:1,col:1,
@@ -644,6 +644,10 @@ const MODELS = [
 {name:"GPT-6.1 Sol", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-09-29",
  note:"Launched 29 Sep at DevDay at GPT-6 Sol's $2/$10 price, with cached input cut to $0.10 — a 95% discount. Artificial Analysis now scores it 52 at max effort, four points above GPT-6 Sol and one behind GPT-6 Astra, for $0.72 per index task — about an eighth of Opus 5.5's $5.98. Even at medium (48, $0.21) it matches GPT-6 Sol at max. OpenRouter's τ²-bench Airline re-run puts it at 70.0%, up from 66.7% on its first run and above GPT-6 Sol's 69.3%. ARC Prize scores it 52.7% on ARC-AGI-3 under the standard harness, against 96.4% with its Provider Adapter. OpenAI's 29 Sep launch charts give DeepSWE 75.2% (high effort), AutomationBench 36.1% and OSWorld 2.0 71.4% (offline set), and its system card HealthBench Professional 64.2% and ExploitGym 35.1%, all vendor-run. Vals AI scores it 55.05% on Terminal-Bench 4.0 and 52.86% on Terminal-Bench Science, against OpenAI's own 57.0%. An Ultrafast tier (up to 300 tokens/sec, 6× the price) is coming.",
  s:{matharena:[84.0,"ind","max effort"],hle:[52.9,"ind","Artificial Analysis"],arc3:[52.73,"ind","standard harness — 96.37% with the Provider Adapter"],lmarena:[1480,"ind","max variant; 8,305 votes"],ttft:[236.01,"ind"],speed:[54,"ind"],arc2:[94.2,"ind"],arc1:[98.5,"ind"],webdev:[1749,"ind","max variant"],tau2air:[70.0,"ind"],costTask:[0.72,"ind"],aaii:[52,"ind"],price:[1.47,"ind"],ctx:[1050000,"ven"],weirdml:[38.25,"ind","xhigh effort, Codex CLI"],weirdmlCost:[5.29,"ind"],deepswe:[75.2,"ven","high effort — 71.9% at max"],automationbench:[36.1,"ven","max effort"],osw2ga:[71.4,"ven","max effort, offline set"],healthbench:[64.2,"ven","length-adjusted, GPT-6.1 Sol system card"],exploitgym:[35.1,"ven","GPT-6.1 Sol system card"],tbsci:[52.86,"ind","Vals AI — OpenAI reports 57.0% at max"],tb40:[55.05,"ind","Vals AI"],arc2cost:[0.25,"ind","max effort"]}},
+
+{name:"GPT-6.1 Terra", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-10-26",
+ note:"The middle tier of the GPT-6.1 family, released 26 Oct at $1/$5 per million tokens with cached input at $0.05 — half of GPT-6.1 Sol's price, and well under GPT-5.6 Terra's $2/$12. Prompts over 272K input tokens bill at 2× input and 1.5× output for the whole request. Artificial Analysis scores it 48 at max effort for $0.40 per index task: six points above GPT-5.6 Terra for under a third of its $1.40 per task, and four below GPT-6.1 Sol. At high effort it scores 44 for $0.13. Vals AI scores it 49.49% on Terminal-Bench 4.0, against 22.73% for GPT-5.6 Terra and 55.05% for GPT-6.1 Sol, and Artificial Analysis's HLE run gives 46.2% without tools. No Arena, ARC Prize or OpenRouter τ²-bench score yet, and OpenAI's own launch figures are not on the board.",
+ s:{aaii:[48,"ind"],costTask:[0.40,"ind"],price:[0.74,"ind"],speed:[91,"ind"],ttft:[77.96,"ind"],ctx:[1050000,"ven"],hle:[46.2,"ind","Artificial Analysis"],tb40:[49.49,"ind","Vals AI"]}},
 
 {name:"Claude Haiku 5.5", prov:"Anthropic", tier:"frontier", open:false, rel:"2026-10-07",
  note:"Released 7 Oct at $0.10/$0.50 per million tokens for prompts under 100K tokens, and $0.50/$2.50 above that. That's a tenth of Haiku 4.5's price, with a 1M context window and adjustable effort. Anthropic's own table puts it far ahead of Haiku 4.5 and GPT-6 Luna: Terminal-Bench 4.0 39.2% against Luna's 16.4% (Vals AI's own run: 36.36% and 13.64%), GDPval-AA v2.1 1620 against 1437, and HLE 45.9% without tools. Artificial Analysis scored it a day later: 43 at max for $0.21 per task, or 38 at high for eight cents, which beats Mistral Large 4 at a fraction of its cost. Its own HLE run gives 44.4% without tools. WebDev Arena has it at 1586 (high) on 3,917 votes, and Arena text at 1425 (high) on 6,080 votes. WeirdML v3 scores it 11.70% at xhigh for $2.30 per run. ARC Prize scores it 89.0% on ARC-AGI-1 at max effort and 61.3% on ARC-AGI-2 at xhigh; ARC-AGI-3 is 0.5% under the standard harness, 2.8% with the Provider Adapter.",
@@ -757,8 +761,8 @@ const MODELS = [
  s:{price:[0.78,"ind"],ctx:[1000000,"ven"],
     weirdml2:[60.3,"ind","$0.38 per run"],lmarena:[1491,"ind","xhigh variant"],webdev:[1533,"ind","xhigh variant"],tb40:[6.06,"ind","Vals AI"],tb21:[69.66,"ind","Vals AI"],swebv:[86.6,"ind","Vals AI"]}},
 
-{name:"GPT-5.6 Terra", prov:"OpenAI", tier:"frontier", open:false, rel:"2026-07-09",
- note:"The balanced middle tier of the GPT-5.6 family. On the archived WeirdML v2 it ran at about a tenth of Sol's cost per run.",
+{name:"GPT-5.6 Terra", prov:"OpenAI", tier:"legacy", open:false, rel:"2026-07-09",
+ note:"The balanced middle tier of the GPT-5.6 family, superseded by GPT-6.1 Terra on 26 Oct. On the archived WeirdML v2 it ran at about a tenth of Sol's cost per run.",
  s:{tau2air:[73.1,"ind"],aaii:[42,"ind"],price:[1.74,"ind"],costTask:[1.4,"ind"],speed:[124,"ind"],ttft:[91.62,"ind"],ctx:[1050000,"ven"],
     tb21:[78.4,"ind","Snorkel · Codex CLI"],arc3:[0.80,"ven"],weirdml2:[78.27,"ind","$0.25 per run"],
     frontiermath:[84.9,"ven"],lmarena:[1467,"ind"],webdev:[1521,"ind"],healthbench:[57.7,"ven","length-adjusted, GPT-6.1 Sol system card"],tb40:[22.73,"ind","Vals AI"],tbsci:[10.00,"ind","Vals AI"],swebv:[95.4,"ind","Vals AI"],gpqa:[90.91,"ind","Vals AI"],arc1:[96.5,"ind","max effort"],arc2:[83.9,"ind","max effort"],arc2cost:[1.09,"ind"]}},
@@ -865,9 +869,9 @@ const MODELS = [
  s:{tb21:[76.40,"ind","Vals AI"],webdev:[1635,"ind"],hle:[35.1,"ind","Artificial Analysis"],price:[0.06,"ind"],costTask:[0.06,"ind"],aaii:[38,"ind"],speed:[60,"ind"],ttft:[4.19,"ind"],tau2air:[78.7,"ind"],ctx:[1000000,"ven"],tb40:[24.24,"ind","Vals AI — vendor-reported 28.8%"],deepswe:[67.9,"ven"],exploitgym:[6.0,"ven"],lmarena:[1448,"ind"],tbsci:[4.29,"ind","Vals AI"],osworld:[80.8,"ven","Xiaomi-reported, via Steel"]}},
 
 {name:"Kimi K3.1 Pro", prov:"Moonshot AI", tier:"challenger", open:false, rel:"2026-10-23",
- note:"Kimi K3 post-trained with far more reinforcement-learning compute; 2.8T total / 104B active per Artificial Analysis, 1M context, text and image input. An Index score of 55, eleven points above Kimi K3 and fourth on the board. Moonshot says full weights will be released by 4 Nov 2026, so it is listed as proprietary until they ship. Not yet in Vals AI's Terminal-Bench runs, and Arena's WebDev snapshot that lists it predates the launch.",
- s:{aaii:[55,"ind"],price:[1.54,"ind"],costTask:[2.11,"ind"],speed:[77,"ind"],ttft:[3.08,"ind"],ctx:[1000000,"ven"],
-    hle:[52.5,"ind","Artificial Analysis — Moonshot reports 51.1%"],gpqa:[94.2,"ven","Moonshot-reported"],deepswe:[75.5,"ven","Moonshot-reported, Claude Code harness"]}},
+ note:"Kimi K3 post-trained with far more reinforcement-learning compute; 2.8T total / 104B active per Artificial Analysis, 1M context, text and image input. Artificial Analysis scores it 55, eleven points above Kimi K3, for $2.11 per index task, at 44 tokens per second. Vals AI scores it 63.64% on Terminal-Bench 4.0, between Claude Opus 5.5's 65.15% and GPT-6 Astra's 59.60%, and 31.43% on Terminal-Bench Science. WebDev Arena has it at 1692 (max) on 2,451 votes; it has no Arena text score yet. Moonshot says full weights will be released by 4 Nov 2026, so it is listed as proprietary until they ship.",
+ s:{aaii:[55,"ind"],price:[1.54,"ind"],costTask:[2.11,"ind"],speed:[44,"ind"],ttft:[2.98,"ind"],ctx:[1000000,"ven"],
+    hle:[52.5,"ind","Artificial Analysis — Moonshot reports 51.1%"],gpqa:[94.2,"ven","Moonshot-reported"],deepswe:[75.5,"ven","Moonshot-reported, Claude Code harness"],tb40:[63.64,"ind","Vals AI"],tbsci:[31.43,"ind","Vals AI"],webdev:[1692,"ind","max variant; 2,451 votes"]}},
 
 {name:"Ember-1", prov:"Fireworks AI", tier:"challenger", open:false, rel:"2026-09-23",
  note:"Fireworks' own post-train of Kimi K3, tuned to keep K3's quality with about 40% fewer reasoning tokens (Fireworks' figure). A research preview on Fireworks serverless; weights not released. Not yet on Artificial Analysis or Arena. Vals AI's Terminal-Bench 4.0 run scores it 20.71%, against 17.17% for Kimi K3.",
@@ -1096,7 +1100,7 @@ const EFFORT = {
  "Grok 4.6":[["xhigh",44,1.75,77,29.88],["high",44,1.48,82,26.74],["medium",43,1.14,76,25.80],["low",35,0.38,69,7.27]],
  "Qwen3.8 2.4T A95B":[["default",40,2.16,42,2.98]],
  "Mistral Large 4":[["default",38,1.13,93,3.14]],
- "Kimi K3.1 Pro":[["default",55,2.11,77,3.08]],
+ "Kimi K3.1 Pro":[["default",55,2.11,44,2.98]],
  "Kimi K3":[["max",44,2.00,38,3.61],["low",30,1.15,37,3.68]],
  "GPT-5.6 Terra":[["max",42,1.4,124,91.62],["xhigh",38,0.63,107,7.49],["high",34,0.34,103,2.03],["medium",30,0.18,109,1.57],["low",27,0.14,108,1.39],["none",21,0.14,114,0.72]],
  "Gemini 3.8 Flash":[["high",41,1.24,141,24.31],["medium",40,0.93,null,null],["low",33,null,null,null]],
@@ -1105,6 +1109,7 @@ const EFFORT = {
  "Claude Haiku 5.5":[["max",43,0.21,235,320.62],["xhigh",41,0.12,186,64.46],["high",38,0.08,173,16.41],["medium",34,0.05,178,7.46],["low",29,0.02,172,6.63]],
  "Gemini 4 Argon":[["high",53,1.99,82,53.92]],
  "GPT-6.1 Sol":[["max",52,0.72,54,236.01],["xhigh",51,0.39,50,76.57],["high",50,0.32,51,29.31],["medium",48,0.21,48,4.02],["low",42,0.13,48,1.99]],
+ "GPT-6.1 Terra":[["max",48,0.40,91,77.96],["xhigh",45,0.19,91,13.32],["high",44,0.13,91,5.66],["medium",41,0.10,91,1.43],["low",36,0.05,91,1.28]],
  "Claude Sonnet 5.5":[["max",56,5.46,132,373.43],["xhigh",52,2.01,105,26.33],["high",47,0.88,107,10.07],["medium",41,0.48,104,1.46],["low",36,0.35,104,1.4]],
  "Claude Sonnet 5":[["max",38,5.09,83,173.83],["xhigh",34,2.87,71,16.74],["high",32,1.79,69,6.87],["medium",28,1.00,66,1.83],["low",24,0.51,65,1.42],["none",23,null,67,0.82]],
  "GPT-6 Luna":[["max",38,0.07,136,64.91],["xhigh",35,0.04,123,15.29],["high",33,0.03,122,6.06],["medium",30,0.02,92,2.79],["low",22,0.005,109,2.14]],
@@ -1123,6 +1128,7 @@ const PRICES = {
  "Claude Fable 5.1":{in:10,out:50,cr:0.25,note:"Cache reads cut from $1.00 to $0.25 at launch."},
  "GPT-6 Astra":{in:10,out:50,cr:1.00,note:"Above 272K input: $20/$75. Gated at launch."},
  "GPT-6.1 Sol":{in:2,out:10,cr:0.10,note:"Cache writes $2.50. Above 272K input: 2× input, 1.5× output for the whole request. Ultrafast tier 6× price. Batch/Flex 50% off."},
+ "GPT-6.1 Terra":{in:1,out:5,cr:0.05,note:"Cache writes $1.25. Above 272K input: 2× input, 1.5× output for the whole request. Batch/Flex 50% off."},
  "GPT-6 Sol":{in:2,out:10,cr:0.20,note:"Any request above 272K input tokens bills 2× input and 1.5× output for the whole request."},
  "GPT-6 Luna":{in:0.10,out:0.50,cr:0.01,note:"Same 272K surcharge as Sol."},
  "Grok 4.7":{in:2,out:6,cr:0.50,note:"Above 200K tokens: $4/$12."},
@@ -1174,6 +1180,10 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"27 Oct 2026", items:[
+  ["add","GPT-6.1 Terra (OpenAI, 26 Oct): $1/$5 per million tokens, $0.05 cached, 1.05M context. Artificial Analysis scores it 48 at max for $0.40 per index task (91 tok/s, 77.96 s to first token), with xhigh 45 ($0.19), high 44 ($0.13), medium 41 ($0.10) and low 36 ($0.05); HLE 46.2% without tools. Vals AI: Terminal-Bench 4.0 49.49%. Its non-reasoning rung (33, $0.11 per task — more than low) is left out of the effort data, as with GPT-6 Luna's. OpenAI's launch-post figures could not be read for this update and are not on the board yet."],
+  ["move","GPT-5.6 Terra → legacy after GPT-6.1 Terra."],
+  ["data","Kimi K3.1 Pro: Vals AI Terminal-Bench 4.0 63.64% and Terminal-Bench Science 31.43%; first WebDev Arena score, 1692 (max) on 2,451 votes in the 23 Oct snapshot, which matches every other WebDev row on the board. Artificial Analysis now measures it at 44 tok/s and 2.98 s to first token (was 77 and 3.08); Index 55 and $2.11 per task unchanged. Weights are not on Hugging Face yet, so it stays proprietary."],
+  ["data","Not re-read in this update: other models' speed, latency and cost per task (several have moved on Artificial Analysis since 23 Oct), Arena text (no snapshot after 22 Oct, which predates both models), and ARC Prize and OpenRouter τ²-bench, which have no rows yet for either model."],
   ["feature","Three new effort-level charts on the Charts tab. Intelligence vs waiting time and Intelligence vs output speed draw each model's effort levels as a line, like the cost chart, and use the same model picker. Ranked at the same effort level lists every model Artificial Analysis has measured at one chosen setting, with cost per task beside each bar. On phones, the axis menus on the price chart no longer push the page sideways. No scores changed."],
   ["data","GPT-6 Luna's non-reasoning rung (Index 18, $0.01 per task) removed from the effort data. It cost twice as much per task as the low setting while scoring four points less, which bent Luna's line back on itself in the cost chart. Luna's other five levels and its board scores are unchanged."]]},
  {d:"23 Oct 2026", items:[
@@ -1644,7 +1654,7 @@ function renderEffort(rows){
 }
 
 /* ---------------- intelligence vs cost, by effort (connected) ---------------- */
-const EFF_DEFAULT=["Claude Opus 5.5","Gemini 4 Argon","Claude Sonnet 5.5","Claude Fable 5.1","GPT-6 Astra","GPT-6.1 Sol","GPT-6 Luna","Gemini 3.8 Flash","GLM-5.3"];
+const EFF_DEFAULT=["Claude Opus 5.5","Gemini 4 Argon","Claude Sonnet 5.5","Claude Fable 5.1","GPT-6 Astra","GPT-6.1 Sol","GPT-6.1 Terra","GPT-6 Luna","Gemini 3.8 Flash","GLM-5.3"];
 state.effSel=null;
 function renderEffCost(rows){
   const multi=(m,k)=>effRows(m).filter(r=>r[k]!=null&&r[k]>0).length>1;
@@ -1833,7 +1843,7 @@ const CAVEATS=[
  ["Benchmark versions are not comparable","Terminal-Bench 2.1 sits near 85% where 3.0 sits near 35% for the same tier of model. ARC-AGI-2 cost per task is not ARC-AGI-1 cost per task. Never read across a version boundary."],
  ["Two different price columns exist","Artificial Analysis publishes blended dollars per million tokens on each model's page and dollars per index task on the leaderboard. Claude Sonnet 5.5 is $1.47 by the first and $5.46 by the second; GPT-6.1 Sol is $1.47 and $0.72. Same $2/$10 list price and the same blended rate, but a more than sevenfold gap per task, because Sonnet thinks far longer at max effort. Both columns are on this board; they answer different questions."],
  ["Saturation is quietly breaking three benchmarks","SWE-bench Verified has seven models above 95%. τ²-bench Airline puts Amazon Nova Micro at 78.0%, about two points below the best score of 80.2%. GPQA is at 95%. When a benchmark compresses, small gaps at the high end stop meaning anything."],
- ["The newest rows are thin, and it shows","Kimi K3.1 Pro (23 Oct) has only Artificial Analysis and Moonshot's own table so far — no Vals AI run and no Arena score dated after its launch. MiniMax M3.1 Flash (19 Oct) has Artificial Analysis, Vals AI's Terminal-Bench 4.0 and a preliminary WebDev Elo of 1589 on 2,212 votes against 923,854 board-wide. DeepSeek V4.1 Flash 1017 (17 Oct) has Artificial Analysis, WeirdML, Vals AI and a WebDev Elo of 1665 on 2,500 votes, but no Arena text score. Claude Haiku 5.5 (7 Oct) now has Artificial Analysis, ARC Prize, Vals AI, both Arenas and OpenRouter τ²-Airline at 76.0%; GDPval-AA v2.1 and FrontierCode are still Anthropic's own table. Gemini 4 Argon's Arena text and WebDev scores are both flagged preliminary. These rows can still move as Arena votes accumulate and other evaluators catch up."],
+ ["The newest rows are thin, and it shows","GPT-6.1 Terra (26 Oct) has only Artificial Analysis and Vals AI's Terminal-Bench 4.0 so far — no Arena, ARC Prize or τ²-bench score. Kimi K3.1 Pro (23 Oct) now has Vals AI's Terminal-Bench runs and a WebDev Elo of 1692 on 2,451 votes, but no Arena text score. MiniMax M3.1 Flash (19 Oct) has Artificial Analysis, Vals AI's Terminal-Bench 4.0 and a preliminary WebDev Elo of 1589 on 2,212 votes against 923,854 board-wide. DeepSeek V4.1 Flash 1017 (17 Oct) has Artificial Analysis, WeirdML, Vals AI and a WebDev Elo of 1665 on 2,500 votes, but no Arena text score. Claude Haiku 5.5 (7 Oct) now has Artificial Analysis, ARC Prize, Vals AI, both Arenas and OpenRouter τ²-Airline at 76.0%; GDPval-AA v2.1 and FrontierCode are still Anthropic's own table. Gemini 4 Argon's Arena text and WebDev scores are both flagged preliminary. These rows can still move as Arena votes accumulate and other evaluators catch up."],
  ["The Intelligence Index changed underneath the board","Artificial Analysis moved from v4.1.1 to v4.3.2 in September, and every model's score fell by eight to fifteen points — not because the models got worse but because the test got harder. Scores from the two versions cannot share a column, so the whole column was replaced, and older models Artificial Analysis never re-ran now show a dash. If you compare a number here against a screenshot from August, it will look like a collapse. It isn't."],
  ["The default view hides superseded models","Opus 5, Fable 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash and others moved to Previous gen when their replacements shipped. Turn on the Previous gen chip to bring them back — useful when a new model's vendor table only compares against the old generation."],
  ["Three labs launched inside four days","Claude Fable 5.1 on 1 Sep, Gemini 3.8 Flash and Muse Spark 1.3 on 2 Sep, GPT-6 Astra on 3 Sep. Most of the newest columns exist because each lab published a table benchmarking its rivals. Where those tables overlap they mostly agree — Terminal-Bench 4.0 matched exactly across OpenAI and Anthropic — which was the best available evidence that the numbers were being run honestly. Vals AI's independent Terminal-Bench 4.0 run, now on the board, lands within a few points of most vendor figures but well below some, such as Claude Sonnet 5.5 (64.14% against Anthropic's 70.6%)."],
