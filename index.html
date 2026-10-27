@@ -78,7 +78,7 @@ a{color:var(--accent-ink)}
   border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}
 .chip:hover{border-color:var(--ink-3);color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface);font-weight:500}
-input[type=search],select{
+input[type=search],select{max-width:100%;
   font:inherit;font-size:13px;padding:4px 9px;border:1px solid var(--line-2);border-radius:var(--r);
   background:var(--surface);color:var(--ink);min-width:150px}
 .count{margin-left:auto;font-size:12px;color:var(--ink-3)}
@@ -321,7 +321,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
 
   <section class="panel" id="p-quad">
     <nav class="jump" aria-label="Charts">
-      <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a>
+      <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a><a href="#ch-efflat">Latency by effort</a><a href="#ch-effspeed">Speed by effort</a><a href="#ch-efflevel">Same-effort ranking</a>
       <a href="#ch-price">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
       <a href="#ch-ttft">Latency</a><a href="#ch-blend">Price</a><a href="#ch-ctx">Context window</a><a href="#ch-ppp">Price of a point</a>
     </nav>
@@ -348,6 +348,27 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <div id="c-effcost"></div>
     </div>
 
+    <div class="card" id="ch-efflat">
+      <div class="cardhead"><div><h2>Intelligence vs waiting time, by effort</h2>
+        <p class="sub">The same lines against seconds to the first answer token, log scale. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models picked in the chart above.</p></div>
+        <div class="effkey" id="effkey3"></div></div>
+      <div id="c-efflat"></div>
+    </div>
+
+    <div class="card" id="ch-effspeed">
+      <div class="cardhead"><div><h2>Intelligence vs output speed, by effort</h2>
+        <p class="sub">The same lines against output tokens per second, log scale, so further right is faster. Most models keep roughly the same speed at every setting; a line that leans left means the higher settings also stream more slowly. Uses the models picked above.</p></div>
+        <div class="effkey" id="effkey4"></div></div>
+      <div id="c-effspeed"></div>
+    </div>
+
+    <div class="card" id="ch-efflevel">
+      <div class="cardhead"><div><h2>Ranked at the same effort level</h2>
+        <p class="sub">Every model Artificial Analysis has measured at one setting, ranked by Index score, with cost per index task beside each bar. Pick a level to compare models on equal terms rather than each at its best.</p></div></div>
+      <div class="effsel" id="efflvsel"></div>
+      <div id="c-efflevel"></div>
+    </div>
+
     <div class="card" id="ch-price">
       <div class="cardhead">
         <div>
@@ -361,7 +382,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
           <span style="color:var(--ink-3)">Point size = context window</span>
         </div>
       </div>
-      <div class="fg" style="margin:12px 0 4px">
+      <div class="fg" style="margin:12px 0 4px;flex-wrap:wrap">
         <label for="xaxis">X axis</label>
         <select id="xaxis">
           <option value="price">Blended price — $ per 1M tokens</option>
@@ -443,8 +464,8 @@ details.changes summary b{color:var(--ink);font-weight:600}
    whichever models have a score.  Check with: node scripts/check-data.mjs
    ========================================================================= */
 
-const ASOF = "23 Oct 2026";
-const ASOF_NOTE = "23 Oct 2026: Full audit. GPT-6.1 Sol gains OpenAI's launch-chart and system-card figures plus Vals AI's Terminal-Bench 4.0 and Science runs. Terminal-Bench 4.0 and Science now come from Vals AI's independent runs, with vendor figures in the notes. Blanks filled from Vals AI (SWE-bench Verified, Terminal-Bench 2.1, GPQA), ARC Prize, Arena, OpenRouter τ²-bench and METR; Artificial Analysis speed and TTFT refreshed. Added Kimi K3.1 Pro, Ember-1 and Qwen3.8 2.4T A95B.";
+const ASOF = "27 Oct 2026";
+const ASOF_NOTE = "27 Oct 2026: no new scores. The Charts tab adds three effort-level charts — Index against waiting time and against output speed at each effort setting, and a ranking of every model at one chosen setting — and GPT-6 Luna's non-reasoning rung is dropped from the effort charts. Data last refreshed 23 Oct 2026 (full audit). Open What changed, below, for the history of each update.";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
@@ -1086,7 +1107,7 @@ const EFFORT = {
  "GPT-6.1 Sol":[["max",52,0.72,54,236.01],["xhigh",51,0.39,50,76.57],["high",50,0.32,51,29.31],["medium",48,0.21,48,4.02],["low",42,0.13,48,1.99]],
  "Claude Sonnet 5.5":[["max",56,5.46,132,373.43],["xhigh",52,2.01,105,26.33],["high",47,0.88,107,10.07],["medium",41,0.48,104,1.46],["low",36,0.35,104,1.4]],
  "Claude Sonnet 5":[["max",38,5.09,83,173.83],["xhigh",34,2.87,71,16.74],["high",32,1.79,69,6.87],["medium",28,1.00,66,1.83],["low",24,0.51,65,1.42],["none",23,null,67,0.82]],
- "GPT-6 Luna":[["max",38,0.07,136,64.91],["xhigh",35,0.04,123,15.29],["high",33,0.03,122,6.06],["medium",30,0.02,92,2.79],["low",22,0.005,109,2.14],["none",18,0.01,109,0.87]],
+ "GPT-6 Luna":[["max",38,0.07,136,64.91],["xhigh",35,0.04,123,15.29],["high",33,0.03,122,6.06],["medium",30,0.02,92,2.79],["low",22,0.005,109,2.14]],
  "Qwen3.8 27B":[["xhigh",34,1.01,45,3.91],["medium",28,1.13,51,3.96],["low",26,1.05,53,4.13]],
  "MiMo-V2.5-Pro":[["reasoning",26,0.05,40,2.23],["none",18,null,39,2.23]],
  "Gemma 4 31B":[["reasoning",15,null,36,1.07],["none",14,null,51,1.71]],
@@ -1152,6 +1173,9 @@ const PRICES = {
 
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
+ {d:"27 Oct 2026", items:[
+  ["feature","Three new effort-level charts on the Charts tab. Intelligence vs waiting time and Intelligence vs output speed draw each model's effort levels as a line, like the cost chart, and use the same model picker. Ranked at the same effort level lists every model Artificial Analysis has measured at one chosen setting, with cost per task beside each bar. On phones, the axis menus on the price chart no longer push the page sideways. No scores changed."],
+  ["data","GPT-6 Luna's non-reasoning rung (Index 18, $0.01 per task) removed from the effort data. It cost twice as much per task as the low setting while scoring four points less, which bent Luna's line back on itself in the cost chart. Luna's other five levels and its board scores are unchanged."]]},
  {d:"23 Oct 2026", items:[
   ["feature", "Removed the How to update tab. The board, Charts, Benchmarks and Sources & caveats tabs are unchanged."],
   ["add", "Kimi K3.1 Pro (Moonshot AI, 23 Oct): Kimi K3 with much larger post-training, 2.8T total / 104B active, 1M context, $2/$10 list ($0.20 cache hit). Weights promised by 4 Nov, so marked proprietary for now. Artificial Analysis scores it 55, fourth on the board, for $2.11 per index task at $1.54 blended, 77 tok/s and a 3.08 s first token; HLE 52.5% (Moonshot reports 51.1%). Moonshot's table: DeepSWE 75.5% and GPQA Diamond 94.2%."],
@@ -1623,41 +1647,72 @@ function renderEffort(rows){
 const EFF_DEFAULT=["Claude Opus 5.5","Gemini 4 Argon","Claude Sonnet 5.5","Claude Fable 5.1","GPT-6 Astra","GPT-6.1 Sol","GPT-6 Luna","Gemini 3.8 Flash","GLM-5.3"];
 state.effSel=null;
 function renderEffCost(rows){
-  const host=$("#c-effcost");
   const cand=rows.filter(m=>effRows(m).filter(r=>r.cost!=null).length>1).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
   if(!state.effSel) state.effSel=new Set(EFF_DEFAULT);
   $("#effsel").innerHTML=cand.map(m=>`<button class="chip" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}">${esc(m.name)}</button>`).join("");
-  $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffCost(filtered());});
-  const ms=cand.filter(m=>state.effSel.has(m.name));
-  const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>r.cost!=null&&seen.add(r.e)));
-  effKey("#effkey2",EFF_ORDER.filter(e=>seen.has(e)));
-  if(!ms.length){host.innerHTML='<p class="empty">Pick at least one model above.</p>';return;}
+  $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffLines(filtered());});
+  const pick=rows.filter(m=>state.effSel.has(m.name));
+  effLines("#c-effcost","#effkey2",pick,"cost",{fmt:money,title:"Cost per Intelligence Index task — log scale",
+    aria:"Intelligence against cost per task at each effort level"});
+}
+function renderEffLines(rows){
+  renderEffCost(rows);
+  const pick=rows.filter(m=>state.effSel.has(m.name));
+  effLines("#c-efflat","#effkey3",pick,"ttft",{fmt:v=>(v>=10?Math.round(v):+v.toFixed(1))+" s",title:"Seconds to first answer token — log scale",
+    aria:"Intelligence against time to first token at each effort level"});
+  effLines("#c-effspeed","#effkey4",pick,"speed",{fmt:v=>plain(Math.round(v)),title:"Output speed, tokens per second — log scale",
+    aria:"Intelligence against output speed at each effort level"});
+}
+const EFF_XLABEL={cost:"Cost per index task",ttft:"Time to first token",speed:"Output speed"};
+function effLines(hostSel,keySel,pick,xk,o){
+  const host=$(hostSel);
+  const ms=pick.filter(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0).length>1);
+  const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>r[xk]!=null&&seen.add(r.e)));
+  effKey(keySel,EFF_ORDER.filter(e=>seen.has(e)));
+  if(!ms.length){host.innerHTML=`<p class="empty">${pick.length?"None of the picked models has this measured at more than one effort level.":"Pick at least one model above."}</p>`;return;}
   const W=980,H=560,ml=62,mr=120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
-  const pts=ms.flatMap(m=>effRows(m).filter(r=>r.cost!=null));
-  const x0=lx(Math.min(...pts.map(p=>p.cost)))-0.12, x1=lx(Math.max(...pts.map(p=>p.cost)))+0.12;
+  const pts=ms.flatMap(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0));
+  const x0=lx(Math.min(...pts.map(p=>p[xk])))-0.12, x1=lx(Math.max(...pts.map(p=>p[xk])))+0.12;
   const ys=pts.map(p=>p.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
-  let s=`<svg class="effsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Intelligence against cost per task at each effort level">`;
-  logTicks(x0,x1).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${money(v)}</text>`;});
+  let s=`<svg class="effsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+  logTicks(x0,x1).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.fmt(v)}</text>`;});
   niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${Math.round(v)}</text>`;});
-  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">Cost per Intelligence Index task — log scale</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
+  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">${esc(o.title)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
   const ends=[];
   ms.forEach(m=>{
-    const rs=effRows(m).filter(r=>r.cost!=null).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
-    s+=`<g class="effg"><polyline class="effline${m.open?" o":""}" points="${rs.map(r=>X(r.cost).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`;
+    const rs=effRows(m).filter(r=>r[xk]!=null&&r[xk]>0).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
+    s+=`<g class="effg"><polyline class="effline${m.open?" o":""}" points="${rs.map(r=>X(r[xk]).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`;
     rs.forEach(r=>{
-      const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",money(r.cost)],["Output speed",r.speed!=null?r.speed+" tok/s":"—"]]);
-      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r.cost).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="6" fill="${EFF_SHADE[r.e]}"/>`;
+      const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first token",r.ttft!=null?r.ttft+" s":"—"]]);
+      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="6" fill="${EFF_SHADE[r.e]}"/>`;
     });
     s+="</g>";
-    const top=effRows(m)[0]; if(top.cost!=null) ends.push({x:X(top.cost),y:Y(top.aaii),r:6,label:m.name,raw:{y:top.aaii}});
+    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:6,label:m.name,raw:{y:top.aaii}});
   });
-  const dots=pts.map(p=>({x:X(p.cost),y:Y(p.aaii),r:6,nolabel:true}));
+  const dots=pts.map(p=>({x:X(p[xk]),y:Y(p.aaii),r:6,nolabel:true}));
   s+=placeLabels([...ends,...dots],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
   host.innerHTML=s+"</svg>"; wire(host);
 }
 
-function renderCharts(rows){ renderBarsets(rows); renderEffort(rows); renderEffCost(rows); renderQuad(rows); renderSpeedQ(rows); renderPPP(rows); }
+/* ---------------- ranked at one effort level ---------------- */
+state.effLv="high";
+function renderEffLevel(rows){
+  const at=lv=>rows.map(m=>({m,r:effRows(m).find(r=>r.e===lv)})).filter(o=>o.r);
+  const lvls=EFF_ORDER.filter(e=>at(e).length>=2).reverse();
+  if(!lvls.includes(state.effLv)) state.effLv=lvls[0]||"high";
+  $("#efflvsel").innerHTML=lvls.map(e=>`<button class="chip" data-lv="${e}" aria-pressed="${e===state.effLv}">${EFF_NAME[e]} <span class="eff">${at(e).length}</span></button>`).join("");
+  $$("#efflvsel .chip").forEach(b=>b.onclick=()=>{state.effLv=b.dataset.lv; renderEffLevel(filtered());});
+  const d=at(state.effLv).sort((a,b)=>b.r.aaii-a.r.aaii||(a.r.cost??1e9)-(b.r.cost??1e9));
+  $("#c-efflevel").innerHTML=d.length?hbarSvg(d.map(({m,r})=>({name:m.name,v:r.aaii,fill:idFill(m),
+      label:r.aaii+(r.cost!=null?"  "+money(r.cost)+"/task":""),
+      tip:modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first token",r.ttft!=null?r.ttft+" s":"—"]])})),
+    {aria:"Intelligence Index at "+EFF_NAME[state.effLv]+" effort, ranked",W:980,ml:200,mr:140,rowH:21})
+    :'<p class="empty">No model in view has this effort level measured.</p>';
+  wire($("#c-efflevel"));
+}
+
+function renderCharts(rows){ renderBarsets(rows); renderEffort(rows); renderEffLines(rows); renderEffLevel(rows); renderQuad(rows); renderSpeedQ(rows); renderPPP(rows); }
 
 /* ---------------- price per point ---------------- */
 function renderPPP(rows){
