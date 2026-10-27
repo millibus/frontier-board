@@ -465,7 +465,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
    ========================================================================= */
 
 const ASOF = "27 Oct 2026";
-const ASOF_NOTE = "27 Oct 2026: GPT-6.1 Terra added and GPT-5.6 Terra moved to legacy; Kimi K3.1 Pro gains Vals AI Terminal-Bench runs and a first WebDev score. Artificial Analysis cost per task, output speed and time to first token were re-read for every model and effort level the same day. The Charts tab adds three effort-level charts. Arena text and WebDev are the 22 and 23 Oct snapshots. Open What changed, below, for the history of each update.";
+const ASOF_NOTE = "27 Oct 2026: GPT-6.1 Terra added and GPT-5.6 Terra moved to legacy; Kimi K3.1 Pro gains Vals AI Terminal-Bench runs and a first WebDev score. Artificial Analysis cost per task, output speed and time to first token were re-read for every model and effort level the same day. The Charts tab adds three effort-level charts. Mercury 2.5 was removed. Arena text and WebDev are the 22 and 23 Oct snapshots. Open What changed, below, for the history of each update.";
 
 const BENCH = {
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,
@@ -1021,10 +1021,6 @@ const MODELS = [
  note:"Still in preview on Bedrock nine months after announcement.",
  s:{aaii:[14,"ind","Artificial Analysis marks this score as estimated"],speed:[126,"ind"],ttft:[13.18,"ind"],ctx:[256000,"ven"]}},
 
-{name:"Mercury 2.5", prov:"Inception", tier:"challenger", open:false, rel:"2026-09-08",
- note:"The diffusion model's second version, claiming 40% more intelligence than Mercury 2 and 1,107 tokens per second; Artificial Analysis measures 718. Inception launched Mercury 3 on 19 Oct; it has only Inception's own figures so far, so it isn't on the board yet. Launch promo is $0.04/$0.15, 80% off the $0.20/$0.75 list price.",
- s:{aaii:[12,"ind"],costTask:[0.10,"ind"],speed:[718,"ind"],ttft:[3.45,"ind"],ctx:[260000,"ven"],tb40:[0.00,"ind","Vals AI"],tbsci:[0.00,"ind","Vals AI"],tb21:[34.46,"ind","Vals AI"]}},
-
 {name:"Mistral Large 3", prov:"Mistral", tier:"challenger", open:true, rel:"2025-12-02",
  note:"Apache 2.0, 675B/41B active.",
  s:{aaii:[9,"ind"],costTask:[0.03,"ind"],speed:[82,"ind"],ttft:[1.13,"ind"],ctx:[256000,"ven"],webdev:[1232,"ind"],lmarena:[1414,"ind"],swebv:[41.4,"ind","Vals AI"],gpqa:[68.43,"ind","Vals AI"]}},
@@ -1165,7 +1161,6 @@ const PRICES = {
  "MiniMax M3":{in:0.30,out:1.20,cr:null,note:"Above 512K tokens: $0.60/$2.40."},
  "Step 5 Preview":{in:1.00,out:2.70,cr:0.05,note:"Listed API price; open weights under StepFun Model License 1.0 since 15 Oct."},
  "Ling 3.1 Flash":{in:0.30,out:0.90,cr:0.075,note:"Ant's USD list price (OpenRouter and ZenMux), billed from 14 Oct. Limited-time 75% off: $0.075/$0.225, cache $0.0188. Direct API in CNY: ¥2/¥6. MIT open weights on Hugging Face. OpenRouter's current providers (DeepInfra, NovitaAI) list cache reads at $0.06, or $0.015 during the promo."},
- "Mercury 2.5":{in:0.20,out:0.75,cr:null,note:"Launch promo $0.04/$0.15."},
  "Hy3":{in:0.14,out:0.55,cr:null,note:""},
  "Inkling":{in:1.00,out:4.05,cr:null,note:""},
  "Kimi K2.7 Code":{in:0.95,out:4.00,cr:0.19,note:""},
@@ -1186,6 +1181,7 @@ const CHANGELOG = [
   ["data","Kimi K3.1 Pro: Vals AI Terminal-Bench 4.0 63.64% and Terminal-Bench Science 31.43%; first WebDev Arena score, 1692 (max) on 2,451 votes in the 23 Oct snapshot, which matches every other WebDev row on the board. Artificial Analysis now measures it at 44 tok/s and 2.98 s to first token (was 77 and 3.08); Index 55 and $2.11 per task unchanged. Weights are not on Hugging Face yet, so it stays proprietary."],
   ["data","Not re-read in this update: other models' speed, latency and cost per task (several have moved on Artificial Analysis since 23 Oct), Arena text (no snapshot after 22 Oct, which predates both models), and ARC Prize and OpenRouter τ²-bench, which have no rows yet for either model."],
   ["feature","Three new effort-level charts on the Charts tab. Intelligence vs waiting time and Intelligence vs output speed draw each model's effort levels as a line, like the cost chart, and use the same model picker. Ranked at the same effort level lists every model Artificial Analysis has measured at one chosen setting, with cost per task beside each bar. On phones, the axis menus on the price chart no longer push the page sideways. No scores changed."],
+  ["data","Mercury 2.5 (Inception's diffusion model) removed from the board. Its 718 tok/s and 3.45 s to first token stretched the speed charts, and its 0% Terminal-Bench 4.0 and Science runs sat at the bottom of those columns."],
   ["data","GPT-6 Luna's non-reasoning rung (Index 18, $0.01 per task) removed from the effort data. It cost twice as much per task as the low setting while scoring four points less, which bent Luna's line back on itself in the cost chart. Luna's other five levels and its board scores are unchanged."]]},
  {d:"23 Oct 2026", items:[
   ["feature", "Removed the How to update tab. The board, Charts, Benchmarks and Sources & caveats tabs are unchanged."],
