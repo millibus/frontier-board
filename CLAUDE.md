@@ -69,3 +69,4 @@ node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, he
 - Match the surrounding code style. Keep the light/dark theme tokens working.
 - Copyright: `© 2026 millibus. All rights reserved.` It appears in the page footer and the README. There is deliberately no LICENSE file; do not add one unless asked.
 - The page footer credits the data sources and links to the Sources tab. Keep it. When a new independent evaluator starts supplying scores, add it to the footer list and the README.
+- `AGENTS.md` restates these rules as review guidelines for the Codex review bot. When you change a rule here, change it there too.
