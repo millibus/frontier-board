@@ -1647,7 +1647,8 @@ function renderEffort(rows){
 const EFF_DEFAULT=["Claude Opus 5.5","Gemini 4 Argon","Claude Sonnet 5.5","Claude Fable 5.1","GPT-6 Astra","GPT-6.1 Sol","GPT-6 Luna","Gemini 3.8 Flash","GLM-5.3"];
 state.effSel=null;
 function renderEffCost(rows){
-  const cand=rows.filter(m=>effRows(m).filter(r=>r.cost!=null).length>1).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
+  const multi=(m,k)=>effRows(m).filter(r=>r[k]!=null&&r[k]>0).length>1;
+  const cand=rows.filter(m=>["cost","ttft","speed"].some(k=>multi(m,k))).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
   if(!state.effSel) state.effSel=new Set(EFF_DEFAULT);
   $("#effsel").innerHTML=cand.map(m=>`<button class="chip" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}">${esc(m.name)}</button>`).join("");
   $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffLines(filtered());});
@@ -1699,7 +1700,7 @@ function effLines(hostSel,keySel,pick,xk,o){
 state.effLv="high";
 function renderEffLevel(rows){
   const at=lv=>rows.map(m=>({m,r:effRows(m).find(r=>r.e===lv)})).filter(o=>o.r);
-  const lvls=EFF_ORDER.filter(e=>at(e).length>=2).reverse();
+  const lvls=EFF_ORDER.filter(e=>at(e).length).reverse();
   if(!lvls.includes(state.effLv)) state.effLv=lvls[0]||"high";
   $("#efflvsel").innerHTML=lvls.map(e=>`<button class="chip" data-lv="${e}" aria-pressed="${e===state.effLv}">${EFF_NAME[e]} <span class="eff">${at(e).length}</span></button>`).join("");
   $$("#efflvsel .chip").forEach(b=>b.onclick=()=>{state.effLv=b.dataset.lv; renderEffLevel(filtered());});
