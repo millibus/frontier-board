@@ -9,7 +9,7 @@ Single-page LLM benchmark aggregator, published with GitHub Pages from `main` (r
   - `asof` is the date of the newest data in that column, not the date the column was created. Bump it whenever you add or change a row from a newer source, e.g. a vendor's launch table or a new Artificial Analysis run. Use `"D Mon YYYY"` (optionally followed by ` · note`), or `"Mon YYYY"` / `"Mon–Mon YYYY"` (read as the last day of the last month) when the day is unknown, or `"undated"` if the source publishes no date. Anything else, including an impossible day like `31 Sep`, fails the check.
   - When a column starts mixing several vendors' tables, change `src` to "Vendor comparison tables".
 - `MODELS`: one entry per model: `name`, `prov`, `tier` (frontier/challenger/legacy), `open`, `rel` (YYYY-MM-DD), `note`, and `s`, the scores map.
-- `EFFORT`: per-model reasoning-effort rows: `[level, index, cost per task, tok/s, TTFT s]`. The first row must match the model's `aaii` and `costTask`.
+- `EFFORT`: per-model reasoning-effort rows: `[level, index, cost per task, tok/s, TTFT s]`. The first row must match the model's `aaii` and `costTask`. Leave out GPT-6 Luna's non-reasoning (`none`) row even when Artificial Analysis publishes one; the owner asked for it off the board.
 - `PRICES`: per-model `{in, out, cr, note}` in $ per 1M tokens.
 - `CHANGELOG`: newest first: `{d:"8 Oct 2026", items:[[tag, "text"], ...]}`, where tag is one of `add`, `data`, `rescale`, `move` (tier change) or `feature`.
 

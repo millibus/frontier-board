@@ -218,6 +218,8 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .effg{transition:opacity .12s}
 .dumbline{stroke:var(--line-2);stroke-width:4;stroke-linecap:round}
 .effdot{stroke:var(--surface);stroke-width:1.5}
+.zebra{fill:var(--ink);opacity:.035}
+.stem{stroke:var(--line);stroke-width:1.5}
 .eff{font-size:10px;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;margin-left:4px;letter-spacing:.02em}
 table.efftab{grid-column:1/-1;justify-self:start;border-collapse:collapse;font-size:12px;width:auto}
 table.efftab th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;text-align:right;padding:4px 14px 4px 0;border-bottom:1px solid var(--line-2)}
@@ -413,18 +415,18 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <div class="card" id="ch-speed"><div class="cardhead"><div><h2>Output speed</h2>
         <p class="sub">End-to-end output tokens per second, reasoning included, at the same effort level as the Index score, fastest first.</p></div></div><div id="c-speed"></div></div>
       <div class="card" id="ch-ttft"><div class="cardhead"><div><h2>Latency</h2>
-        <p class="sub">Seconds to the first answer token, quickest first. For reasoning models at high effort this includes thinking time, which is why the slowest run to minutes.</p></div></div><div id="c-ttft"></div></div>
+        <p class="sub">Seconds to the first answer token, quickest first, on a log scale so sub-second and multi-minute models both stay readable. For reasoning models at high effort this includes thinking time, which is why the slowest run to minutes.</p></div></div><div id="c-ttft"></div></div>
     </div>
     <div class="grid2">
       <div class="card" id="ch-blend"><div class="cardhead"><div><h2>Price</h2>
-        <p class="sub">Blended dollars per million tokens, cheapest first — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
+        <p class="sub">Blended dollars per million tokens, cheapest first, on a log scale — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
       <div class="card" id="ch-ctx"><div class="cardhead"><div><h2>Context window</h2>
         <p class="sub">Maximum input tokens, largest first.</p></div></div><div id="c-ctx"></div></div>
     </div>
 
     <div class="card" id="ch-ppp">
       <div class="cardhead"><div><h2>Price of a point</h2>
-        <p class="sub">Blended dollars per million tokens divided by index score — how much you pay per unit of measured capability. Lower is better.</p></div></div>
+        <p class="sub">Blended dollars per million tokens divided by index score — how much you pay per unit of measured capability. Lower is better; shows the 22 cheapest models in view.</p></div></div>
       <div id="ppp"></div>
     </div>
   </section>
@@ -1100,7 +1102,7 @@ const EFFORT = {
  "Claude Sonnet 5.5":[["max",55,10.02,151,277.32],["xhigh",50,4.09,136,31.07],["high",42,1.64,139,12.36],["medium",31,0.78,142,4.91],["low",26,0.51,134,3.28]],
  "Claude Opus 5.5":[["max",59,10.04,108,369.68],["xhigh",57,6.05,107,82.33],["high",52,3.46,107,35.35],["medium",48,2.45,108,18.13],["low",35,0.98,106,6.17]],
  "Grok 4.7":[["xhigh",35,7.77,72,53.09],["high",35,6.18,72,30.83],["low",31,2.92,71,9.57]],
- "GPT-6 Luna":[["max",28,0.15,100,94.74],["xhigh",23,0.1,95,23.82],["high",21,0.07,94,12.62],["medium",18,0.04,100,6.23],["low",10,0.005,90,2.53],["none",9,0.07,88,1.09]],
+ "GPT-6 Luna":[["max",28,0.15,100,94.74],["xhigh",23,0.1,95,23.82],["high",21,0.07,94,12.62],["medium",18,0.04,100,6.23],["low",10,0.005,90,2.53]],
  "GPT-6 Astra":[["max",57,6.24,42,231.48],["xhigh",55,3.66,43,119.46],["high",55,3.24,44,54.35],["medium",52,2.73,47,6.73],["low",43,1.42,44,3.83]],
  "Muse Wonder":[["max",44,6.95,124,22.22]],
  "Claude Fable 5.1":[["xhigh",50,10.85,86,67.07],["max",49,12.99,87,188.03],["high",47,7.54,86,15.85],["medium",43,5.56,86,9.47],["low",39,4.47,86,8.17]],
@@ -1171,6 +1173,8 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"6 Nov 2026", items:[
+  ["feature","Charts: every ranked bar chart gets a value axis with gridlines and alternate row shading, and ties sort by name. Latency and Price become dot plots on a log scale, since their values span about 23 and 96 times and straight bars squashed most rows to slivers. Price of a point shows four decimals and says it lists the 22 cheapest models. Narrow log axes, such as output speed by effort, get more tick labels. Scatter labels no longer overprint the quadrant captions and get room past the right edge, and the effort-line keys explain the orange open-weights line."],
+  ["data","GPT-6 Luna's non-reasoning rung (Index 9, $0.07 per task) removed from the effort data again, as on 27 Oct; the 3 Nov refresh had brought it back. It scores a point below the low setting at 14 times the cost per task. The board keeps it out from now on."],
   ["rescale","Artificial Analysis replaced its speed and latency figures with Performance v3 measurements between 3 and 6 Nov. Output speed is now end-to-end: output tokens, reasoning included, per second over the whole request. The first-token column is now time to first answer token, which includes thinking time for models that stream their reasoning. Every model and effort level on the board was re-read on 6 Nov: 61 models and 61 effort rows. Speeds moved both ways and most heavy settings wait less, e.g. GPT-6.1 Terra 111→73 tok/s and 275.16→172.24 s, Claude Opus 5.5 96→108 tok/s and 625.92→369.68 s. Open models that used to show about a second now show their thinking time, e.g. GLM-5.3 1.44→95.86 s, Kimi K3.1 Pro 3.45→165.49 s and Qwen3.8 Max 2.95→133.49 s. GPT-6 Luna medium and both Mistral Large 4 rows have speed and latency figures again. The column descriptions now carry the new definitions and a warning, and notes quoting the old figures were rewritten. Readings in earlier entries use the old method."],
   ["add","Inkling 2 Small (Thinking Machines, 5 Nov on Tinker; 594B total / 17B active, image input, 256K maximum context; closed weights at release, Apache 2.0 weights promised after safety testing). Artificial Analysis: Index v5 31, $1.18 per index task, 18 cents blended ($0.30/$1.00, $0.03 cached), 150 tok/s, 30.27 s to first answer token, HLE 44.1%. Thinking Machines' table: DeepSWE v1.1 72.1% (vendor-run); its FrontierCode v2.0 and Terminal-Bench Science figures are in the note only."],
   ["data","Artificial Analysis Index v5 moves (read 6 Nov): Gemini 4 Carbon 59→60, Claude Opus 5.5 58→59, Claude Sonnet 5.5 54→55 (high 41→42, medium 30→31, low 25→26), Muse Wonder 43→44, DeepSeek V4.1 Flash 1017 32→33, Ling 3.1 Flash 1019 29→30. Effort rows: Claude Haiku 5.5 xhigh 34→35, GPT-6.1 Terra non-reasoning 30→31, GPT-6 Astra medium 51→52, Claude Fable 5.1 low 38→39. Gemini 4 Argon's cost per index task rose from $7.68 to $9.95 at an unchanged $2.94 blend. Notes and caveats quoting the old figures were updated."],
@@ -1512,14 +1516,17 @@ function niceTicks(a,b,n=5){
   for(let v=Math.ceil(a/step)*step; v<=b+1e-9; v+=step) out.push(+v.toFixed(6));
   return out;
 }
-function logTicks(x0,x1){ // x0,x1 in log10 space
-  const t=[]; for(let e=Math.floor(x0);e<=Math.ceil(x1);e++) for(const m of [1,2,5]){
-    const v=m*Math.pow(10,e); const l=Math.log10(v); if(l>=x0&&l<=x1) t.push(v);} return t;
+function logTicks(x0,x1){ // x0,x1 in log10 space; finer steps when the range is too narrow for 1-2-5
+  for(const ms of [[1,2,5],[1,1.5,2,3,5,7],[1,1.2,1.5,2,2.5,3,4,5,6,8]]){
+    const t=[]; for(let e=Math.floor(x0);e<=Math.ceil(x1);e++) for(const m of ms){
+      const v=+(m*Math.pow(10,e)).toPrecision(6), l=Math.log10(v); if(l>=x0&&l<=x1) t.push(v);}
+    if(t.length>=4||ms.length>6) return t;
+  }
 }
 const money=v=>"$"+(v>=1?(+v.toFixed(2)).toString():v>=0.01?v.toFixed(2).replace(/0$/,""):v.toFixed(3));
 const plain=v=>v>=1000?(v/1000)+"k":String(v);
-function placeLabels(marks, bounds, maxN, textOf){
-  const boxes=marks.map(o=>({x0:o.x-o.r-2,x1:o.x+o.r+2,y0:o.y-o.r-2,y1:o.y+o.r+2}));
+function placeLabels(marks, bounds, maxN, textOf, block=[]){
+  const boxes=marks.map(o=>({x0:o.x-o.r-2,x1:o.x+o.r+2,y0:o.y-o.r-2,y1:o.y+o.r+2})).concat(block);
   const hit=b=>boxes.some(q=>!(b.x1<q.x0||b.x0>q.x1||b.y1<q.y0||b.y0>q.y1))
               || b.x0<bounds.x0-4 || b.x1>bounds.x1+2 || b.y0<bounds.y0 || b.y1>bounds.y1;
   let out="", n=0;
@@ -1527,7 +1534,8 @@ function placeLabels(marks, bounds, maxN, textOf){
     if(n>=maxN||o.nolabel) return;
     const txt=textOf(o), w=txt.length*6.35+4;
     for(const c of [{x:o.x+o.r+6,y:o.y+4,a:"start"},{x:o.x-o.r-6,y:o.y+4,a:"end"},{x:o.x,y:o.y-o.r-7,a:"middle"},{x:o.x,y:o.y+o.r+15,a:"middle"},
-                    {x:o.x-o.r-2,y:o.y-o.r-6,a:"end"},{x:o.x+o.r+2,y:o.y-o.r-6,a:"start"},{x:o.x-o.r-2,y:o.y+o.r+14,a:"end"},{x:o.x+o.r+2,y:o.y+o.r+14,a:"start"}]){
+                    {x:o.x-o.r-2,y:o.y-o.r-6,a:"end"},{x:o.x+o.r+2,y:o.y-o.r-6,a:"start"},{x:o.x-o.r-2,y:o.y+o.r+14,a:"end"},{x:o.x+o.r+2,y:o.y+o.r+14,a:"start"},
+                    {x:o.x+o.r+8,y:o.y-o.r-14,a:"start"},{x:o.x+o.r+8,y:o.y+o.r+22,a:"start"},{x:o.x-o.r-8,y:o.y-o.r-14,a:"end"},{x:o.x-o.r-8,y:o.y+o.r+22,a:"end"}]){
       const x0=c.a==="start"?c.x:c.a==="end"?c.x-w:c.x-w/2, b={x0:x0-2,x1:x0+w+2,y0:c.y-11,y1:c.y+3};
       if(hit(b)) continue;
       out+=`<text class="ptlab" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}" text-anchor="${c.a}">${esc(txt)}</text>`;
@@ -1555,7 +1563,7 @@ function frontText(front,xfmt,yfmt,xDir){
 
 /* generic scatter: log x, linear y, median quadrants, optional Pareto frontier */
 function scatterSvg(pts,o){
-  const W=980,H=o.H||560,ml=62,mr=28,mt=22,mb=58, iw=W-ml-mr, ih=H-mt-mb;
+  const W=980,H=o.H||560,ml=62,mr=96,mt=22,mb=58, iw=W-ml-mr, ih=H-mt-mb;
   const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), lx=Math.log10;
   const x0=lx(Math.min(...xs))-0.12, x1=lx(Math.max(...xs))+0.12;
   const yp=(Math.max(...ys)-Math.min(...ys))*0.09||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
@@ -1576,7 +1584,9 @@ function scatterSvg(pts,o){
   if(front.size>1) s+=`<polyline class="frontline" points="${[...front].map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join(" ")}"/>`;
   const marks=pts.map(p=>({...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)}));
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`;});
-  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:ml+iw,y0:mt,y1:mt+ih},24,m=>m.label);
+  const qw=t=>t.length*8.2+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
+    {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
+  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},24,m=>m.label,qb);
   return s+"</svg>";
 }
 const modelTip=(m,lines)=>`<b>${esc(m.name)}</b><span class="tl"><span>${esc(m.prov)}</span><span>${m.open?"Open weights":"Proprietary"}</span></span>`
@@ -1612,37 +1622,53 @@ function renderSpeedQ(rows){
 }
 
 /* ---------------- generic ranked bars ---------------- */
+/* o.dot: a dot plot on a log axis, for measures spanning orders of magnitude, where bar lengths would squash
+   most rows to slivers and log-length bars would misstate the ratios */
 function hbarSvg(items,o){
   if(!items.length) return '<p class="empty">No models in view have this measure.</p>';
-  const rowH=o.rowH||22, ml=o.ml||178, mr=o.mr||92, W=o.W||560, H=items.length*rowH+8, iw=W-ml-mr;
-  const max=Math.max(...items.map(i=>i.v));
+  const rowH=o.rowH||22, ml=o.ml||178, mr=o.mr||92, W=o.W||560, mt=24, H=items.length*rowH+mt+6, iw=W-ml-mr, lx=Math.log10;
+  const max=Math.max(...items.map(i=>i.v)), tf=o.tfmt||plain;
+  const l0=o.dot?lx(Math.min(...items.map(i=>i.v)))-0.06:0, l1=o.dot?lx(max)+0.02:0;
+  const X=o.dot?v=>ml+(lx(v)-l0)/(l1-l0)*iw:v=>ml+v/max*iw;
+  const ticks=o.dot?logTicks(l0,l1):niceTicks(0,max,4).filter(v=>v<=max*1.0001);
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+  if(items.length>8) items.forEach((it,i)=>{ if(i%2) s+=`<rect class="zebra" x="4" y="${mt+i*rowH-2.5}" width="${W-8}" height="${rowH}" rx="3"/>`; });
+  ticks.forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt-6}" x2="${X(v).toFixed(1)}" y2="${H-4}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt-11}" text-anchor="middle">${tf(v)}</text>`;});
+  if(!o.dot) s+=`<line class="axline" x1="${ml}" y1="${mt-6}" x2="${ml}" y2="${H-4}"/>`;
   items.forEach((it,i)=>{
-    const y=i*rowH+4, w=Math.max(2,(o.log?Math.log10(it.v/o.logMin)/Math.log10(max/o.logMin):it.v/max)*iw);
-    s+=`<text class="barlab" x="${ml-10}" y="${y+12}" text-anchor="end">${esc(it.name)}</text>`
-      +`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="4" fill="${it.fill}"/>`
-      +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`;
+    const y=mt+i*rowH, cy=y+(rowH-5)/2;
+    s+=`<text class="barlab" x="${ml-10}" y="${y+12}" text-anchor="end">${esc(it.name)}</text>`;
+    if(o.dot){
+      const x=X(it.v);
+      s+=`<line class="stem" x1="${ml}" y1="${cy}" x2="${x.toFixed(1)}" y2="${cy}"/>`
+        +`<circle class="pt" data-tip="${esc(it.tip)}" cx="${x.toFixed(1)}" cy="${cy}" r="5.5" fill="${it.fill}"/>`
+        +`<text class="barval" x="${(x+11).toFixed(1)}" y="${y+12}">${it.label}</text>`;
+    } else {
+      const w=Math.max(2,X(it.v)-ml);
+      s+=`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${it.fill}"/>`
+        +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`;
+    }
   });
   return s+"</svg>";
 }
 function renderBarsets(rows){
   const cur=rows;
   // Intelligence Index — every model in view, top effort
-  const idx=cur.filter(m=>val(m,"aaii")!=null).sort((a,b)=>val(b,"aaii")-val(a,"aaii"));
+  const idx=cur.filter(m=>val(m,"aaii")!=null).sort((a,b)=>val(b,"aaii")-val(a,"aaii")||a.name.localeCompare(b.name));
   $("#c-index").innerHTML=hbarSvg(idx.map(m=>({name:m.name,v:val(m,"aaii"),fill:idFill(m),
       label:val(m,"aaii")+(topEff(m)?`  ${topEff(m)}`:""),
       tip:modelTip(m,[["Index",val(m,"aaii")],["Effort level",topEff(m)?EFF_NAME[topEff(m)]:"single setting"],["Cost per index task",val(m,"costTask")!=null?fmt(val(m,"costTask"),"usd2"):"—"]])})),
     {aria:"Intelligence Index ranked",W:980,ml:200,mr:110,rowH:21});
-  const set=(host,key,asc,lab,tipk,n=Infinity)=>{
-    const d=cur.filter(m=>val(m,key)!=null&&val(m,key)>0).sort((a,b)=>asc?val(a,key)-val(b,key):val(b,key)-val(a,key)).slice(0,n);
+  const set=(host,key,asc,lab,tipk,ax={})=>{
+    const d=cur.filter(m=>val(m,key)!=null&&val(m,key)>0).sort((a,b)=>(asc?val(a,key)-val(b,key):val(b,key)-val(a,key))||a.name.localeCompare(b.name));
     $(host).innerHTML=hbarSvg(d.map(m=>({name:m.name,v:val(m,key),fill:idFill(m),label:lab(val(m,key)),
       tip:modelTip(m,[[tipk,lab(val(m,key))],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])})),
-      {aria:tipk,rowH:20});
+      {aria:tipk,rowH:20,...ax});
   };
   set("#c-speed","speed",false,v=>Math.round(v)+" tok/s","Output speed");
-  set("#c-ttft","ttft",true,v=>(v>=10?Math.round(v):v.toFixed(2))+" s","Time to first answer token");
-  set("#c-blend","price",true,v=>"$"+v.toFixed(2),"Blended $/1M");
-  set("#c-ctx","ctx",false,v=>fmt(v,"ctx"),"Context window");
+  set("#c-ttft","ttft",true,v=>(v>=10?Math.round(v):v.toFixed(2))+" s","Time to first answer token",{dot:true,tfmt:v=>v+" s"});
+  set("#c-blend","price",true,v=>"$"+v.toFixed(2),"Blended $/1M",{dot:true,tfmt:money});
+  set("#c-ctx","ctx",false,v=>fmt(v,"ctx"),"Context window",{tfmt:v=>fmt(v,"ctx")});
   ["#c-index","#c-speed","#c-ttft","#c-blend","#c-ctx"].forEach(h=>wire($(h)));
 }
 
@@ -1704,6 +1730,7 @@ function effLines(hostSel,keySel,pick,xk,o){
   const ms=pick.filter(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0).length>1);
   const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>r[xk]!=null&&seen.add(r.e)));
   effKey(keySel,EFF_ORDER.filter(e=>seen.has(e)));
+  if(ms.some(m=>m.open)) $(keySel).innerHTML+=`<span><i style="width:16px;height:0;border-radius:0;border-top:2px solid var(--open);vertical-align:3px"></i>Open-weights model</span>`;
   if(!ms.length){host.innerHTML=`<p class="empty">${pick.length?"None of the picked models has this measured at more than one effort level.":"Pick at least one model above."}</p>`;return;}
   const W=980,H=560,ml=62,mr=120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
   const pts=ms.flatMap(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0));
@@ -1752,22 +1779,15 @@ function renderCharts(rows){ renderBarsets(rows); renderEffort(rows); renderEffL
 /* ---------------- price per point ---------------- */
 function renderPPP(rows){
   const d=rows.filter(m=>val(m,"price")!=null&&val(m,"aaii")!=null)
-    .map(m=>({m,v:val(m,"price")/val(m,"aaii")})).sort((a,b)=>a.v-b.v).slice(0,22);
+    .map(m=>({m,v:val(m,"price")/val(m,"aaii")})).sort((a,b)=>a.v-b.v||a.m.name.localeCompare(b.m.name)).slice(0,22);
   const host=$("#ppp");
   if(!d.length){host.innerHTML='<p class="empty">No models with both a price and an Index score.</p>';return;}
-  const rowH=25,ml=190,mr=64,W=980,H=d.length*rowH+34;
-  const max=Math.max(...d.map(o=>o.v)), iw=W-ml-mr;
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Blended price per Intelligence Index point">`;
-  d.forEach((o,i)=>{
-    const y=i*rowH+8, w=Math.max(2,o.v/max*iw);
-    const t=`<b>${esc(o.m.name)}</b><span class="tl"><span>Per index point</span><span>$${o.v.toFixed(4)}</span></span>`
-      +`<span class="tl"><span>Blended price</span><span>$${val(o.m,"price").toFixed(2)}</span></span>`
-      +`<span class="tl"><span>Index</span><span>${val(o.m,"aaii")}</span></span>`;
-    s+=`<text class="barlab" x="${ml-12}" y="${y+14}" text-anchor="end">${esc(o.m.name)}</text>`
-      +`<rect data-tip="${esc(t)}" x="${ml}" y="${y+3}" width="${w.toFixed(1)}" height="14" rx="4" fill="${o.m.open?"var(--open)":"var(--accent)"}"/>`
-      +`<text class="barval" x="${ml+w+8}" y="${y+14}">$${o.v.toFixed(3)}</text>`;
-  });
-  s+="</svg>"; host.innerHTML=s; wire(host);
+  host.innerHTML=hbarSvg(d.map(o=>({name:o.m.name,v:o.v,fill:idFill(o.m),label:"$"+o.v.toFixed(4),
+      tip:`<b>${esc(o.m.name)}</b><span class="tl"><span>Per index point</span><span>$${o.v.toFixed(4)}</span></span>`
+        +`<span class="tl"><span>Blended price</span><span>$${val(o.m,"price").toFixed(2)}</span></span>`
+        +`<span class="tl"><span>Index</span><span>${val(o.m,"aaii")}</span></span>`})),
+    {aria:"Blended price per Intelligence Index point",W:980,ml:200,mr:90,rowH:24,tfmt:v=>"$"+(+v.toFixed(4))});
+  wire(host);
 }
 
 /* ---------------- per-benchmark ranked bars ---------------- */

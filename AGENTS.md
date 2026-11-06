@@ -21,6 +21,7 @@ Flag these as P2:
 - A model note, `BENCH` description, warning or caveat that quotes a number the data no longer has, or claims a figure the model has no tuple for.
 - Wording that ages: ranks ("second on WebDev"), "today", "newest", "N days old", promo deadlines.
 - A `ctx` value not marked `ven`.
+- A `none` (non-reasoning) row added back to GPT-6 Luna's `EFFORT` data; the owner asked for it off the board.
 - A new independent evaluator supplying scores without being added to the footer list and the README.
 
 Don't flag:
