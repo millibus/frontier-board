@@ -196,9 +196,9 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .missing b{color:var(--ink)}
 
 /* ---------- charts tab ---------- */
-:root{--e0:#a3aab4;--e1:#86b6ef;--e2:#3987e5;--e3:#256abf;--e4:#184f95;--e5:#0d366b}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--e0:#5c6570;--e1:#256abf;--e2:#3987e5;--e3:#6da7ec;--e4:#9ec5f4;--e5:#e3eefc}}
-:root[data-theme="dark"]{--e0:#5c6570;--e1:#256abf;--e2:#3987e5;--e3:#6da7ec;--e4:#9ec5f4;--e5:#e3eefc}
+:root{--e0:#a3aab4;--e1:#9fcaf3;--e2:#4d9be6;--e3:#2463c4;--e4:#4b3aa8;--e5:#221466}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--e0:#5c6570;--e1:#1f5aa6;--e2:#3f8be0;--e3:#79b4f0;--e4:#b3a6f2;--e5:#ece8ff}}
+:root[data-theme="dark"]{--e0:#5c6570;--e1:#1f5aa6;--e2:#3f8be0;--e3:#79b4f0;--e4:#b3a6f2;--e5:#ece8ff}
 .jump{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
 .jump a{font-size:12.5px;text-decoration:none;color:var(--ink-2);border:1px solid var(--line-2);background:var(--surface);
   border-radius:999px;padding:3px 11px}
@@ -219,6 +219,7 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .dumbline{stroke:var(--line-2);stroke-width:4;stroke-linecap:round}
 .effdot{stroke:var(--surface);stroke-width:1.5}
 .zebra{fill:var(--ink);opacity:.035}
+.tlist{display:block;max-width:300px;white-space:normal;margin-top:6px;line-height:1.45;color:var(--ink-2)}
 .stem{stroke:var(--line);stroke-width:1.5}
 .eff{font-size:10px;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;margin-left:4px;letter-spacing:.02em}
 table.efftab{grid-column:1/-1;justify-self:start;border-collapse:collapse;font-size:12px;width:auto}
@@ -381,7 +382,6 @@ details.changes summary b{color:var(--ink);font-weight:600}
           <span><i style="background:var(--accent)"></i>Proprietary</span>
           <span><i style="background:var(--open)"></i>Open weights</span>
           <span><i class="lk"></i>Pareto frontier</span>
-          <span style="color:var(--ink-3)">Point size = context window</span>
         </div>
       </div>
       <div class="fg" style="margin:12px 0 4px;flex-wrap:wrap">
@@ -421,7 +421,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <div class="card" id="ch-blend"><div class="cardhead"><div><h2>Price</h2>
         <p class="sub">Blended dollars per million tokens, cheapest first, on a log scale — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
       <div class="card" id="ch-ctx"><div class="cardhead"><div><h2>Context window</h2>
-        <p class="sub">Maximum input tokens, largest first.</p></div></div><div id="c-ctx"></div></div>
+        <p class="sub">Maximum input tokens, largest first. Three or more models with the same window share one row, split blue and orange by weights; hover it for the names.</p></div></div><div id="c-ctx"></div></div>
     </div>
 
     <div class="card" id="ch-ppp">
@@ -1173,6 +1173,7 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"6 Nov 2026", items:[
+  ["feature","Charts, second pass: on phones each chart is drawn at the card's own width, so text stays full size, long model names are shortened (hover shows the full name) and crowded axis labels are thinned. The context-window chart groups three or more models sharing a window into one row, split blue and orange by weights. The price scatter drops point size for context window, since most models share 1M. The effort colours run from light blue to indigo so High, Extra high and Max are easier to tell apart in both themes."],
   ["feature","Charts: every ranked bar chart gets a value axis with gridlines and alternate row shading, and ties sort by name. Latency and Price become dot plots on a log scale, since their values span about 23 and 96 times and straight bars squashed most rows to slivers. Price of a point shows four decimals and says it lists the 22 cheapest models. Narrow log axes, such as output speed by effort, get more tick labels. Scatter labels no longer overprint the quadrant captions and get room past the right edge, and the effort-line keys explain the orange open-weights line."],
   ["data","GPT-6 Luna's non-reasoning rung (Index 9, $0.07 per task) removed from the effort data again, as on 27 Oct; the 3 Nov refresh had brought it back. It scores a point below the low setting at 14 times the cost per task. The board keeps it out from now on."],
   ["rescale","Artificial Analysis replaced its speed and latency figures with Performance v3 measurements between 3 and 6 Nov. Output speed is now end-to-end: output tokens, reasoning included, per second over the whole request. The first-token column is now time to first answer token, which includes thinking time for models that stream their reasoning. Every model and effort level on the board was re-read on 6 Nov: 61 models and 61 effort rows. Speeds moved both ways and most heavy settings wait less, e.g. GPT-6.1 Terra 111→73 tok/s and 275.16→172.24 s, Claude Opus 5.5 96→108 tok/s and 625.92→369.68 s. Open models that used to show about a second now show their thinking time, e.g. GLM-5.3 1.44→95.86 s, Kimi K3.1 Pro 3.45→165.49 s and Qwen3.8 Max 2.95→133.49 s. GPT-6 Luna medium and both Mistral Large 4 rows have speed and latency figures again. The column descriptions now carry the new definitions and a warning, and notes quoting the old figures were rewritten. Readings in earlier entries use the old method."],
@@ -1516,6 +1517,7 @@ function niceTicks(a,b,n=5){
   for(let v=Math.ceil(a/step)*step; v<=b+1e-9; v+=step) out.push(+v.toFixed(6));
   return out;
 }
+const thinTicks=(t,X,gap)=>{let last=-1e9; return t.filter(v=>X(v)-last>=gap&&(last=X(v),true));}; // keep labels at least gap px apart
 function logTicks(x0,x1){ // x0,x1 in log10 space; finer steps when the range is too narrow for 1-2-5
   for(const ms of [[1,2,5],[1,1.5,2,3,5,7],[1,1.2,1.5,2,2.5,3,4,5,6,8]]){
     const t=[]; for(let e=Math.floor(x0);e<=Math.ceil(x1);e++) for(const m of ms){
@@ -1523,6 +1525,10 @@ function logTicks(x0,x1){ // x0,x1 in log10 space; finer steps when the range is
     if(t.length>=4||ms.length>6) return t;
   }
 }
+/* SVG width for a chart: the card's on-screen width, capped at the desktop design width, so text keeps its
+   full size on phones instead of being scaled down with the whole drawing */
+const fitW=(host,max)=>{const w=host&&host.clientWidth; return w?Math.max(300,Math.min(max,Math.round(w))):max;};
+const fitName=(t,px)=>{const n=Math.floor(px/6.1); return t.length>n?t.slice(0,n-1)+"…":t;};
 const money=v=>"$"+(v>=1?(+v.toFixed(2)).toString():v>=0.01?v.toFixed(2).replace(/0$/,""):v.toFixed(3));
 const plain=v=>v>=1000?(v/1000)+"k":String(v);
 function placeLabels(marks, bounds, maxN, textOf, block=[]){
@@ -1563,30 +1569,30 @@ function frontText(front,xfmt,yfmt,xDir){
 
 /* generic scatter: log x, linear y, median quadrants, optional Pareto frontier */
 function scatterSvg(pts,o){
-  const W=980,H=o.H||560,ml=62,mr=96,mt=22,mb=58, iw=W-ml-mr, ih=H-mt-mb;
+  const W=fitW(o.host,980), nar=W<600, H=nar?Math.round(W*1.15):o.H||560, ml=nar?46:62, mr=nar?14:96, mt=22, mb=58, iw=W-ml-mr, ih=H-mt-mb;
   const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), lx=Math.log10;
   const x0=lx(Math.min(...xs))-0.12, x1=lx(Math.max(...xs))+0.12;
   const yp=(Math.max(...ys)-Math.min(...ys))*0.09||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
   const med=a=>{const q=[...a].sort((p,r)=>p-r),n=q.length;return n%2?q[(n-1)/2]:(q[n/2-1]+q[n/2])/2;};
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
-  logTicks(x0,x1).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.xfmt(v)}</text>`;});
+  thinTicks(logTicks(x0,x1),X,nar?48:0).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.xfmt(v)}</text>`;});
   niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${o.yfmt(v)}</text>`;});
   s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/>`;
   if(o.quad){
     const mx=med(xs),my=med(ys);
     s+=`<line class="quadline" x1="${X(mx).toFixed(1)}" y1="${mt}" x2="${X(mx).toFixed(1)}" y2="${mt+ih}"/><line class="quadline" x1="${ml}" y1="${Y(my).toFixed(1)}" x2="${ml+iw}" y2="${Y(my).toFixed(1)}"/>`
-      +`<text class="qlab" x="${ml+8}" y="${mt+16}">${o.quad[0]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+16}" text-anchor="end">${o.quad[1]}</text>`
-      +`<text class="qlab" x="${ml+8}" y="${mt+ih-8}">${o.quad[2]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+ih-8}" text-anchor="end">${o.quad[3]}</text>`;
+      +(nar?"":`<text class="qlab" x="${ml+8}" y="${mt+16}">${o.quad[0]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+16}" text-anchor="end">${o.quad[1]}</text>`
+      +`<text class="qlab" x="${ml+8}" y="${mt+ih-8}">${o.quad[2]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+ih-8}" text-anchor="end">${o.quad[3]}</text>`);
   }
-  s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">${o.xtitle} — log scale</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
+  s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
   const front=o.front?new Set(paretoFront(pts,o.front)):new Set();
   if(front.size>1) s+=`<polyline class="frontline" points="${[...front].map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join(" ")}"/>`;
   const marks=pts.map(p=>({...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)}));
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`;});
-  const qw=t=>t.length*8.2+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
+  const qw=t=>t.length*8.2+4, qb=o.quad&&!nar?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
     {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
-  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},24,m=>m.label,qb);
+  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},nar?10:24,m=>m.label,qb);
   return s+"</svg>";
 }
 const modelTip=(m,lines)=>`<b>${esc(m.name)}</b><span class="tl"><span>${esc(m.prov)}</span><span>${m.open?"Open weights":"Proprietary"}</span></span>`
@@ -1598,11 +1604,10 @@ function renderQuad(rows){
   const xk=$("#xaxis").value, yk=$("#yaxis").value, host=$("#quad");
   const ms=rows.filter(m=>val(m,xk)!=null&&val(m,yk)!=null&&val(m,xk)>0);
   if(ms.length<3){host.innerHTML='<p class="empty">Not enough models with both measures under these filters.</p>';$("#quad-front").innerHTML="";return;}
-  const rOf=m=>{const c=val(m,"ctx");return c?Math.max(4,Math.min(11,Math.sqrt(c/1e6)*8+3.5)):4.5;};
-  const pts=ms.map(m=>({x:val(m,xk),y:val(m,yk),r:rOf(m),fill:idFill(m),label:m.name,
+  const pts=ms.map(m=>({x:val(m,xk),y:val(m,yk),r:6.5,fill:idFill(m),label:m.name,
       tip:modelTip(m,[[BENCH[yk].s,fmt(val(m,yk),BENCH[yk].f)+(yk==="aaii"&&topEff(m)?" · "+topEff(m):"")],[BENCH[xk].s,fmt(val(m,xk),BENCH[xk].f)],["Context",val(m,"ctx")?fmt(val(m,"ctx"),"ctx"):"—"]])}));
   host.innerHTML=scatterSvg(pts,
-    {aria:"Capability against price",xfmt:money,yfmt:v=>String(Math.round(v)),xtitle:BENCH[xk].l,ytitle:BENCH[yk].l,
+    {aria:"Capability against price",host,xfmt:money,yfmt:v=>String(Math.round(v)),xtitle:BENCH[xk].l,ytitle:BENCH[yk].l,
      quad:["Value zone","Premium","Budget","Overpriced"],front:"min"});
   $("#quad-front").innerHTML=frontText(paretoFront(pts,"min"),money,v=>fmt(v,BENCH[yk].f),"min");
   wire(host);
@@ -1615,7 +1620,7 @@ function renderSpeedQ(rows){
   const pts=ms.map(m=>({x:val(m,"speed"),y:val(m,"aaii"),fill:idFill(m),label:m.name,
       tip:modelTip(m,[["Index",val(m,"aaii")+(topEff(m)?" · "+topEff(m):"")],["Output speed",Math.round(val(m,"speed"))+" tok/s"],["Time to first answer token",val(m,"ttft")!=null?fmt(val(m,"ttft"),"n1")+" s":"—"]])}));
   host.innerHTML=scatterSvg(pts,
-    {aria:"Capability against output speed",H:520,xfmt:plain,yfmt:v=>String(Math.round(v)),xtitle:"Output speed — tokens per second",ytitle:"AA Intelligence Index",
+    {aria:"Capability against output speed",host,H:520,xfmt:plain,yfmt:v=>String(Math.round(v)),xtitle:"Output speed — tokens per second",ytitle:"AA Intelligence Index",
      quad:["Smart, slow","Smart and fast","Slow","Fast, less capable"],front:"max"});
   $("#speedq-front").innerHTML=frontText(paretoFront(pts,"max"),v=>Math.round(v)+" tok/s",v=>String(Math.round(v)),"max");
   wire(host);
@@ -1626,7 +1631,8 @@ function renderSpeedQ(rows){
    most rows to slivers and log-length bars would misstate the ratios */
 function hbarSvg(items,o){
   if(!items.length) return '<p class="empty">No models in view have this measure.</p>';
-  const rowH=o.rowH||22, ml=o.ml||178, mr=o.mr||92, W=o.W||560, mt=24, H=items.length*rowH+mt+6, iw=W-ml-mr, lx=Math.log10;
+  const W0=o.W||560, W=fitW(o.host,W0), nar=W<W0, ml=nar?Math.min(o.ml||178,Math.round(W*.4)):o.ml||178,
+        mr=nar?Math.min(o.mr||92,Math.max(60,Math.round(W*.3))):o.mr||92, rowH=o.rowH||22, mt=24, H=items.length*rowH+mt+6, iw=W-ml-mr, lx=Math.log10;
   const max=Math.max(...items.map(i=>i.v)), tf=o.tfmt||plain;
   const l0=o.dot?lx(Math.min(...items.map(i=>i.v)))-0.06:0, l1=o.dot?lx(max)+0.02:0;
   const X=o.dot?v=>ml+(lx(v)-l0)/(l1-l0)*iw:v=>ml+v/max*iw;
@@ -1637,15 +1643,17 @@ function hbarSvg(items,o){
   if(!o.dot) s+=`<line class="axline" x1="${ml}" y1="${mt-6}" x2="${ml}" y2="${H-4}"/>`;
   items.forEach((it,i)=>{
     const y=mt+i*rowH, cy=y+(rowH-5)/2;
-    s+=`<text class="barlab" x="${ml-10}" y="${y+12}" text-anchor="end">${esc(it.name)}</text>`;
+    s+=`<text class="barlab" x="${ml-10}" y="${y+12}" text-anchor="end">${esc(fitName(it.name,ml-14))}<title>${esc(it.name)}</title></text>`;
     if(o.dot){
       const x=X(it.v);
       s+=`<line class="stem" x1="${ml}" y1="${cy}" x2="${x.toFixed(1)}" y2="${cy}"/>`
         +`<circle class="pt" data-tip="${esc(it.tip)}" cx="${x.toFixed(1)}" cy="${cy}" r="5.5" fill="${it.fill}"/>`
         +`<text class="barval" x="${(x+11).toFixed(1)}" y="${y+12}">${it.label}</text>`;
     } else {
-      const w=Math.max(2,X(it.v)-ml);
-      s+=`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${it.fill}"/>`
+      const w=Math.max(2,X(it.v)-ml), sp=it.split, w1=sp?w*sp[0]/(sp[0]+sp[1]):w;
+      s+=(sp&&sp[0]&&sp[1]?`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${(w1+3).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--accent)"/>`
+          +`<rect data-tip="${esc(it.tip)}" x="${(ml+w1).toFixed(1)}" y="${y+2}" width="${(w-w1).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--open)"/>`
+        :`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${sp?(sp[0]?"var(--accent)":"var(--open)"):it.fill}"/>`)
         +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`;
     }
   });
@@ -1658,17 +1666,27 @@ function renderBarsets(rows){
   $("#c-index").innerHTML=hbarSvg(idx.map(m=>({name:m.name,v:val(m,"aaii"),fill:idFill(m),
       label:val(m,"aaii")+(topEff(m)?`  ${topEff(m)}`:""),
       tip:modelTip(m,[["Index",val(m,"aaii")],["Effort level",topEff(m)?EFF_NAME[topEff(m)]:"single setting"],["Cost per index task",val(m,"costTask")!=null?fmt(val(m,"costTask"),"usd2"):"—"]])})),
-    {aria:"Intelligence Index ranked",W:980,ml:200,mr:110,rowH:21});
+    {aria:"Intelligence Index ranked",host:$("#c-index"),W:980,ml:200,mr:110,rowH:21});
   const set=(host,key,asc,lab,tipk,ax={})=>{
     const d=cur.filter(m=>val(m,key)!=null&&val(m,key)>0).sort((a,b)=>(asc?val(a,key)-val(b,key):val(b,key)-val(a,key))||a.name.localeCompare(b.name));
     $(host).innerHTML=hbarSvg(d.map(m=>({name:m.name,v:val(m,key),fill:idFill(m),label:lab(val(m,key)),
       tip:modelTip(m,[[tipk,lab(val(m,key))],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])})),
-      {aria:tipk,rowH:20,...ax});
+      {aria:tipk,host:$(host),rowH:20,...ax});
   };
   set("#c-speed","speed",false,v=>Math.round(v)+" tok/s","Output speed");
   set("#c-ttft","ttft",true,v=>(v>=10?Math.round(v):v.toFixed(2))+" s","Time to first answer token",{dot:true,tfmt:v=>v+" s"});
   set("#c-blend","price",true,v=>"$"+v.toFixed(2),"Blended $/1M",{dot:true,tfmt:money});
-  set("#c-ctx","ctx",false,v=>fmt(v,"ctx"),"Context window",{tfmt:v=>fmt(v,"ctx")});
+  // Context window: three or more models sharing a window collapse into one row, split by weights; hover lists them
+  const cx=cur.filter(m=>val(m,"ctx")>0).sort((a,b)=>val(b,"ctx")-val(a,"ctx")||a.name.localeCompare(b.name)), grp=[];
+  cx.forEach(m=>{const g=grp[grp.length-1]; g&&g.v===val(m,"ctx")?g.ms.push(m):grp.push({v:val(m,"ctx"),ms:[m]});});
+  $("#c-ctx").innerHTML=hbarSvg(grp.flatMap(g=>g.ms.length<3
+      ?g.ms.map(m=>({name:m.name,v:g.v,fill:idFill(m),label:fmt(g.v,"ctx"),
+          tip:modelTip(m,[["Context window",fmt(g.v,"ctx")],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])}))
+      :[{name:g.ms.length+" models",v:g.v,label:fmt(g.v,"ctx"),split:[g.ms.filter(m=>!m.open).length,g.ms.filter(m=>m.open).length],
+          tip:`<b>${g.ms.length} models at ${fmt(g.v,"ctx")}</b><span class="tl"><span>Proprietary</span><span>${g.ms.filter(m=>!m.open).length}</span></span>`
+            +`<span class="tl"><span>Open weights</span><span>${g.ms.filter(m=>m.open).length}</span></span>`
+            +`<span class="tlist">${g.ms.map(m=>esc(m.name)).join(", ")}</span>`}]),
+    {aria:"Context window",host:$("#c-ctx"),rowH:20,tfmt:v=>fmt(v,"ctx")});
   ["#c-index","#c-speed","#c-ttft","#c-blend","#c-ctx"].forEach(h=>wire($(h)));
 }
 
@@ -1682,15 +1700,15 @@ function renderEffort(rows){
   const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>seen.add(r.e)));
   effKey("#effkey",EFF_ORDER.filter(e=>seen.has(e)));
   if(!ms.length){host.innerHTML='<p class="empty">No model in view has more than one effort level measured.</p>';return;}
-  const W=980,rowH=28,ml=200,mr=60,mt=26,H=ms.length*rowH+mt+30,iw=W-ml-mr;
+  const W=fitW(host,980),nar=W<700,rowH=28,ml=nar?Math.round(W*.34):200,mr=nar?36:60,mt=26,H=ms.length*rowH+mt+30,iw=W-ml-mr;
   const all=ms.flatMap(m=>effRows(m).map(r=>r.aaii)), lo=Math.floor((Math.min(...all)-2)/5)*5, hi=Math.ceil((Math.max(...all)+2)/5)*5;
   const X=v=>ml+(v-lo)/(hi-lo)*iw;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Intelligence Index at each effort level">`;
-  niceTicks(lo,hi,8).forEach(v=>{s+=`<line class="gridline" x1="${X(v)}" y1="${mt-6}" x2="${X(v)}" y2="${H-26}"/><text class="axlab" x="${X(v)}" y="${mt-12}" text-anchor="middle">${v}</text>`;});
+  niceTicks(lo,hi,nar?4:8).forEach(v=>{s+=`<line class="gridline" x1="${X(v)}" y1="${mt-6}" x2="${X(v)}" y2="${H-26}"/><text class="axlab" x="${X(v)}" y="${mt-12}" text-anchor="middle">${v}</text>`;});
   s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-6}" text-anchor="middle">AA Intelligence Index</text>`;
   ms.forEach((m,i)=>{
     const rs=effRows(m), y=mt+i*rowH+rowH/2, vs=rs.map(r=>r.aaii);
-    s+=`<text class="barlab" x="${ml-12}" y="${y+4}" text-anchor="end">${esc(m.name)}</text>`
+    s+=`<text class="barlab" x="${ml-12}" y="${y+4}" text-anchor="end">${esc(fitName(m.name,ml-16))}<title>${esc(m.name)}</title></text>`
       +`<line class="dumbline" x1="${X(Math.min(...vs))}" y1="${y}" x2="${X(Math.max(...vs))}" y2="${y}"/>`;
     const seenV={};
     [...rs].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e)).forEach(r=>{
@@ -1732,15 +1750,15 @@ function effLines(hostSel,keySel,pick,xk,o){
   effKey(keySel,EFF_ORDER.filter(e=>seen.has(e)));
   if(ms.some(m=>m.open)) $(keySel).innerHTML+=`<span><i style="width:16px;height:0;border-radius:0;border-top:2px solid var(--open);vertical-align:3px"></i>Open-weights model</span>`;
   if(!ms.length){host.innerHTML=`<p class="empty">${pick.length?"None of the picked models has this measured at more than one effort level.":"Pick at least one model above."}</p>`;return;}
-  const W=980,H=560,ml=62,mr=120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
+  const W=fitW(host,980),nar=W<600,H=nar?Math.round(W*1.15):560,ml=nar?46:62,mr=nar?14:120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
   const pts=ms.flatMap(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0));
   const x0=lx(Math.min(...pts.map(p=>p[xk])))-0.12, x1=lx(Math.max(...pts.map(p=>p[xk])))+0.12;
   const ys=pts.map(p=>p.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
   let s=`<svg class="effsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
-  logTicks(x0,x1).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.fmt(v)}</text>`;});
+  thinTicks(logTicks(x0,x1),X,nar?48:0).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.fmt(v)}</text>`;});
   niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${Math.round(v)}</text>`;});
-  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle">${esc(o.title)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
+  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${esc(nar?o.title.replace(" — log scale"," (log)").replace("Intelligence Index ",""):o.title)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
   const ends=[];
   ms.forEach(m=>{
     const rs=effRows(m).filter(r=>r[xk]!=null&&r[xk]>0).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
@@ -1769,7 +1787,7 @@ function renderEffLevel(rows){
   $("#c-efflevel").innerHTML=d.length?hbarSvg(d.map(({m,r})=>({name:m.name,v:r.aaii,fill:idFill(m),
       label:r.aaii+(r.cost!=null?"  "+money(r.cost)+"/task":""),
       tip:modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first answer token",r.ttft!=null?r.ttft+" s":"—"]])})),
-    {aria:"Intelligence Index at "+EFF_NAME[state.effLv]+" effort, ranked",W:980,ml:200,mr:140,rowH:21})
+    {aria:"Intelligence Index at "+EFF_NAME[state.effLv]+" effort, ranked",host:$("#c-efflevel"),W:980,ml:200,mr:140,rowH:21})
     :'<p class="empty">No model in view has this effort level measured.</p>';
   wire($("#c-efflevel"));
 }
@@ -1786,7 +1804,7 @@ function renderPPP(rows){
       tip:`<b>${esc(o.m.name)}</b><span class="tl"><span>Per index point</span><span>$${o.v.toFixed(4)}</span></span>`
         +`<span class="tl"><span>Blended price</span><span>$${val(o.m,"price").toFixed(2)}</span></span>`
         +`<span class="tl"><span>Index</span><span>${val(o.m,"aaii")}</span></span>`})),
-    {aria:"Blended price per Intelligence Index point",W:980,ml:200,mr:90,rowH:24,tfmt:v=>"$"+(+v.toFixed(4))});
+    {aria:"Blended price per Intelligence Index point",host,W:980,ml:200,mr:90,rowH:24,tfmt:v=>"$"+(+v.toFixed(4))});
   wire(host);
 }
 
@@ -1914,6 +1932,8 @@ $$(".tab").forEach(t=>t.onclick=()=>{
   render();
 });
 $("#xaxis").onchange=$("#yaxis").onchange=()=>renderQuad(filtered());
+let lastW=innerWidth; addEventListener("resize",()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>{
+  if(Math.abs(innerWidth-lastW)>40&&$("#p-quad").classList.contains("on")){ lastW=innerWidth; render(); } },150); });
 $("#foot-src").onclick=e=>{e.preventDefault(); $('.tab[data-p="src"]').click(); scrollTo(0,0);};
 
 
