@@ -149,7 +149,9 @@ svg{display:block;max-width:100%;height:auto}
 .pt.front{stroke:var(--ink);stroke-width:1.5}
 .frontline{fill:none;stroke:var(--ink);stroke-width:1.75;stroke-linecap:round;opacity:.7}
 .frontline.steep{opacity:.3;stroke-dasharray:4 4}
-.pt.multi{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 2}
+.ring{fill:none;stroke:var(--ink);stroke-width:1.5;pointer-events:none}
+.endnum{fill:var(--surface);font:700 10px "IBM Plex Mono",monospace;pointer-events:none}
+.leader{stroke:var(--ink-3);stroke-width:.75;opacity:.8}
 .tip .tsep{display:block;border-top:1px solid var(--line);margin:7px 0}
 .ghostline{fill:none;stroke:var(--ink-3);stroke-width:1;opacity:.6}
 .effdot.ghost{opacity:.85}
@@ -1175,6 +1177,7 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"6 Nov 2026", items:[
+  ["feature","Charts, fifth pass after a third design review. Log axes keep their round values first, so the latency axis shows 10 s and 100 s. On phones the effort-line charts put each line's number inside its end dot, stepping overlapping ones apart, and the price scatters keep faint quadrant captions. Two models at one point get a solid ring, and a label placed away from its dot gets a thin line to it."],
   ["feature","Charts, fourth pass after a second design review. Axis labels on the bar and dot charts no longer run together on phones. Point labels steer around the frontier line where they can. Models at the same point share one ringed dot with a combined label and tooltip, and touching dots share a label. The price scatter's description follows the axis dropdowns. Shortened names on phones keep their last word, such as a version number. Expanded context-window rows show their sizes, and the same-effort ranking says ties go to the cheaper model."],
   ["feature","Charts, third pass. Click a grouped context-window row to list its models. On phones the effort-line charts number each line and list the names underneath. The Intelligence Index marks each model's effort level with a coloured dot instead of a word. The separate speed-by-effort chart is folded into Intelligence vs output speed: models picked in the effort charts show their other effort levels there as small dots. Frontier segments that drop below the median score are drawn faint and dashed."],
   ["feature","Charts, second pass: on phones each chart is drawn at the card's own width, so text stays full size, long model names are shortened (hover shows the full name) and crowded axis labels are thinned. The context-window chart groups three or more models sharing a window into one row, split blue and orange by weights. The price scatter drops point size for context window, since most models share 1M. The effort colours run from light blue to indigo so High, Extra high and Max are easier to tell apart in both themes."],
@@ -1521,7 +1524,17 @@ function niceTicks(a,b,n=5){
   for(let v=Math.ceil(a/step)*step; v<=b+1e-9; v+=step) out.push(+v.toFixed(6));
   return out;
 }
-const thinTicks=(t,X,gap)=>{let last=-1e9; return t.filter(v=>X(v)-last>=gap&&(last=X(v),true));}; // keep labels at least gap px apart
+/* log-axis ticks: keep 1s first, then 5s, 2s and the rest, adding each only if its label clears the kept
+   neighbours on both sides (10.5px mono is ~6.4px a character) */
+function pickTicks(t,X,f){
+  const rank=v=>{const m=+(v/Math.pow(10,Math.floor(Math.log10(v)+1e-9))).toFixed(2); return {1:0,5:1,2:2,3:3}[m]??4;};
+  const need=(a,b)=>(String(f(a)).length+String(f(b)).length)/2*6.4+8, kept=[];
+  [...t].sort((a,b)=>rank(a)-rank(b)).forEach(v=>{
+    const lo=kept.filter(k=>k<v).pop(), hi=kept.find(k=>k>v);
+    if((lo==null||X(v)-X(lo)>=need(lo,v))&&(hi==null||X(hi)-X(v)>=need(v,hi))){kept.push(v); kept.sort((a,b)=>a-b);}
+  });
+  return kept;
+}
 const tickGap=(t,f)=>Math.max(0,...t.map(v=>String(f(v)).length))*6.6+10; // widest 10.5px mono label plus a clear gap
 function logTicks(x0,x1){ // x0,x1 in log10 space; finer steps when the range is too narrow for 1-2-5
   for(const ms of [[1,2,5],[1,1.5,2,3,5,7],[1,1.2,1.5,2,2.5,3,4,5,6,8]]){
@@ -1553,6 +1566,8 @@ function placeLabels(marks, bounds, maxN, textOf, block=[], soft=[]){
                     {x:o.x+o.r+8,y:o.y-o.r-14,a:"start"},{x:o.x+o.r+8,y:o.y+o.r+22,a:"start"},{x:o.x-o.r-8,y:o.y-o.r-14,a:"end"},{x:o.x-o.r-8,y:o.y+o.r+22,a:"end"}]){
       const x0=c.a==="start"?c.x:c.a==="end"?c.x-w:c.x-w/2, b={x0:x0-2,x1:x0+w+2,y0:c.y-11,y1:c.y+3};
       if(hit(b,hard)) continue;
+      const px=Math.max(b.x0,Math.min(o.x,b.x1)), py=Math.max(b.y0,Math.min(o.y,b.y1)), d=Math.hypot(px-o.x,py-o.y);
+      if(d>o.r+9) out+=`<line class="leader" x1="${(o.x+(px-o.x)*(o.r+1)/d).toFixed(1)}" y1="${(o.y+(py-o.y)*(o.r+1)/d).toFixed(1)}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}"/>`;
       out+=`<text class="ptlab" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}" text-anchor="${c.a}">${esc(txt)}</text>`;
       boxes.push(b); n++; return;
     }
@@ -1578,21 +1593,22 @@ function frontText(front,xfmt,yfmt,xDir){
 
 /* generic scatter: log x, linear y, median quadrants, optional Pareto frontier */
 function scatterSvg(pts,o){
-  const W=fitW(o.host,980), nar=W<600, H=nar?Math.round(W*1.15):o.H||560, ml=nar?46:62, mr=nar?14:96, mt=22, mb=58, iw=W-ml-mr, ih=H-mt-mb;
+  const W=fitW(o.host,980), nar=W<600, H=nar?Math.round(W*1.15):o.H||560, mr=nar?14:96, mt=22, mb=58, ih=H-mt-mb,
+        ml=Math.max(nar?46:62, 34+Math.max(...pts.map(p=>String(o.yfmt(p.y)).length))*6.4), iw=W-ml-mr; // clear the rotated y title
   const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), lx=Math.log10, gh=(o.ghost||[]).flatMap(g=>g.rows), ax=xs.concat(gh.map(r=>r.speed)), ay=ys.concat(gh.map(r=>r.aaii));
   const x0=lx(Math.min(...ax))-0.12, x1=lx(Math.max(...ax))+0.12;
   const yp=(Math.max(...ay)-Math.min(...ay))*0.09||1, y0=Math.min(...ay)-yp, y1=Math.max(...ay)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
   const med=a=>{const q=[...a].sort((p,r)=>p-r),n=q.length;return n%2?q[(n-1)/2]:(q[n/2-1]+q[n/2])/2;};
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
-  thinTicks(logTicks(x0,x1),X,tickGap(logTicks(x0,x1),o.xfmt)).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.xfmt(v)}</text>`;});
+  pickTicks(logTicks(x0,x1),X,o.xfmt).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.xfmt(v)}</text>`;});
   niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${o.yfmt(v)}</text>`;});
   s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/>`;
   if(o.quad){
     const mx=med(xs),my=med(ys);
     s+=`<line class="quadline" x1="${X(mx).toFixed(1)}" y1="${mt}" x2="${X(mx).toFixed(1)}" y2="${mt+ih}"/><line class="quadline" x1="${ml}" y1="${Y(my).toFixed(1)}" x2="${ml+iw}" y2="${Y(my).toFixed(1)}"/>`
-      +(nar?"":`<text class="qlab" x="${ml+8}" y="${mt+16}">${o.quad[0]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+16}" text-anchor="end">${o.quad[1]}</text>`
-      +`<text class="qlab" x="${ml+8}" y="${mt+ih-8}">${o.quad[2]}</text><text class="qlab" x="${ml+iw-8}" y="${mt+ih-8}" text-anchor="end">${o.quad[3]}</text>`);
+      +((q=>`<text class="qlab"${q} x="${ml+8}" y="${mt+16}">${o.quad[0]}</text><text class="qlab"${q} x="${ml+iw-8}" y="${mt+16}" text-anchor="end">${o.quad[1]}</text>`
+      +`<text class="qlab"${q} x="${ml+8}" y="${mt+ih-8}">${o.quad[2]}</text><text class="qlab"${q} x="${ml+iw-8}" y="${mt+ih-8}" text-anchor="end">${o.quad[3]}</text>`)(nar?' style="font-size:9px;opacity:.6"':""));
   }
   s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
   const front=o.front?new Set(paretoFront(pts,o.front)):new Set();
@@ -1618,8 +1634,9 @@ function scatterSvg(pts,o){
     const near=marks.find(o=>!o.nolabel&&Math.hypot(o.x-m.x,o.y-m.y)<o.r+m.r+1);
     if(near){ near.label+=" & "+m.label; m.nolabel=true; }
     marks.push(m);});
-  marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}${m.multi?" multi":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`;});
-  const qw=t=>t.length*8.2+4, qb=o.quad&&!nar?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
+  marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`
+    +(m.multi?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
+  const qw=t=>t.length*(nar?7:8.2)+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
     {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
   s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},nar?10:24,m=>m.label,qb,lineBoxes);
   return s+"</svg>";
@@ -1666,13 +1683,13 @@ function renderSpeedQ(rows){
 function hbarSvg(items,o){
   if(!items.length) return '<p class="empty">No models in view have this measure.</p>';
   const W0=o.W||560, W=fitW(o.host,W0), nar=W<W0, ml=nar?Math.min(o.ml||178,Math.round(W*.4)):o.ml||178,
-        mr=nar?Math.min(o.mr||92,Math.max(60,Math.round(W*.3))):o.mr||92, rowH=o.rowH||22, mt=24, H=items.length*rowH+mt+6, iw=W-ml-mr, lx=Math.log10;
+        mr=nar?Math.min(Math.round(W*.45),Math.max(60,...items.map(i=>String(i.label).length*7.3+14+(i.eff?18:0)))):o.mr||92, rowH=o.rowH||22, mt=24, H=items.length*rowH+mt+6, iw=W-ml-mr, lx=Math.log10;
   const max=Math.max(...items.map(i=>i.v)), tf=o.tfmt||plain;
   const l0=o.dot?lx(Math.min(...items.map(i=>i.v)))-0.06:0, l1=o.dot?lx(max)+0.02:0;
   const X=o.dot?v=>ml+(lx(v)-l0)/(l1-l0)*iw:v=>ml+v/max*iw;
   // linear axes take fewer, still-round steps until the labels fit; log axes drop labels that would touch
   let ticks;
-  if(o.dot) ticks=thinTicks(logTicks(l0,l1),X,tickGap(logTicks(l0,l1),tf));
+  if(o.dot) ticks=pickTicks(logTicks(l0,l1),X,tf);
   else for(let n=4;n>=1;n--){ ticks=niceTicks(0,max,n).filter(v=>v<=max*1.0001); if(ticks.length<2||X(ticks[1])-X(ticks[0])>=tickGap(ticks,tf)) break; }
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
   if(items.length>8) items.forEach((it,i)=>{ if(i%2) s+=`<rect class="zebra" x="4" y="${mt+i*rowH-2.5}" width="${W-8}" height="${rowH}" rx="3"/>`; });
@@ -1803,7 +1820,7 @@ function effLines(hostSel,keySel,pick,xk,o){
   const ys=pts.map(p=>p.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
   let s=`<svg class="effsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
-  thinTicks(logTicks(x0,x1),X,tickGap(logTicks(x0,x1),o.fmt)).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.fmt(v)}</text>`;});
+  pickTicks(logTicks(x0,x1),X,o.fmt).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.fmt(v)}</text>`;});
   niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${Math.round(v)}</text>`;});
   s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${esc(nar?o.title.replace(" — log scale"," (log)").replace("Intelligence Index ",""):o.title)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
   const ends=[];
@@ -1815,10 +1832,17 @@ function effLines(hostSel,keySel,pick,xk,o){
       s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="6" fill="${EFF_SHADE[r.e]}"/>`;
     });
     s+="</g>";
-    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:6,label:nar?String(ends.length+1):m.name,raw:{y:top.aaii}});
+    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:6,label:m.name,raw:{y:top.aaii},e:top.e});
   });
-  const dots=pts.map(p=>({x:X(p[xk]),y:Y(p.aaii),r:6,nolabel:true}));
-  s+=placeLabels([...ends,...dots],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
+  // badges that would overlap step up or down out of the way and keep a short line to their end dot
+  if(nar){ const put=[];
+    ends.forEach((o,i)=>{ let bx=o.x, by=o.y;
+      for(const dy of [0,-19,19,-38,38]){ by=Math.min(mt+ih-9,Math.max(mt+9,o.y+dy)); if(put.every(q=>Math.hypot(q.x-bx,q.y-by)>=19)) break; }
+      put.push({x:bx,y:by});
+      if(by!==o.y) s+=`<line class="leader" x1="${o.x.toFixed(1)}" y1="${o.y.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/>`;
+      s+=`<circle class="effdot" cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" fill="${EFF_SHADE[o.e]}"/>`
+        +`<text class="endnum" x="${bx.toFixed(1)}" y="${(by+3.5).toFixed(1)}" text-anchor="middle">${i+1}</text>`;});}
+  else s+=placeLabels([...ends,...pts.map(p=>({x:X(p[xk]),y:Y(p.aaii),r:6,nolabel:true}))],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
   // on phones the line ends carry numbers, keyed in a list below, since full names don't fit
   host.innerHTML=s+"</svg>"+(nar?`<ol class="effnums">${ms.map(m=>`<li>${esc(m.name)}</li>`).join("")}</ol>`:""); wire(host);
 }
