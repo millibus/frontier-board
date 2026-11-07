@@ -32,7 +32,7 @@ Don't flag:
 
 ```
 node scripts/check-data.mjs    # data consistency, no dependencies
-node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, header matches data
+node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, header matches data
 ```
 
 Both must pass. `smoke.mjs` needs Playwright and a Chromium; set `CHROMIUM_PATH` if the browser isn't at `/opt/pw-browsers/chromium`. Never run `playwright install`.

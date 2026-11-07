@@ -46,7 +46,7 @@ When a change goes through a pull request, the Codex review bot reviews it autom
 
 ```
 node scripts/check-data.mjs    # data consistency, no dependencies
-node scripts/smoke.mjs         # headless Chromium: all five tabs, no errors, header matches data (CHROMIUM_PATH=/usr/bin/google-chrome on the box)
+node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, header matches data (CHROMIUM_PATH=/usr/bin/google-chrome on the box)
 ```
 
 - `check-data.mjs` fails on:
