@@ -147,7 +147,12 @@ svg{display:block;max-width:100%;height:auto}
 .pt{stroke:var(--surface);stroke-width:2}
 .pt:hover{stroke:var(--ink)}
 .pt.front{stroke:var(--ink);stroke-width:1.5}
-.frontline{fill:none;stroke:var(--ink);stroke-width:1.75;stroke-linejoin:round;opacity:.7}
+.frontline{fill:none;stroke:var(--ink);stroke-width:1.75;stroke-linecap:round;opacity:.7}
+.frontline.steep{opacity:.3;stroke-dasharray:4 4}
+.ghostline{fill:none;stroke:var(--ink-3);stroke-width:1;opacity:.6}
+.effdot.ghost{opacity:.85}
+.barlab.sub{fill:var(--ink-2);font-size:11px}
+.effnums{margin:6px 0 0;padding-left:22px;columns:2;column-gap:18px;font-size:12px;color:var(--ink-2)}
 .legend .lk{display:inline-block;width:16px;height:0;border-top:2px solid var(--ink);opacity:.7;margin-right:5px;vertical-align:3px}
 .frontlist{margin-top:8px;max-width:none}
 .barlab{fill:var(--ink);font-size:12px;font-family:"IBM Plex Sans",sans-serif}
@@ -324,15 +329,16 @@ details.changes summary b{color:var(--ink);font-weight:600}
 
   <section class="panel" id="p-quad">
     <nav class="jump" aria-label="Charts">
-      <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a><a href="#ch-efflat">Latency by effort</a><a href="#ch-effspeed">Speed by effort</a><a href="#ch-efflevel">Same-effort ranking</a>
+      <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a><a href="#ch-efflat">Latency by effort</a><a href="#ch-efflevel">Same-effort ranking</a>
       <a href="#ch-price">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
       <a href="#ch-ttft">Latency</a><a href="#ch-blend">Price</a><a href="#ch-ctx">Context window</a><a href="#ch-ppp">Price of a point</a>
     </nav>
 
     <div class="card" id="ch-index">
       <div class="cardhead"><div><h2>Intelligence Index</h2>
-        <p class="sub">Artificial Analysis Intelligence Index v5, each model at its highest-scoring effort level — the level is named beside the score.</p></div>
-        <div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span></div></div>
+        <p class="sub">Artificial Analysis Intelligence Index v5, each model at its highest-scoring effort level. A dot beside the score shows that level, for models measured at more than one.</p></div>
+        <div><div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span></div>
+        <div class="effkey" id="effkey0" style="margin-top:8px;justify-content:flex-end"></div></div></div>
       <div id="c-index"></div>
     </div>
 
@@ -356,13 +362,6 @@ details.changes summary b{color:var(--ink);font-weight:600}
         <p class="sub">The same lines against seconds to the first answer token, log scale. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models picked in the chart above.</p></div>
         <div class="effkey" id="effkey3"></div></div>
       <div id="c-efflat"></div>
-    </div>
-
-    <div class="card" id="ch-effspeed">
-      <div class="cardhead"><div><h2>Intelligence vs output speed, by effort</h2>
-        <p class="sub">The same lines against output tokens per second, log scale, so further right is faster. Most models keep roughly the same speed at every setting; a line that leans left means the higher settings also stream more slowly. Uses the models picked above.</p></div>
-        <div class="effkey" id="effkey4"></div></div>
-      <div id="c-effspeed"></div>
     </div>
 
     <div class="card" id="ch-efflevel">
@@ -405,8 +404,9 @@ details.changes summary b{color:var(--ink);font-weight:600}
 
     <div class="card" id="ch-speedq">
       <div class="cardhead"><div><h2>Intelligence vs output speed</h2>
-        <p class="sub">Index score against output tokens per second at the same effort level, log scale. The upper-right quadrant is fast and capable. The solid line is the Pareto frontier: models that no faster model in view matches or beats.</p></div>
-        <div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span><span><i class="lk"></i>Pareto frontier</span></div></div>
+        <p class="sub">Index score against output tokens per second at the same effort level, log scale. The upper-right quadrant is fast and capable. The solid line is the Pareto frontier: models that no faster model in view matches or beats. For the models picked in the effort charts above, small dots on a thin line show their other effort levels: most run at about the same speed at every setting, so the line drops straight down.</p></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span><span><i class="lk"></i>Pareto frontier</span></div>
+        <div class="effkey" id="effkey5" style="margin-top:8px;justify-content:flex-end"></div></div>
       <div id="c-speedq"></div>
       <p class="sub frontlist" id="speedq-front"></p>
     </div>
@@ -421,7 +421,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <div class="card" id="ch-blend"><div class="cardhead"><div><h2>Price</h2>
         <p class="sub">Blended dollars per million tokens, cheapest first, on a log scale — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
       <div class="card" id="ch-ctx"><div class="cardhead"><div><h2>Context window</h2>
-        <p class="sub">Maximum input tokens, largest first. Three or more models with the same window share one row, split blue and orange by weights; hover it for the names.</p></div></div><div id="c-ctx"></div></div>
+        <p class="sub">Maximum input tokens, largest first. Three or more models with the same window share one row, split blue and orange by weights; click it to list them.</p></div></div><div id="c-ctx"></div></div>
     </div>
 
     <div class="card" id="ch-ppp">
@@ -1173,6 +1173,7 @@ const PRICES = {
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
  {d:"6 Nov 2026", items:[
+  ["feature","Charts, third pass. Click a grouped context-window row to list its models. On phones the effort-line charts number each line and list the names underneath. The Intelligence Index marks each model's effort level with a coloured dot instead of a word. The separate speed-by-effort chart is folded into Intelligence vs output speed: models picked in the effort charts show their other effort levels there as small dots. Frontier segments that drop below the median score are drawn faint and dashed."],
   ["feature","Charts, second pass: on phones each chart is drawn at the card's own width, so text stays full size, long model names are shortened (hover shows the full name) and crowded axis labels are thinned. The context-window chart groups three or more models sharing a window into one row, split blue and orange by weights. The price scatter drops point size for context window, since most models share 1M. The effort colours run from light blue to indigo so High, Extra high and Max are easier to tell apart in both themes."],
   ["feature","Charts: every ranked bar chart gets a value axis with gridlines and alternate row shading, and ties sort by name. Latency and Price become dot plots on a log scale, since their values span about 23 and 96 times and straight bars squashed most rows to slivers. Price of a point shows four decimals and says it lists the 22 cheapest models. Narrow log axes, such as output speed by effort, get more tick labels. Scatter labels no longer overprint the quadrant captions and get room past the right edge, and the effort-line keys explain the orange open-weights line."],
   ["data","GPT-6 Luna's non-reasoning rung (Index 9, $0.07 per task) removed from the effort data again, as on 27 Oct; the 3 Nov refresh had brought it back. It scores a point below the low setting at 14 times the cost per task. The board keeps it out from now on."],
@@ -1570,9 +1571,9 @@ function frontText(front,xfmt,yfmt,xDir){
 /* generic scatter: log x, linear y, median quadrants, optional Pareto frontier */
 function scatterSvg(pts,o){
   const W=fitW(o.host,980), nar=W<600, H=nar?Math.round(W*1.15):o.H||560, ml=nar?46:62, mr=nar?14:96, mt=22, mb=58, iw=W-ml-mr, ih=H-mt-mb;
-  const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), lx=Math.log10;
-  const x0=lx(Math.min(...xs))-0.12, x1=lx(Math.max(...xs))+0.12;
-  const yp=(Math.max(...ys)-Math.min(...ys))*0.09||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
+  const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y), lx=Math.log10, gh=(o.ghost||[]).flatMap(g=>g.rows), ax=xs.concat(gh.map(r=>r.speed)), ay=ys.concat(gh.map(r=>r.aaii));
+  const x0=lx(Math.min(...ax))-0.12, x1=lx(Math.max(...ax))+0.12;
+  const yp=(Math.max(...ay)-Math.min(...ay))*0.09||1, y0=Math.min(...ay)-yp, y1=Math.max(...ay)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
   const med=a=>{const q=[...a].sort((p,r)=>p-r),n=q.length;return n%2?q[(n-1)/2]:(q[n/2-1]+q[n/2])/2;};
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
@@ -1587,7 +1588,16 @@ function scatterSvg(pts,o){
   }
   s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
   const front=o.front?new Set(paretoFront(pts,o.front)):new Set();
-  if(front.size>1) s+=`<polyline class="frontline" points="${[...front].map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join(" ")}"/>`;
+  (o.ghost||[]).forEach(({m,rows})=>{
+    const rs=[...rows].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
+    s+=`<polyline class="ghostline" points="${rs.map(r=>X(r.speed).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`
+      +rs.slice(0,-1).map(r=>`<circle class="effdot ghost" data-tip="${esc(modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Output speed",r.speed+" tok/s"]]))}" cx="${X(r.speed).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="3.5" fill="${EFF_SHADE[r.e]}"/>`).join("");
+  });
+  // frontier: segments reaching below the median score are drawn faint, so the plunge to a cheap or fast but
+  // weak model doesn't dominate the chart
+  const fr=[...front], ymed=med(ys);
+  fr.slice(1).forEach((p,k)=>{const q=fr[k], steep=Math.min(p.y,q.y)<ymed;
+    s+=`<line class="frontline${steep?" steep":""}" x1="${X(q.x).toFixed(1)}" y1="${Y(q.y).toFixed(1)}" x2="${X(p.x).toFixed(1)}" y2="${Y(p.y).toFixed(1)}"/>`;});
   const marks=pts.map(p=>({...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)}));
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`;});
   const qw=t=>t.length*8.2+4, qb=o.quad&&!nar?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
@@ -1617,10 +1627,12 @@ function renderQuad(rows){
 function renderSpeedQ(rows){
   const host=$("#c-speedq"), ms=rows.filter(m=>val(m,"speed")&&val(m,"aaii")!=null);
   if(ms.length<3){host.innerHTML='<p class="empty">Not enough models with both measures under these filters.</p>';$("#speedq-front").innerHTML="";return;}
+  const ghost=ms.filter(m=>state.effSel&&state.effSel.has(m.name)).map(m=>({m,rows:effRows(m).filter(r=>r.speed>0&&r.aaii!=null)})).filter(g=>g.rows.length>1);
+  effKey("#effkey5",EFF_ORDER.filter(e=>ghost.some(g=>g.rows.some(r=>r.e===e))));
   const pts=ms.map(m=>({x:val(m,"speed"),y:val(m,"aaii"),fill:idFill(m),label:m.name,
       tip:modelTip(m,[["Index",val(m,"aaii")+(topEff(m)?" · "+topEff(m):"")],["Output speed",Math.round(val(m,"speed"))+" tok/s"],["Time to first answer token",val(m,"ttft")!=null?fmt(val(m,"ttft"),"n1")+" s":"—"]])}));
   host.innerHTML=scatterSvg(pts,
-    {aria:"Capability against output speed",host,H:520,xfmt:plain,yfmt:v=>String(Math.round(v)),xtitle:"Output speed — tokens per second",ytitle:"AA Intelligence Index",
+    {aria:"Capability against output speed",host,H:520,ghost,xfmt:plain,yfmt:v=>String(Math.round(v)),xtitle:"Output speed — tokens per second",ytitle:"AA Intelligence Index",
      quad:["Smart, slow","Smart and fast","Slow","Fast, less capable"],front:"max"});
   $("#speedq-front").innerHTML=frontText(paretoFront(pts,"max"),v=>Math.round(v)+" tok/s",v=>String(Math.round(v)),"max");
   wire(host);
@@ -1643,7 +1655,8 @@ function hbarSvg(items,o){
   if(!o.dot) s+=`<line class="axline" x1="${ml}" y1="${mt-6}" x2="${ml}" y2="${H-4}"/>`;
   items.forEach((it,i)=>{
     const y=mt+i*rowH, cy=y+(rowH-5)/2;
-    s+=`<text class="barlab" x="${ml-10}" y="${y+12}" text-anchor="end">${esc(fitName(it.name,ml-14))}<title>${esc(it.name)}</title></text>`;
+    const g=it.grp!=null?` data-grp="${it.grp}" class="grprow"`:"";
+    s+=`<text class="barlab${it.sub?" sub":""}"${g?` data-grp="${it.grp}" style="cursor:pointer;font-weight:600"`:""} x="${ml-10}" y="${y+12}" text-anchor="end">${esc(fitName(it.name.trim(),ml-14-(it.sub?10:0)))}<title>${esc(it.name.trim())}</title></text>`;
     if(o.dot){
       const x=X(it.v);
       s+=`<line class="stem" x1="${ml}" y1="${cy}" x2="${x.toFixed(1)}" y2="${cy}"/>`
@@ -1651,10 +1664,11 @@ function hbarSvg(items,o){
         +`<text class="barval" x="${(x+11).toFixed(1)}" y="${y+12}">${it.label}</text>`;
     } else {
       const w=Math.max(2,X(it.v)-ml), sp=it.split, w1=sp?w*sp[0]/(sp[0]+sp[1]):w;
-      s+=(sp&&sp[0]&&sp[1]?`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${(w1+3).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--accent)"/>`
-          +`<rect data-tip="${esc(it.tip)}" x="${(ml+w1).toFixed(1)}" y="${y+2}" width="${(w-w1).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--open)"/>`
-        :`<rect data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${sp?(sp[0]?"var(--accent)":"var(--open)"):it.fill}"/>`)
-        +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`;
+      s+=(sp&&sp[0]&&sp[1]?`<rect${g} data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${(w1+3).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--accent)"/>`
+          +`<rect${g} data-tip="${esc(it.tip)}" x="${(ml+w1).toFixed(1)}" y="${y+2}" width="${(w-w1).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--open)"/>`
+        :`<rect${g}${it.sub?' opacity=".55"':""} data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${sp?(sp[0]?"var(--accent)":"var(--open)"):it.fill}"/>`)
+        +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`
+        +(it.eff?`<circle class="effdot" cx="${(ml+w+7+String(it.label).length*7.4+8).toFixed(1)}" cy="${cy}" r="4.5" fill="${EFF_SHADE[it.eff]}"><title>${EFF_NAME[it.eff]} effort</title></circle>`:"");
     }
   });
   return s+"</svg>";
@@ -1663,8 +1677,9 @@ function renderBarsets(rows){
   const cur=rows;
   // Intelligence Index — every model in view, top effort
   const idx=cur.filter(m=>val(m,"aaii")!=null).sort((a,b)=>val(b,"aaii")-val(a,"aaii")||a.name.localeCompare(b.name));
+  effKey("#effkey0",EFF_ORDER.filter(e=>idx.some(m=>topEff(m)===e)));
   $("#c-index").innerHTML=hbarSvg(idx.map(m=>({name:m.name,v:val(m,"aaii"),fill:idFill(m),
-      label:val(m,"aaii")+(topEff(m)?`  ${topEff(m)}`:""),
+      label:val(m,"aaii"),eff:topEff(m),
       tip:modelTip(m,[["Index",val(m,"aaii")],["Effort level",topEff(m)?EFF_NAME[topEff(m)]:"single setting"],["Cost per index task",val(m,"costTask")!=null?fmt(val(m,"costTask"),"usd2"):"—"]])})),
     {aria:"Intelligence Index ranked",host:$("#c-index"),W:980,ml:200,mr:110,rowH:21});
   const set=(host,key,asc,lab,tipk,ax={})=>{
@@ -1676,18 +1691,27 @@ function renderBarsets(rows){
   set("#c-speed","speed",false,v=>Math.round(v)+" tok/s","Output speed");
   set("#c-ttft","ttft",true,v=>(v>=10?Math.round(v):v.toFixed(2))+" s","Time to first answer token",{dot:true,tfmt:v=>v+" s"});
   set("#c-blend","price",true,v=>"$"+v.toFixed(2),"Blended $/1M",{dot:true,tfmt:money});
-  // Context window: three or more models sharing a window collapse into one row, split by weights; hover lists them
+  renderCtx(cur);
+  ["#c-index","#c-speed","#c-ttft","#c-blend"].forEach(h=>wire($(h)));
+}
+/* Context window: three or more models sharing a window collapse into one row, split by weights; clicking it
+   lists the models underneath */
+state.ctxOpen=new Set();
+function renderCtx(cur){
   const cx=cur.filter(m=>val(m,"ctx")>0).sort((a,b)=>val(b,"ctx")-val(a,"ctx")||a.name.localeCompare(b.name)), grp=[];
-  cx.forEach(m=>{const g=grp[grp.length-1]; g&&g.v===val(m,"ctx")?g.ms.push(m):grp.push({v:val(m,"ctx"),ms:[m]});});
+  cx.forEach(m=>{const g=grp[grp.length-1]; g&&g.f===fmt(val(m,"ctx"),"ctx")?g.ms.push(m):grp.push({v:val(m,"ctx"),f:fmt(val(m,"ctx"),"ctx"),ms:[m]});}); // same displayed size, one group
   $("#c-ctx").innerHTML=hbarSvg(grp.flatMap(g=>g.ms.length<3
       ?g.ms.map(m=>({name:m.name,v:g.v,fill:idFill(m),label:fmt(g.v,"ctx"),
           tip:modelTip(m,[["Context window",fmt(g.v,"ctx")],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])}))
-      :[{name:g.ms.length+" models",v:g.v,label:fmt(g.v,"ctx"),split:[g.ms.filter(m=>!m.open).length,g.ms.filter(m=>m.open).length],
+      :[{name:(state.ctxOpen.has(g.v)?"▾ ":"▸ ")+g.ms.length+" models",grp:g.v,v:g.v,label:fmt(g.v,"ctx"),split:[g.ms.filter(m=>!m.open).length,g.ms.filter(m=>m.open).length],
           tip:`<b>${g.ms.length} models at ${fmt(g.v,"ctx")}</b><span class="tl"><span>Proprietary</span><span>${g.ms.filter(m=>!m.open).length}</span></span>`
             +`<span class="tl"><span>Open weights</span><span>${g.ms.filter(m=>m.open).length}</span></span>`
-            +`<span class="tlist">${g.ms.map(m=>esc(m.name)).join(", ")}</span>`}]),
+            +`<span class="tlist">${g.ms.map(m=>esc(m.name)).join(", ")}</span><span class="tlist">Click to ${state.ctxOpen.has(g.v)?"hide":"list"} them.</span>`},
+         ...(state.ctxOpen.has(g.v)?g.ms.map(m=>({name:"   "+m.name,sub:true,v:g.v,fill:idFill(m),label:"",
+           tip:modelTip(m,[["Context window",fmt(g.v,"ctx")],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])})):[])]),
     {aria:"Context window",host:$("#c-ctx"),rowH:20,tfmt:v=>fmt(v,"ctx")});
-  ["#c-index","#c-speed","#c-ttft","#c-blend","#c-ctx"].forEach(h=>wire($(h)));
+  $$("#c-ctx [data-grp]").forEach(el=>el.onclick=()=>{const v=+el.dataset.grp; state.ctxOpen.has(v)?state.ctxOpen.delete(v):state.ctxOpen.add(v); renderCtx(filtered());});
+  wire($("#c-ctx"));
 }
 
 /* ---------------- effort range (dumbbell) ---------------- */
@@ -1729,7 +1753,7 @@ function renderEffCost(rows){
   const cand=rows.filter(m=>["cost","ttft","speed"].some(k=>multi(m,k))).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
   if(!state.effSel) state.effSel=new Set(EFF_DEFAULT);
   $("#effsel").innerHTML=cand.map(m=>`<button class="chip" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}">${esc(m.name)}</button>`).join("");
-  $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffLines(filtered());});
+  $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffLines(filtered()); renderSpeedQ(filtered());});
   const pick=rows.filter(m=>state.effSel.has(m.name));
   effLines("#c-effcost","#effkey2",pick,"cost",{fmt:money,title:"Cost per Intelligence Index task — log scale",
     aria:"Intelligence against cost per task at each effort level"});
@@ -1739,8 +1763,6 @@ function renderEffLines(rows){
   const pick=rows.filter(m=>state.effSel.has(m.name));
   effLines("#c-efflat","#effkey3",pick,"ttft",{fmt:v=>(v>=10?Math.round(v):+v.toFixed(1))+" s",title:"Seconds to first answer token — log scale",
     aria:"Intelligence against time to first answer token at each effort level"});
-  effLines("#c-effspeed","#effkey4",pick,"speed",{fmt:v=>plain(Math.round(v)),title:"Output speed, tokens per second — log scale",
-    aria:"Intelligence against output speed at each effort level"});
 }
 const EFF_XLABEL={cost:"Cost per index task",ttft:"Time to first answer token",speed:"Output speed"};
 function effLines(hostSel,keySel,pick,xk,o){
@@ -1768,11 +1790,12 @@ function effLines(hostSel,keySel,pick,xk,o){
       s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="6" fill="${EFF_SHADE[r.e]}"/>`;
     });
     s+="</g>";
-    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:6,label:m.name,raw:{y:top.aaii}});
+    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:6,label:nar?String(ends.length+1):m.name,raw:{y:top.aaii}});
   });
   const dots=pts.map(p=>({x:X(p[xk]),y:Y(p.aaii),r:6,nolabel:true}));
   s+=placeLabels([...ends,...dots],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
-  host.innerHTML=s+"</svg>"; wire(host);
+  // on phones the line ends carry numbers, keyed in a list below, since full names don't fit
+  host.innerHTML=s+"</svg>"+(nar?`<ol class="effnums">${ms.map(m=>`<li>${esc(m.name)}</li>`).join("")}</ol>`:""); wire(host);
 }
 
 /* ---------------- ranked at one effort level ---------------- */
