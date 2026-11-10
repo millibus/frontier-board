@@ -150,13 +150,14 @@ svg{display:block;max-width:100%;height:auto}
 .frontline{fill:none;stroke:var(--ink);stroke-width:1.75;stroke-linecap:round;opacity:.7}
 .frontline.steep{opacity:.3;stroke-dasharray:4 4}
 .ring{fill:none;stroke:var(--ink);stroke-width:1.5;pointer-events:none}
-.endnum{fill:var(--surface);font:700 10px "IBM Plex Mono",monospace;pointer-events:none}
+.endnum{fill:var(--ink);font:700 10px "IBM Plex Mono",monospace;pointer-events:none}
 .leader{stroke:var(--ink-3);stroke-width:.75;opacity:.8}
 .tip .tsep{display:block;border-top:1px solid var(--line);margin:7px 0}
 .ghostline{fill:none;stroke:var(--ink-3);stroke-width:1;opacity:.6}
 .effdot.ghost{opacity:.85}
 .barlab.sub{fill:var(--ink-2);font-size:11px}
 .effnums{margin:6px 0 0;padding-left:22px;columns:2;column-gap:18px;font-size:12px;color:var(--ink-2)}
+.effnums i{margin-right:5px}
 .legend .lk{display:inline-block;width:16px;height:0;border-top:2px solid var(--ink);opacity:.7;margin-right:5px;vertical-align:3px}
 .frontlist{margin-top:8px;max-width:none}
 .barlab{fill:var(--ink);font-size:12px;font-family:"IBM Plex Sans",sans-serif}
@@ -205,9 +206,12 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .missing b{color:var(--ink)}
 
 /* ---------- charts tab ---------- */
-:root{--e0:#a3aab4;--e1:#9fcaf3;--e2:#4d9be6;--e3:#2463c4;--e4:#4b3aa8;--e5:#221466}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--e0:#5c6570;--e1:#1f5aa6;--e2:#3f8be0;--e3:#79b4f0;--e4:#b3a6f2;--e5:#ece8ff}}
-:root[data-theme="dark"]{--e0:#5c6570;--e1:#1f5aa6;--e2:#3f8be0;--e3:#79b4f0;--e4:#b3a6f2;--e5:#ece8ff}
+:root{--e0:#a3aab4;--e1:#9fcaf3;--e2:#4d9be6;--e3:#2463c4;--e4:#4b3aa8;--e5:#221466;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--e0:#77818d;--e1:#2d6dc2;--e2:#4f97e8;--e3:#8cc0f5;--e4:#b3a6f2;--e5:#ece8ff;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767}}
+:root[data-theme="dark"]{--e0:#77818d;--e1:#2d6dc2;--e2:#4f97e8;--e3:#8cc0f5;--e4:#b3a6f2;--e5:#ece8ff;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767}
 .jump{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
 .jump a{font-size:12.5px;text-decoration:none;color:var(--ink-2);border:1px solid var(--line-2);background:var(--surface);
   border-radius:999px;padding:3px 11px}
@@ -219,11 +223,31 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .effkey{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--ink-2)}
 .effkey i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
 .effsel{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 6px}
-.effline{fill:none;stroke:var(--ink-3);stroke-width:1.5;stroke-linejoin:round}
-.effline.o{stroke:var(--open)}
-.effsvg:hover .effg{opacity:.22}
-.effsvg .effg:hover{opacity:1}
-.effsvg .effg:hover .effline{stroke-width:2.5;stroke:var(--ink)}
+.picked{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 8px}
+.pchip{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);
+  border-radius:999px;padding:3px 8px 3px 9px;font:inherit;font-size:12.5px;cursor:pointer}
+.pchip i,.picklist i,.effnums i{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+.pchip .x{color:var(--ink-3);font-size:14px;line-height:1}
+.pchip:hover{border-color:var(--ink-3)} .pchip:hover .x{color:var(--ink)}
+.pickbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
+.pickadd{position:relative}
+.pickadd input{width:210px}
+.picklist{position:absolute;z-index:30;top:calc(100% + 4px);left:0;width:min(340px,86vw);max-height:340px;overflow:auto;background:var(--surface);
+  border:1px solid var(--line-2);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.18);padding:4px}
+.picklist h4{margin:6px 8px 2px;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.picklist button{appearance:none;display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;color:var(--ink);font:inherit;font-size:12.5px;
+  text-align:left;padding:5px 8px;border-radius:4px;cursor:pointer}
+.picklist button:hover,.picklist button:focus-visible{background:var(--surface-2)}
+.picklist button i{border:1.5px solid var(--line-2)}
+.picklist button[aria-pressed="true"]{font-weight:600}
+.picklist .pm{margin-left:auto;color:var(--ink-3);font-size:11px;font-weight:400;white-space:nowrap}
+.picklist p{margin:8px;font-size:12px;color:var(--ink-3)}
+.picknote{font-size:11.5px;color:var(--ink-3);margin-left:4px}
+.effline{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.effsvg:hover .effg,.effsvg.hl .effg{opacity:.18}
+.effsvg .effg:hover,.effsvg.hl .effg.on{opacity:1}
+.effsvg .effg:hover .effline,.effsvg.hl .effg.on .effline{stroke-width:3}
+.effbadge{fill:var(--surface);stroke-width:2.5}
 .effg{transition:opacity .12s}
 .dumbline{stroke:var(--line-2);stroke-width:4;stroke-linecap:round}
 .effdot{stroke:var(--surface);stroke-width:1.5}
@@ -355,15 +379,18 @@ details.changes summary b{color:var(--ink);font-weight:600}
 
     <div class="card" id="ch-effcost">
       <div class="cardhead"><div><h2>Intelligence vs cost to run, by effort</h2>
-        <p class="sub">Each line is one model walking up its effort levels, lowest to highest, against cost per index task on a log scale. Where a line runs flat, the extra effort buys cost without capability; where it doubles back, a lower setting cost more than a higher one. Pick which models to compare; hover a line to isolate it.</p></div>
+        <p class="sub">Each coloured line is one model walking up its effort levels against cost per index task on a log scale; bigger dots are higher effort. Where a line runs flat, the extra effort buys cost without capability; where it doubles back, a lower setting cost more than a higher one. A model measured at one setting shows as a single dot. Add or remove models below; the filters at the top of the page don't apply here. Hover a line or a name to isolate it.</p></div>
         <div class="effkey" id="effkey2"></div></div>
-      <div class="effsel" id="effsel"></div>
+      <div class="picked" id="effpicked"></div>
+      <div class="pickbar"><div class="pickadd"><input type="search" id="effq" placeholder="Add a model…" autocomplete="off" aria-label="Add a model to the effort charts"><div class="picklist" id="efflist" hidden></div></div>
+        <button class="chip" data-set="default">Reset</button><button class="chip" data-set="frontier">Top frontier</button><button class="chip" data-set="open">Top open weights</button><button class="chip" data-set="none">Clear</button>
+        <span class="picknote" id="effnote"></span></div>
       <div id="c-effcost"></div>
     </div>
 
     <div class="card" id="ch-efflat">
       <div class="cardhead"><div><h2>Intelligence vs waiting time, by effort</h2>
-        <p class="sub">The same lines against seconds to the first answer token, log scale. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models picked in the chart above.</p></div>
+        <p class="sub">The same lines against seconds to the first answer token, log scale. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models and colours picked in the chart above.</p></div>
         <div class="effkey" id="effkey3"></div></div>
       <div id="c-efflat"></div>
     </div>
@@ -1031,7 +1058,7 @@ const PRICES = {
 
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
-{d:"9 Nov 2026",items:[["add","Claude Fable 5.2, released 9 Nov: 1M context; standard input/output $8/$40 per million tokens and $0.20 cache reads; optional fast mode $16/$80. All specifications and launch scores come from Anthropic’s primary pages."],["add","Muse Ember (Meta), released 9 Nov: verified as muse-ember-1.0, distinct from Ember-1. AA Index 36 at max for $0.14/task, two recorded efforts, and Vals TB4 39.39%. Meta’s exact context and both pricing tiers are recorded. Unavailable speed/latency stays blank."],["data","Added ten separately versioned launch-table columns, including FrontierCode 2.0, FrontierSWE v2, OSWorld 2.1 offline partial, AA-Briefcase v1.1 rubric and Elo, and HLE with tools. Comparator rows are marked vendor-reported; existing independent results are not replaced by vendor comparisons. Mythos-only results are excluded."],["move","Fable 5.1 retained under Previous gen after Fable 5.2’s release."],["data","Missing scores mean no verified score is recorded here, not proof that an evaluator has never run the model. Preserve prior measurements on stale, partial or unavailable sources."],["add","Arete-27B (Nous Research), announced 6 Nov: open-weight Qwen3.8-27B fine-tune, with a vendor-reported Terminal-Bench 2.1 score of 70%. No independent or context/pricing metrics were inferred."],["data","Reconciled four missing vendor tuples for GPT-6.1 Terra, GPT-6 Sol, Claude Haiku 4.5 and Claude Sonnet 5. Fable 5’s FrontierMath Tier 4 row follows the Astra comparison table at 90.2%, retaining the earlier 87.8% in its note. Removed Fable 5/5.1 ExploitGym tuples after the primary-source footnote identified them as Mythos runs."],["data","Artificial Analysis v5.0.1 and end-to-end performance re-read across all 88 baseline models: 84 exact/explicit-alias matches and four identity gaps preserved. All 60 existing effort rows were re-read; three extra efforts and Fable 5.2’s five effort levels are added. Conflicting evaluator, model identity, context and zero-price observations are held rather than silently substituted."],["rescale","All 40 stored MathArena expected-performance values updated after the November 9 refit. This is a changed test/fit, not a model improvement. WeirdML v3 follows its November 6 prepared data."],["data","ARC Prize standard-harness results and cost/effort pairs refreshed, including Fable 5.2 and Inkling 2 Small. OpenRouter Airline has 17 numeric changes and the omitted Kimi K3.1 Pro row. Vals adds independent Fable 5.2 and Inkling 2 Small results. Source-backed historical blanks are backfilled without reopening archived benchmark versions."],["data","Arena text is blocked and the readable WebDev snapshot is older than the maintained data: all Arena values and freshness dates are preserved. Coverage gaps, rejected candidates and source conflicts are detailed in docs/refresh-2026-11-09.md."]]},
+{d:"9 Nov 2026",items:[["feature","Charts: the two effort-line charts give each model its own colour and show effort by dot size, so lines can be told apart. Their model picker lists every model with an Index score, including previous-generation ones and models measured at a single setting, with search, one-click removal and presets; picks are remembered in the browser. The default set is now worked out from the data instead of a fixed list. Dark-theme effort dots are brighter, a quadrant caption is left out when a dot sits on it, and long names on phones keep their last word."],["add","Claude Fable 5.2, released 9 Nov: 1M context; standard input/output $8/$40 per million tokens and $0.20 cache reads; optional fast mode $16/$80. All specifications and launch scores come from Anthropic’s primary pages."],["add","Muse Ember (Meta), released 9 Nov: verified as muse-ember-1.0, distinct from Ember-1. AA Index 36 at max for $0.14/task, two recorded efforts, and Vals TB4 39.39%. Meta’s exact context and both pricing tiers are recorded. Unavailable speed/latency stays blank."],["data","Added ten separately versioned launch-table columns, including FrontierCode 2.0, FrontierSWE v2, OSWorld 2.1 offline partial, AA-Briefcase v1.1 rubric and Elo, and HLE with tools. Comparator rows are marked vendor-reported; existing independent results are not replaced by vendor comparisons. Mythos-only results are excluded."],["move","Fable 5.1 retained under Previous gen after Fable 5.2’s release."],["data","Missing scores mean no verified score is recorded here, not proof that an evaluator has never run the model. Preserve prior measurements on stale, partial or unavailable sources."],["add","Arete-27B (Nous Research), announced 6 Nov: open-weight Qwen3.8-27B fine-tune, with a vendor-reported Terminal-Bench 2.1 score of 70%. No independent or context/pricing metrics were inferred."],["data","Reconciled four missing vendor tuples for GPT-6.1 Terra, GPT-6 Sol, Claude Haiku 4.5 and Claude Sonnet 5. Fable 5’s FrontierMath Tier 4 row follows the Astra comparison table at 90.2%, retaining the earlier 87.8% in its note. Removed Fable 5/5.1 ExploitGym tuples after the primary-source footnote identified them as Mythos runs."],["data","Artificial Analysis v5.0.1 and end-to-end performance re-read across all 88 baseline models: 84 exact/explicit-alias matches and four identity gaps preserved. All 60 existing effort rows were re-read; three extra efforts and Fable 5.2’s five effort levels are added. Conflicting evaluator, model identity, context and zero-price observations are held rather than silently substituted."],["rescale","All 40 stored MathArena expected-performance values updated after the November 9 refit. This is a changed test/fit, not a model improvement. WeirdML v3 follows its November 6 prepared data."],["data","ARC Prize standard-harness results and cost/effort pairs refreshed, including Fable 5.2 and Inkling 2 Small. OpenRouter Airline has 17 numeric changes and the omitted Kimi K3.1 Pro row. Vals adds independent Fable 5.2 and Inkling 2 Small results. Source-backed historical blanks are backfilled without reopening archived benchmark versions."],["data","Arena text is blocked and the readable WebDev snapshot is older than the maintained data: all Arena values and freshness dates are preserved. Coverage gaps, rejected candidates and source conflicts are detailed in docs/refresh-2026-11-09.md."]]},
  {d:"6 Nov 2026", items:[
   ["feature","Charts, fifth pass after a third design review. Log axes keep their round values first, so the latency axis shows 10 s and 100 s. On phones the effort-line charts put each line's number inside its end dot, stepping overlapping ones apart, and the price scatters keep faint quadrant captions. Two models at one point get a solid ring, and a label placed away from its dot gets a thin line to it."],
   ["feature","Charts, fourth pass after a second design review. Axis labels on the bar and dot charts no longer run together on phones. Point labels steer around the frontier line where they can. Models at the same point share one ringed dot with a combined label and tooltip, and touching dots share a label. The price scatter's description follows the axis dropdowns. Shortened names on phones keep their last word, such as a version number. Expanded context-window rows show their sizes, and the same-effort ranking says ties go to the cheaper model."],
@@ -1371,8 +1398,12 @@ const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"
 /* ---------------- shared chart helpers ---------------- */
 const EFF_ORDER=["none","low","medium","high","reasoning","xhigh","max"];
 const EFF_SHADE={none:"var(--e0)",low:"var(--e1)",medium:"var(--e2)",high:"var(--e3)",reasoning:"var(--e3)",xhigh:"var(--e4)",max:"var(--e5)"};
-const EFF_NAME={none:"Non-reasoning",low:"Low",medium:"Medium",high:"High",reasoning:"Reasoning",xhigh:"Extra high",max:"Max"};
+const EFF_NAME={none:"Non-reasoning",low:"Low",medium:"Medium",high:"High",reasoning:"Reasoning",xhigh:"Extra high",max:"Max",one:"Only setting measured"};
 const effRows=m=>(EFFORT[m.name]||[]).map(r=>({e:r[0],aaii:r[1],cost:r[2],speed:r[3],ttft:r[4]}));
+// every model with an Index score can go on the effort-line charts: one without effort rows is a single point at its board scores
+const effRowsAll=m=>{const r=effRows(m); if(r.length) return r; const a=val(m,"aaii");
+  return a==null?[]:[{e:"one",aaii:a,cost:val(m,"costTask"),speed:val(m,"speed"),ttft:val(m,"ttft")}];};
+const EFF_R={none:4.5,low:3.5,medium:4.5,high:5.5,reasoning:5.5,xhigh:6.5,max:7.5,one:5.5};
 const topEff=m=>{const r=EFFORT[m.name];return r&&r.length>1?r[0][0]:null;};
 function niceTicks(a,b,n=5){
   const span=b-a, raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/mag;
@@ -1404,7 +1435,7 @@ function logTicks(x0,x1){ // x0,x1 in log10 space; finer steps when the range is
 const fitW=(host,max)=>{const w=host&&host.clientWidth; return w?Math.max(300,Math.min(max,Math.round(w))):max;};
 const fitName=(t,px)=>{const n=Math.floor(px/6.6); if(t.length<=n) return t;
   const w=t.split(" "), last=w[w.length-1]; // "DeepSeek V4.1…1017" rather than "DeepSeek V4.1 Fla…"
-  return w.length>2&&last.length<=n/2?t.slice(0,n-last.length-1).trimEnd()+"…"+last:t.slice(0,n-1)+"…";};
+  return w.length>2&&n-last.length-1>=5?t.slice(0,n-last.length-1).trimEnd()+"…"+last:t.slice(0,n-1)+"…";};
 const money=v=>"$"+(v>=1?(+v.toFixed(2)).toString():v>=0.01?v.toFixed(2).replace(/0$/,""):v.toFixed(3));
 const plain=v=>v>=1000?(v/1000)+"k":String(v);
 /* soft: obstacles a label avoids when it can (e.g. a frontier line) but may cross as a last resort */
@@ -1463,8 +1494,7 @@ function scatterSvg(pts,o){
   if(o.quad){
     const mx=med(xs),my=med(ys);
     s+=`<line class="quadline" x1="${X(mx).toFixed(1)}" y1="${mt}" x2="${X(mx).toFixed(1)}" y2="${mt+ih}"/><line class="quadline" x1="${ml}" y1="${Y(my).toFixed(1)}" x2="${ml+iw}" y2="${Y(my).toFixed(1)}"/>`
-      +((q=>`<text class="qlab"${q} x="${ml+8}" y="${mt+16}">${o.quad[0]}</text><text class="qlab"${q} x="${ml+iw-8}" y="${mt+16}" text-anchor="end">${o.quad[1]}</text>`
-      +`<text class="qlab"${q} x="${ml+8}" y="${mt+ih-8}">${o.quad[2]}</text><text class="qlab"${q} x="${ml+iw-8}" y="${mt+ih-8}" text-anchor="end">${o.quad[3]}</text>`)(nar?' style="font-size:9px;opacity:.6"':""));
+      +"<!--Q0--><!--Q1--><!--Q2--><!--Q3-->";
   }
   s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
   const front=o.front?new Set(paretoFront(pts,o.front)):new Set();
@@ -1494,6 +1524,10 @@ function scatterSvg(pts,o){
     +(m.multi?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
   const qw=t=>t.length*(nar?7:8.2)+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
     {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
+  // a quadrant caption is left out when a dot sits on it
+  if(o.quad){ const q=nar?' style="font-size:9px;opacity:.6"':"", at=[[ml+8,mt+16,""],[ml+iw-8,mt+16,' text-anchor="end"'],[ml+8,mt+ih-8,""],[ml+iw-8,mt+ih-8,' text-anchor="end"']];
+    qb.forEach((b,i)=>{ const hit=marks.some(m=>m.x+m.r>b.x0&&m.x-m.r<b.x1&&m.y+m.r>b.y0&&m.y-m.r<b.y1);
+      s=s.replace(`<!--Q${i}-->`,hit?"":`<text class="qlab"${q} x="${at[i][0]}" y="${at[i][1]}"${at[i][2]}>${o.quad[i]}</text>`); if(hit) b.x1=b.x0; }); }
   s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},nar?10:24,m=>m.label,qb,lineBoxes);
   return s+"</svg>";
 }
@@ -1644,34 +1678,67 @@ function renderEffort(rows){
 }
 
 /* ---------------- intelligence vs cost, by effort (connected) ---------------- */
-const EFF_DEFAULT=["Gemini 4 Carbon","Claude Opus 5.5","Gemini 4 Argon","Claude Sonnet 5.5","Claude Fable 5.2","GPT-6 Astra","GPT-6.1 Sol","GPT-6.1 Terra","GPT-6 Luna","GLM-5.3"];
-state.effSel=null;
-function renderEffCost(rows){
-  const multi=(m,k)=>effRows(m).filter(r=>r[k]!=null&&r[k]>0).length>1;
-  const cand=rows.filter(m=>["cost","ttft","speed"].some(k=>multi(m,k))).sort((a,b)=>effRows(b)[0].aaii-effRows(a)[0].aaii);
-  if(!state.effSel) state.effSel=new Set(EFF_DEFAULT);
-  $("#effsel").innerHTML=cand.map(m=>`<button class="chip" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}">${esc(m.name)}</button>`).join("");
-  $$("#effsel .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.m; state.effSel.has(n)?state.effSel.delete(n):state.effSel.add(n); renderEffLines(filtered()); renderSpeedQ(filtered());});
-  const pick=rows.filter(m=>state.effSel.has(m.name));
+/* Models on the two effort-line charts. Nothing is hard-coded: the default is the six highest-scoring frontier models
+   plus the two highest-scoring open-weights ones, so it follows the data. A visitor's own picks are kept in localStorage. */
+const SERIES=8, EFF_KEY="fb-effpick";
+const effCands=()=>MODELS.filter(m=>effRowsAll(m).some(r=>r.aaii!=null&&(r.cost>0||r.ttft>0))).sort((a,b)=>effRowsAll(b)[0].aaii-effRowsAll(a)[0].aaii||a.name.localeCompare(b.name));
+const effPreset=k=>{const c=effCands(), f=c.filter(m=>m.tier==="frontier"), o=c.filter(m=>m.open&&m.tier!=="legacy");
+  return (k==="frontier"?f.slice(0,SERIES):k==="open"?o.slice(0,SERIES):k==="none"?[]:[...f.slice(0,6),...o.filter(m=>m.tier!=="frontier").slice(0,2)]).map(m=>m.name);};
+state.effSel=null; state.effCol=new Map();
+function effSetPicks(names){
+  const ok=new Set(effCands().map(m=>m.name));
+  state.effSel=new Set(names.filter(n=>ok.has(n)));
+  [...state.effCol.keys()].forEach(n=>state.effSel.has(n)||state.effCol.delete(n));
+  // a colour stays with its model while it is picked; the ninth model onwards is grey until a colour frees up
+  state.effSel.forEach(n=>{ if(state.effCol.has(n)) return; const used=new Set(state.effCol.values());
+    for(let i=0;i<SERIES;i++) if(!used.has(i)){state.effCol.set(n,i);break;} });
+}
+const effColor=n=>state.effCol.has(n)?`var(--s${state.effCol.get(n)+1})`:"var(--ink-3)";
+function effChange(names){ effSetPicks(names); try{localStorage.setItem(EFF_KEY,JSON.stringify([...state.effSel]));}catch(e){} renderEffLines(); renderSpeedQ(filtered()); }
+const effToggle=n=>effChange(state.effSel.has(n)?[...state.effSel].filter(x=>x!==n):[...state.effSel,n]);
+function effHover(n){ $$(".effsvg").forEach(v=>{v.classList.toggle("hl",!!n); $$(".effg",v).forEach(g=>g.classList.toggle("on",g.dataset.m===n));}); }
+function renderEffList(){
+  const q=$("#effq").value.trim().toLowerCase(), c=effCands().filter(m=>!q||(m.name+" "+m.prov).toLowerCase().includes(q));
+  $("#efflist").innerHTML=c.length?TIERS.map(([t,l])=>{const g=c.filter(m=>m.tier===t); return g.length?`<h4>${l}</h4>`+g.map(m=>
+    `<button type="button" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}"><i style="${state.effSel.has(m.name)?`background:${effColor(m.name)};border-color:transparent`:""}"></i>${esc(m.name)}<span class="pm">${esc(m.prov)} · ${effRowsAll(m)[0].aaii}</span></button>`).join(""):"";}).join("")
+    :'<p>No model with an Index score matches.</p>';
+  $$("#efflist button").forEach(b=>b.onclick=()=>{effToggle(b.dataset.m); renderEffList();});
+}
+function renderEffPicker(){
+  $("#effpicked").innerHTML=[...state.effSel].map(n=>`<button type="button" class="pchip" data-m="${esc(n)}" title="Remove ${esc(n)}"><i style="background:${effColor(n)}"></i>${esc(n)}<span class="x" aria-hidden="true">×</span></button>`).join("");
+  $$("#effpicked .pchip").forEach(b=>{b.onclick=()=>{effHover(null); effToggle(b.dataset.m);}; b.onmouseenter=()=>effHover(b.dataset.m); b.onmouseleave=()=>effHover(null);});
+  const n=state.effSel.size; $("#effnote").textContent=n+" of "+effCands().length+" models shown"+(n>SERIES?" · the first "+SERIES+" get a colour":"");
+  if(!$("#efflist").hidden) renderEffList();
+}
+{ const q=$("#effq"), list=$("#efflist"), open=()=>{list.hidden=false; renderEffList();};
+  q.onfocus=open; q.oninput=open;
+  q.onkeydown=e=>{ if(e.key==="Escape"){list.hidden=true; q.blur();} if(e.key==="Enter"){const b=$("#efflist button"); if(b&&q.value.trim()){effToggle(b.dataset.m); q.value=""; renderEffList();}} };
+  document.addEventListener("mousedown",e=>{ if(!e.target.closest(".pickadd")) list.hidden=true; });
+  $$(".pickbar [data-set]").forEach(b=>b.onclick=()=>effChange(effPreset(b.dataset.set)));
+}
+function renderEffCost(){
+  if(!state.effSel){ let saved=null; try{saved=JSON.parse(localStorage.getItem(EFF_KEY));}catch(e){} effSetPicks(Array.isArray(saved)?saved:effPreset("default")); }
+  renderEffPicker();
+  const pick=[...state.effSel].map(n=>MODELS.find(m=>m.name===n));
   effLines("#c-effcost","#effkey2",pick,"cost",{fmt:money,title:"Cost per Intelligence Index task — log scale",
     aria:"Intelligence against cost per task at each effort level"});
+  return pick;
 }
-function renderEffLines(rows){
-  renderEffCost(rows);
-  const pick=rows.filter(m=>state.effSel.has(m.name));
+function renderEffLines(){
+  const pick=renderEffCost();
   effLines("#c-efflat","#effkey3",pick,"ttft",{fmt:v=>(v>=10?Math.round(v):+v.toFixed(1))+" s",title:"Seconds to first answer token — log scale",
     aria:"Intelligence against time to first answer token at each effort level"});
 }
 const EFF_XLABEL={cost:"Cost per index task",ttft:"Time to first answer token",speed:"Output speed"};
 function effLines(hostSel,keySel,pick,xk,o){
   const host=$(hostSel);
-  const ms=pick.filter(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0).length>1);
-  const seen=new Set(); ms.forEach(m=>effRows(m).forEach(r=>r[xk]!=null&&seen.add(r.e)));
-  effKey(keySel,EFF_ORDER.filter(e=>seen.has(e)));
-  if(ms.some(m=>m.open)) $(keySel).innerHTML+=`<span><i style="width:16px;height:0;border-radius:0;border-top:2px solid var(--open);vertical-align:3px"></i>Open-weights model</span>`;
-  if(!ms.length){host.innerHTML=`<p class="empty">${pick.length?"None of the picked models has this measured at more than one effort level.":"Pick at least one model above."}</p>`;return;}
+  const ms=pick.filter(m=>effRowsAll(m).some(r=>r[xk]!=null&&r[xk]>0));
+  const seen=new Set(); ms.forEach(m=>effRowsAll(m).forEach(r=>r[xk]!=null&&seen.add(r.e)));
+  // colour names the model, so effort is carried by dot size
+  $(keySel).innerHTML=EFF_ORDER.filter(e=>seen.has(e)).map(e=>`<span><i style="width:${EFF_R[e]*2}px;height:${EFF_R[e]*2}px;${e==="none"?"box-sizing:border-box;border:2px solid var(--ink-3)":"background:var(--ink-3)"}"></i>${EFF_NAME[e]}</span>`).join("");
+  if(!ms.length){host.innerHTML=`<p class="empty">${pick.length?"None of the picked models has this measured.":"Add at least one model above."}</p>`;return;}
   const W=fitW(host,980),nar=W<600,H=nar?Math.round(W*1.15):560,ml=nar?46:62,mr=nar?14:120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
-  const pts=ms.flatMap(m=>effRows(m).filter(r=>r[xk]!=null&&r[xk]>0));
+  const pts=ms.flatMap(m=>effRowsAll(m).filter(r=>r[xk]!=null&&r[xk]>0));
   const x0=lx(Math.min(...pts.map(p=>p[xk])))-0.12, x1=lx(Math.max(...pts.map(p=>p[xk])))+0.12;
   const ys=pts.map(p=>p.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
   const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
@@ -1681,14 +1748,15 @@ function effLines(hostSel,keySel,pick,xk,o){
   s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${esc(nar?o.title.replace(" — log scale"," (log)").replace("Intelligence Index ",""):o.title)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
   const ends=[];
   ms.forEach(m=>{
-    const rs=effRows(m).filter(r=>r[xk]!=null&&r[xk]>0).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
-    s+=`<g class="effg"><polyline class="effline${m.open?" o":""}" points="${rs.map(r=>X(r[xk]).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`;
+    const rs=effRowsAll(m).filter(r=>r[xk]!=null&&r[xk]>0).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e)), col=effColor(m.name);
+    s+=`<g class="effg" data-m="${esc(m.name)}">`+(rs.length>1?`<polyline class="effline" stroke="${col}" points="${rs.map(r=>X(r[xk]).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`:"");
     rs.forEach(r=>{
       const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first answer token",r.ttft!=null?r.ttft+" s":"—"]]);
-      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="6" fill="${EFF_SHADE[r.e]}"/>`;
+      s+=r.e==="none"?`<circle data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="${EFF_R.none-1}" fill="var(--surface)" stroke="${col}" stroke-width="2"/>`
+        :`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="${EFF_R[r.e]}" fill="${col}"/>`;
     });
     s+="</g>";
-    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:6,label:m.name,raw:{y:top.aaii},e:top.e});
+    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:EFF_R[top.e],label:m.name,raw:{y:top.aaii},e:top.e,col});
   });
   // badges that would overlap step up or down out of the way and keep a short line to their end dot
   if(nar){ const put=[];
@@ -1696,11 +1764,11 @@ function effLines(hostSel,keySel,pick,xk,o){
       for(const dy of [0,-19,19,-38,38]){ by=Math.min(mt+ih-9,Math.max(mt+9,o.y+dy)); if(put.every(q=>Math.hypot(q.x-bx,q.y-by)>=19)) break; }
       put.push({x:bx,y:by});
       if(by!==o.y) s+=`<line class="leader" x1="${o.x.toFixed(1)}" y1="${o.y.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/>`;
-      s+=`<circle class="effdot" cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" fill="${EFF_SHADE[o.e]}"/>`
+      s+=`<circle class="effbadge" cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" stroke="${o.col}"/>`
         +`<text class="endnum" x="${bx.toFixed(1)}" y="${(by+3.5).toFixed(1)}" text-anchor="middle">${i+1}</text>`;});}
   else s+=placeLabels([...ends,...pts.map(p=>({x:X(p[xk]),y:Y(p.aaii),r:6,nolabel:true}))],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
   // on phones the line ends carry numbers, keyed in a list below, since full names don't fit
-  host.innerHTML=s+"</svg>"+(nar?`<ol class="effnums">${ms.map(m=>`<li>${esc(m.name)}</li>`).join("")}</ol>`:""); wire(host);
+  host.innerHTML=s+"</svg>"+(nar?`<ol class="effnums">${ms.map(m=>`<li><i style="background:${effColor(m.name)}"></i>${esc(m.name)}</li>`).join("")}</ol>`:""); wire(host);
 }
 
 /* ---------------- ranked at one effort level ---------------- */
@@ -1720,7 +1788,7 @@ function renderEffLevel(rows){
   wire($("#c-efflevel"));
 }
 
-function renderCharts(rows){ renderBarsets(rows); renderEffort(rows); renderEffLines(rows); renderEffLevel(rows); renderQuad(rows); renderSpeedQ(rows); renderPPP(rows); }
+function renderCharts(rows){ renderBarsets(rows); renderEffort(rows); renderEffLines(); renderEffLevel(rows); renderQuad(rows); renderSpeedQ(rows); renderPPP(rows); }
 
 /* ---------------- price per point ---------------- */
 function renderPPP(rows){
