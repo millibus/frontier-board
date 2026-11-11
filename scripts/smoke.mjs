@@ -302,6 +302,13 @@ try {
     if (C.tab !== "quad" || C.section !== "ch-efflat") problems.push(`#ch-efflat link opened ${C.tab} / ${C.section}`);
     if (C.picks !== known || C.hide !== level || C.linear || C.pareto || !C.labels) problems.push(`unknown URL values were not ignored: ${JSON.stringify(C)}`);
     await c.close();
+
+    // a default comparison link opens the default picks even for a visitor whose own saved picks differ (page a's storage holds custom picks)
+    const own = await a.evaluate(k => localStorage.getItem(k), "fb-effpick");
+    if (!own || own === JSON.stringify(def.picks.split("|"))) problems.push("test setup: page a's custom picks were not saved, so the shared-link check proves nothing");
+    await a.goto(url + "?tab=charts", { waitUntil: "load" });
+    const D = await snap(a);
+    if (D.picks !== def.picks) problems.push(`?tab=charts opened the visitor's saved picks "${D.picks}" instead of the defaults "${def.picks}"`);
     await a.close();
 
     // phone: the controls live in a full-screen sheet behind a "Models N" button

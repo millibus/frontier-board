@@ -2312,7 +2312,8 @@ function urlApply(){
   let names=null;
   if(p.has("models")){ const by=new Map(MODELS.map(m=>[slug(m.name),m.name])), ids=p.get("models").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
     names=[...new Set(ids.map(s=>by.get(s)).filter(Boolean))]; if(ids.length&&!names.length) names=null; }
-  effInit(names);
+  // a Charts link without models= means the default picks: the visitor's own saved picks apply only to a link that is not a comparison
+  effInit(names||(tab==="quad"?effPreset("default"):null));
   (p.get("hide")||"").split(",").forEach(e=>EFF_ORDER.includes(e)&&c.hideEff.add(e));
   if(p.get("scale")==="linear") c.linear=true;
   if(on(p.get("pareto"))) c.pareto=true;
