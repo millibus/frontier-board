@@ -15,6 +15,7 @@ Flag these as P1 (they break the board's sourcing rules or the page):
 - A data change without a `CHANGELOG` entry, or `ASOF` not equal to the newest `CHANGELOG` date.
 - A JavaScript error, a broken tab, or a change that drops `<!doctype html>`, the charset or viewport meta, the `<title>`, the light/dark theme tokens, the footer's source credits, or the copyright line `© 2026 millibus. All rights reserved.`
 - Deleting `.nojekyll`, or adding a LICENSE file.
+- Committing `node_modules/`, a `package-lock.json`, or a workflow step that runs `playwright install` or builds/deploys the site.
 
 Flag these as P2:
 - A touched column whose `BENCH.asof` wasn't bumped to the date of its newest data, or a model released after its column's `asof`.
@@ -35,4 +36,4 @@ node scripts/check-data.mjs    # data consistency, no dependencies
 node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, header matches data
 ```
 
-Both must pass. `smoke.mjs` needs Playwright and a Chromium; set `CHROMIUM_PATH` if the browser isn't at `/opt/pw-browsers/chromium`. Never run `playwright install`.
+Both must pass, and the `checks` GitHub Actions workflow runs them on every PR. `smoke.mjs` needs Playwright and a Chromium; set `CHROMIUM_PATH` if the browser isn't at `/opt/pw-browsers/chromium`. Never run `playwright install`.
