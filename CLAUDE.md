@@ -1,6 +1,6 @@
 # Frontier Board
 
-Single-page LLM benchmark aggregator, published with GitHub Pages from `main` (root) at https://millibus.github.io/frontier-board/. Everything the site serves lives in `index.html` (HTML, CSS, JS, data). There is no build step and no dependencies. `.nojekyll` must stay. `scripts/` holds dev-only checks; they are never loaded by the page.
+Single-page LLM benchmark aggregator, published with GitHub Pages from `main` (root) at https://millibus.github.io/frontier-board/. Everything the site serves lives in `index.html` (HTML, CSS, JS, data). There is no build step and no dependencies. `.nojekyll` must stay. `scripts/` holds dev-only checks and `.github/workflows/checks.yml` runs them in CI; neither is loaded by the page.
 
 ## Data blocks (inside the `<script>` in index.html)
 
@@ -62,6 +62,7 @@ node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, he
   It warns on speed claims in notes that differ from the measured speed.
 - `smoke.mjs` uses the pre-installed playwright; do not run `playwright install`. It looks for `/opt/pw-browsers/chromium`, which doesn't exist on the shared box, so set `CHROMIUM_PATH` there: `CHROMIUM_PATH=/usr/bin/google-chrome node scripts/smoke.mjs`. It serves the repo over local HTTP and ignores blocked Google Fonts requests.
 - Both must pass. For visual changes, also screenshot the page in light and dark themes.
+- `.github/workflows/checks.yml` runs both checks on every pull request and every push to `main`. It installs `playwright-core` with `--no-save`, never runs `playwright install`, and uses the runner's Google Chrome. A PR whose `checks` run fails is not ready to merge. The workflow does not build or deploy anything; Pages still serves `main` as is. `node_modules/` is git-ignored; never commit it.
 
 ## Conventions
 

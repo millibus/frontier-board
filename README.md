@@ -4,7 +4,7 @@ Frontier Board — single-page LLM benchmark aggregator (AA Intelligence Index, 
 
 ## Checks
 
-`node scripts/check-data.mjs` validates the data blocks (no dependencies). `node scripts/smoke.mjs` loads the page in headless Chromium and clicks every tab; it needs playwright or playwright-core installed. Neither script is part of the published site.
+`node scripts/check-data.mjs` validates the data blocks (no dependencies). `node scripts/smoke.mjs` loads the page in headless Chromium and clicks every tab; it needs playwright or playwright-core installed. Both run in GitHub Actions on every pull request and push to `main` (`.github/workflows/checks.yml`). Neither script is part of the published site.
 
 ## Data sources
 

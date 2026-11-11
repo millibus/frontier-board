@@ -1,0 +1,41 @@
+# Runs the dev-only checks on every push to main and every pull request.
+# Nothing here builds or deploys the site: Pages still serves main (root) as is.
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Data consistency
+        run: node scripts/check-data.mjs
+
+      # playwright-core only; no browser download and never `playwright install`.
+      # The runner image's Google Chrome is used instead.
+      - name: Install playwright-core (not saved)
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: npm install --no-save --no-package-lock --no-audit --no-fund playwright-core@1.65.0
+
+      - name: Smoke test (headless Chrome)
+        env:
+          CHROMIUM_PATH: /usr/bin/google-chrome
+        run: node scripts/smoke.mjs
