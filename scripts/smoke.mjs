@@ -329,6 +329,19 @@ try {
     if (await m.locator("#cmp").isVisible()) problems.push("phone: Done did not close the sheet");
     if (+M.count !== +n0 + 1 || await m.textContent("#ch-effcost .cmpopen .cmpn") !== String(+n0 + 1)) problems.push("phone: the Models count did not follow a pick made in the sheet");
     if (M.named !== "effcost" || M.section !== "ch-effcost") problems.push(`phone: after the sheet the section is ${M.named} / ${M.section}, not effcost`);
+    // phone: a pinned details card pushes the legend and frontier list down rather than covering them
+    for (const pareto of [false, true]) {
+      const lay = await m.evaluate(on => {
+        state.cmp.pareto = on; renderEffLines();
+        const sel = Object.keys(effUI.charts)[0]; effPin(sel, 0);
+        const c = effUI.charts[sel], card = c.card.getBoundingClientRect();
+        const after = [...c.wrap.children].filter(e => e !== c.plot && e.getClientRects().length).map(e => ({ cls: e.className, top: e.getBoundingClientRect().top }));
+        effClose();
+        return { shown: !c.card.hidden || card.height > 0, bottom: card.bottom, after };
+      }, pareto);
+      if (!lay.after.length) problems.push(`phone: no legend under the chart to check (pareto ${pareto})`);
+      for (const e of lay.after) if (e.top < lay.bottom - 0.5) problems.push(`phone: pinned card (bottom ${lay.bottom}) covers .${e.cls} (top ${e.top}), pareto ${pareto}`);
+    }
     await m.close();
   }
   /* ===== comparison controls + shareable URL: end ===== */

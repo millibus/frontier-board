@@ -307,7 +307,8 @@ table.efftab td:first-child{font-family:"IBM Plex Sans",sans-serif}
 .effx{appearance:none;position:absolute;top:3px;right:3px;width:28px;height:28px;border:0;border-radius:4px;background:none;color:var(--ink-2);
   font:inherit;font-size:18px;line-height:1;cursor:pointer}
 .effx:hover{color:var(--ink);background:var(--surface-2)}
-.effwrap.nar .effcard,.effwrap.nar .effcard.alt{left:0;right:0;top:100%;bottom:auto;width:auto;margin-top:4px;padding-right:46px}
+/* phones: the card joins the flow under the plot, so the numbered legend and frontier list move down instead of being covered */
+.effwrap.nar .effcard,.effwrap.nar .effcard.alt{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto;margin-top:4px;padding-right:46px}
 .effwrap.nar .effcard dl{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
 .effwrap.nar .effx{width:44px;height:44px;top:0;right:0;font-size:22px}
 
@@ -2098,7 +2099,6 @@ function effApply(){
       +`<a href="${esc(BENCH.aaii.url)}" target="_blank" rel="noopener">Artificial Analysis</a>`+(pinned?"":`<span class="effhint">Click the point to keep this open</span>`);
     c.card.classList.toggle("alt",!g.nar&&g.alt!==g.inBox(p,g.box[+g.alt])); // the other corner when the point itself is under the card
     c.card.hidden=false;
-    if(g.nar) c.wrap.style.minHeight=(c.plot.offsetHeight+c.card.offsetHeight+8)+"px"; // room under the plot for the card
   });
 }
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!effClose()&&effUI.latch&&!e.target.closest("input")) effLatch(effUI.latch); });
