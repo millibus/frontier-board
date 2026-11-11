@@ -303,6 +303,49 @@ details.changes summary b{color:var(--ink);font-weight:600}
 .foot p{margin:0;max-width:110ch}
 .foot b{color:var(--ink-2);font-weight:600}
 .foot a{color:var(--ink-2)}
+/* ---------- comparison controls ---------- */
+.cmpbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 8px}
+.cmpopen,.cmphead{display:none}
+.cmpopen b,.cmphead .cmpn{font-variant-numeric:tabular-nums}
+.cmp .pickbar{row-gap:8px;column-gap:14px}
+.cmpgrp{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.cmpgrp > span:not(.cmplab){display:inline-flex;gap:6px;flex-wrap:wrap}
+.cmplab{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.cmp .chip .eff{font-size:11px;opacity:.75;margin-left:2px;font-variant-numeric:tabular-nums}
+.cmp .chip[aria-pressed="mixed"]{border-color:var(--ink);color:var(--ink);font-weight:500}
+/* an excluded effort level is off, not unavailable: full-contrast text, struck through, still a live button */
+#cmpeff .chip[aria-pressed="false"]{color:var(--ink);text-decoration:line-through;text-decoration-color:var(--ink-3);border-style:dashed}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface-2)}
+.seg button{appearance:none;border:0;background:none;font:inherit;font-size:12.5px;color:var(--ink-2);padding:3px 11px;cursor:pointer}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
+.cmpreset{margin-left:auto}
+.cmpctx{font-size:12px;color:var(--ink-3);margin:6px 0 2px;max-width:none}
+.cmpctx b{color:var(--ink-2);font-weight:600}
+@media (max-width:700px){
+  .cmpopen{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:13.5px;color:var(--ink);font-weight:500}
+  #ch-effcost .picked,#ch-effcost .cmpbar .picknote{display:none}
+  .cmp{display:none}
+  html.cmplock{overflow:hidden}
+  .cmp.open{display:block;position:fixed;inset:0;z-index:120;background:var(--surface);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .cmp.open .cmphead{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:2;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 14px}
+  .cmphead h3{font-size:16px;letter-spacing:-.015em;margin-right:auto}
+  .cmphead .cmpn{color:var(--ink-3);font-weight:500;margin-left:4px}
+  .cmphead .chip,.cmp.open .chip,.cmp.open .seg button{min-height:40px;padding:8px 14px;font-size:13.5px}
+  .cmphead .cmpdone{background:var(--ink);border-color:var(--ink);color:var(--surface);font-weight:600}
+  /* in the sheet the controls come before the long model list, so they are reachable without scrolling past it */
+  .cmpbody{padding:12px 14px 28px;display:flex;flex-direction:column;gap:16px}
+  .cmp.open .pickbar,.cmp.open .pickadd{display:contents}
+  .cmp.open .picklist{order:9}
+  .cmp.open .cmpreset{display:none}
+  .cmp.open .cmpgrp{align-items:center}
+  .cmp.open .cmplab{flex-basis:100%}
+  .cmp.open .pickadd input{width:100%;font-size:16px;padding:10px 12px}
+  .cmp.open .picklist{display:block!important;position:static;width:auto;max-height:none;overflow:visible;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;padding:2px 0 0}
+  .cmp.open .picklist button{min-height:46px;font-size:14.5px;padding:8px 6px;border-bottom:1px solid var(--line)}
+  .cmp.open .picklist h4{margin:14px 6px 4px;font-size:11px}
+  .cmp.open .picklist i{width:12px;height:12px}
+}
 @media (max-width:700px){
   main{padding:14px} .top-in,.rail-in,.foot{padding-left:14px;padding-right:14px}
   .bgrid{grid-template-columns:1fr}
@@ -356,7 +399,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
   </section>
 
   <section class="panel" id="p-quad">
-    <nav class="jump" aria-label="Charts">
+    <nav class="jump" id="jump" aria-label="Charts">
       <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a><a href="#ch-efflat">Latency by effort</a><a href="#ch-efflevel">Same-effort ranking</a>
       <a href="#ch-price">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
       <a href="#ch-ttft">Latency</a><a href="#ch-blend">Price</a><a href="#ch-ctx">Context window</a><a href="#ch-ppp">Price of a point</a>
@@ -379,19 +422,39 @@ details.changes summary b{color:var(--ink);font-weight:600}
 
     <div class="card" id="ch-effcost">
       <div class="cardhead"><div><h2>Intelligence vs cost to run, by effort</h2>
-        <p class="sub">Each coloured line is one model walking up its effort levels against cost per index task on a log scale; bigger dots are higher effort. Where a line runs flat, the extra effort buys cost without capability; where it doubles back, a lower setting cost more than a higher one. A model measured at one setting shows as a single dot. Add or remove models below; the filters at the top of the page don't apply here. Hover a line or a name to isolate it.</p></div>
+        <p class="sub">Each coloured line is one model walking up its effort levels against cost per index task; bigger dots are higher effort. Where a line runs flat, the extra effort buys cost without capability; where it doubles back, a lower setting cost more than a higher one. A model measured at one setting shows as a single dot. The controls below set which models and effort levels are compared and how both effort charts are drawn; the filters at the top of the page don't apply here. Hover a line or a name to isolate it.</p></div>
         <div class="effkey" id="effkey2"></div></div>
       <div class="picked" id="effpicked"></div>
-      <div class="pickbar"><div class="pickadd"><input type="search" id="effq" placeholder="Add a model…" autocomplete="off" aria-label="Add a model to the effort charts"><div class="picklist" id="efflist" hidden></div></div>
-        <button class="chip" data-set="default">Reset</button><button class="chip" data-set="frontier">Top frontier</button><button class="chip" data-set="open">Top open weights</button><button class="chip" data-set="none">Clear</button>
+      <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button>
         <span class="picknote" id="effnote"></span></div>
+      <div class="cmp" id="cmp" aria-label="Comparison: models and chart controls">
+        <div class="cmphead"><h3>Models <span class="cmpn"></span></h3>
+          <button type="button" class="chip" data-cmp="reset" title="Restore the default models, effort levels, scale, Pareto line and labels, and clear the search">Reset comparison</button>
+          <button type="button" class="chip cmpdone" id="cmpdone">Done</button></div>
+        <div class="cmpbody">
+          <div class="pickbar">
+            <div class="pickadd"><input type="search" id="effq" placeholder="Add a model…  ( / )" autocomplete="off" aria-label="Find a model to add to or remove from the effort charts" aria-keyshortcuts="/"><div class="picklist" id="efflist" hidden></div></div>
+            <span class="cmpgrp" role="group" aria-label="Add or remove a whole group of models"><span class="cmplab">Add or remove</span><span id="cmpgroups"></span>
+              <button type="button" class="chip" data-cmp="clear">Clear models</button></span>
+          </div>
+          <div class="pickbar">
+            <span class="cmpgrp" role="group" aria-label="Effort levels shown"><span class="cmplab">Effort</span><span id="cmpeff"></span></span>
+            <span class="cmpgrp"><span class="cmplab">Scale</span><span class="seg" role="group" aria-label="Horizontal axis scale"><button type="button" data-scale="log" aria-pressed="true">Log</button><button type="button" data-scale="linear" aria-pressed="false">Linear</button></span></span>
+            <span class="cmpgrp"><span class="cmplab">Show</span><button type="button" class="chip" data-cmp="pareto" aria-pressed="false">Pareto line</button><button type="button" class="chip" data-cmp="labels" aria-pressed="true">Labels</button></span>
+            <button type="button" class="chip cmpreset" data-cmp="reset" title="Restore the default models, effort levels, scale, Pareto line and labels, and clear the search">Reset comparison</button>
+          </div>
+        </div>
+      </div>
+      <p class="sub cmpctx" id="effctx-cost"></p>
       <div id="c-effcost"></div>
     </div>
 
     <div class="card" id="ch-efflat">
       <div class="cardhead"><div><h2>Intelligence vs waiting time, by effort</h2>
-        <p class="sub">The same lines against seconds to the first answer token, log scale. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models and colours picked in the chart above.</p></div>
+        <p class="sub">The same lines against seconds to the first answer token. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models, effort levels, scale and colours set in the chart above.</p></div>
         <div class="effkey" id="effkey3"></div></div>
+      <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button></div>
+      <p class="sub cmpctx" id="effctx-lat"></p>
       <div id="c-efflat"></div>
     </div>
 
@@ -1685,6 +1748,7 @@ const effCands=()=>MODELS.filter(m=>effRowsAll(m).some(r=>r.aaii!=null&&(r.cost>
 const effPreset=k=>{const c=effCands(), f=c.filter(m=>m.tier==="frontier"), o=c.filter(m=>m.open&&m.tier!=="legacy");
   return (k==="frontier"?f.slice(0,SERIES):k==="open"?o.slice(0,SERIES):k==="none"?[]:[...f.slice(0,6),...o.filter(m=>m.tier!=="frontier").slice(0,2)]).map(m=>m.name);};
 state.effSel=null; state.effCol=new Map();
+state.cmp={linear:false,pareto:false,labels:true,hideEff:new Set()};   // read by effLines: x scale, Pareto line, series labels, effort levels left out
 function effSetPicks(names){
   const ok=new Set(effCands().map(m=>m.name));
   state.effSel=new Set(names.filter(n=>ok.has(n)));
@@ -1694,40 +1758,120 @@ function effSetPicks(names){
     for(let i=0;i<SERIES;i++) if(!used.has(i)){state.effCol.set(n,i);break;} });
 }
 const effColor=n=>state.effCol.has(n)?`var(--s${state.effCol.get(n)+1})`:"var(--ink-3)";
-function effChange(names){ effSetPicks(names); try{localStorage.setItem(EFF_KEY,JSON.stringify([...state.effSel]));}catch(e){} renderEffLines(); renderSpeedQ(filtered()); }
+// picks come from the URL first, then this visitor's saved picks, then the data-driven default
+function effInit(names){ let saved=null; if(!names) try{saved=JSON.parse(localStorage.getItem(EFF_KEY));}catch(e){} effSetPicks(names||(Array.isArray(saved)?saved:effPreset("default"))); }
+/* A control that changes the charts' height must not move the page under the pointer or change which chart is in view:
+   the search box keeps its place in the viewport, and the section named in the URL is left alone (see secTrack). */
+function keepView(fn){
+  const el=$("#effq"), on=$("#p-quad").classList.contains("on")&&!cmpSheet.open&&el.getClientRects().length, y=on&&el.getBoundingClientRect().top;
+  fn();
+  if(on){ const d=el.getBoundingClientRect().top-y; if(Math.abs(d)>=1) scrollBy(0,d); }
+  secY=scrollY;
+}
+function effChange(names){ effSetPicks(names); try{localStorage.setItem(EFF_KEY,JSON.stringify([...state.effSel]));}catch(e){} keepView(()=>{renderEffLines(); renderSpeedQ(filtered());}); syncURL(); }
 const effToggle=n=>effChange(state.effSel.has(n)?[...state.effSel].filter(x=>x!==n):[...state.effSel,n]);
+// the board's own groups add to or remove from the picks without clearing the rest
+const EFF_GROUPS=[...TIERS,["open","Open weights"]];
+const effGroup=k=>effCands().filter(m=>k==="open"?m.open:m.tier===k).map(m=>m.name);
+function effBulk(k){ const g=effGroup(k), gs=new Set(g);
+  effChange(g.every(n=>state.effSel.has(n))?[...state.effSel].filter(n=>!gs.has(n)):[...state.effSel,...g.filter(n=>!state.effSel.has(n))]); }
+function cmpSet(k,v){ const c=state.cmp; if(k==="hide") c.hideEff.has(v)?c.hideEff.delete(v):c.hideEff.add(v); else c[k]=v; keepView(renderEffLines); syncURL(); }
+// restores everything the comparison controls set, and nothing else: not the theme, not the Board filters
+function cmpReset(){
+  state.cmp={linear:false,pareto:false,labels:true,hideEff:new Set()};
+  $("#effq").value=""; $("#efflist").hidden=true; effHover(null);
+  effSetPicks(effPreset("default")); try{localStorage.removeItem(EFF_KEY);}catch(e){}
+  keepView(()=>{renderEffLines(); renderSpeedQ(filtered());}); syncURL();
+}
 function effHover(n){ $$(".effsvg").forEach(v=>{v.classList.toggle("hl",!!n); $$(".effg",v).forEach(g=>g.classList.toggle("on",g.dataset.m===n));}); }
+// rebuilding a row of buttons must not drop keyboard focus: put it back on the button with the same key
+function refill(host,html){ const a=document.activeElement, k=a&&host.contains(a)?a.dataset.k:null; host.innerHTML=html;
+  if(k!=null){ const b=$$("[data-k]",host).find(x=>x.dataset.k===k); if(b) b.focus({preventScroll:true}); } }
 function renderEffList(){
   const q=$("#effq").value.trim().toLowerCase(), c=effCands().filter(m=>!q||(m.name+" "+m.prov).toLowerCase().includes(q));
-  $("#efflist").innerHTML=c.length?TIERS.map(([t,l])=>{const g=c.filter(m=>m.tier===t); return g.length?`<h4>${l}</h4>`+g.map(m=>
-    `<button type="button" data-m="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}"><i style="${state.effSel.has(m.name)?`background:${effColor(m.name)};border-color:transparent`:""}"></i>${esc(m.name)}<span class="pm">${esc(m.prov)} · ${effRowsAll(m)[0].aaii}</span></button>`).join(""):"";}).join("")
-    :'<p>No model with an Index score matches.</p>';
-  $$("#efflist button").forEach(b=>b.onclick=()=>{effToggle(b.dataset.m); renderEffList();});
+  refill($("#efflist"),c.length?TIERS.map(([t,l])=>{const g=c.filter(m=>m.tier===t); return g.length?`<h4>${l}</h4>`+g.map(m=>
+    `<button type="button" data-m="${esc(m.name)}" data-k="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}"><i style="${state.effSel.has(m.name)?`background:${effColor(m.name)};border-color:transparent`:""}"></i>${esc(m.name)}<span class="pm">${esc(m.prov)} · ${effRowsAll(m)[0].aaii}</span></button>`).join(""):"";}).join("")
+    :'<p>No model with an Index score matches.</p>');
+  $$("#efflist button").forEach(b=>b.onclick=()=>effToggle(b.dataset.m));
 }
 function renderEffPicker(){
-  $("#effpicked").innerHTML=[...state.effSel].map(n=>`<button type="button" class="pchip" data-m="${esc(n)}" title="Remove ${esc(n)}"><i style="background:${effColor(n)}"></i>${esc(n)}<span class="x" aria-hidden="true">×</span></button>`).join("");
+  const c=state.cmp, picks=[...state.effSel], pm=picks.map(n=>MODELS.find(m=>m.name===n));
+  refill($("#effpicked"),picks.map(n=>`<button type="button" class="pchip" data-m="${esc(n)}" data-k="${esc(n)}" title="Remove ${esc(n)}"><i style="background:${effColor(n)}"></i>${esc(n)}<span class="x" aria-hidden="true">×</span></button>`).join(""));
   $$("#effpicked .pchip").forEach(b=>{b.onclick=()=>{effHover(null); effToggle(b.dataset.m);}; b.onmouseenter=()=>effHover(b.dataset.m); b.onmouseleave=()=>effHover(null);});
-  const n=state.effSel.size; $("#effnote").textContent=n+" of "+effCands().length+" models shown"+(n>SERIES?" · the first "+SERIES+" get a colour":"");
-  if(!$("#efflist").hidden) renderEffList();
+  const n=picks.length; $("#effnote").textContent=n+" of "+effCands().length+" models picked"+(n>SERIES?" · the first "+SERIES+" get a colour":"");
+  $$(".cmpn").forEach(e=>e.textContent=n);
+  // one chip per group: pressed when every member is picked, mixed when some are
+  refill($("#cmpgroups"),EFF_GROUPS.map(([k,l])=>{const g=effGroup(k), h=g.filter(x=>state.effSel.has(x)).length; return g.length?
+    `<button type="button" class="chip" data-g="${k}" data-k="${k}" aria-pressed="${h===g.length?"true":h?"mixed":"false"}" title="${h===g.length?"Remove":"Add"} all ${g.length} ${esc(l)} models; other picks stay">${esc(l)} <span class="eff">${h}/${g.length}</span></button>`:"";}).join(""));
+  $$("#cmpgroups .chip").forEach(b=>b.onclick=()=>effBulk(b.dataset.g));
+  // one chip per effort level the picked models have; each includes or leaves out that level on both charts
+  const cnt=e=>pm.filter(m=>effRowsAll(m).some(r=>r.e===e)).length;
+  refill($("#cmpeff"),EFF_ORDER.filter(cnt).map(e=>`<button type="button" class="chip" data-e="${e}" data-k="${e}" aria-pressed="${!c.hideEff.has(e)}" title="${EFF_NAME[e]}: ${c.hideEff.has(e)?"left out — select to show":"shown — select to leave out"}">${EFF_NAME[e]} <span class="eff">${cnt(e)}</span></button>`).join("")
+    ||'<span class="picknote">no model picked</span>');
+  $$("#cmpeff .chip").forEach(b=>b.onclick=()=>cmpSet("hide",b.dataset.e));
+  $$(".seg [data-scale]").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.scale==="linear")===c.linear));
+  $('[data-cmp="pareto"]').setAttribute("aria-pressed",c.pareto); $('[data-cmp="labels"]').setAttribute("aria-pressed",c.labels);
+  if(!$("#efflist").hidden||cmpSheet.open) renderEffList();
 }
-{ const q=$("#effq"), list=$("#efflist"), open=()=>{list.hidden=false; renderEffList();};
+/* Data context: which picked models a chart cannot draw (no value for its x measure at the effort levels shown), and the data's date. */
+function effContext(sel,pick,xk,what){
+  const has=(m,all)=>effRowsAll(m).some(r=>(all||!state.cmp.hideEff.has(r.e))&&r.aaii!=null&&r[xk]!=null&&r[xk]>0);
+  const none=pick.filter(m=>!has(m,1)).map(m=>m.name), off=pick.filter(m=>has(m,1)&&!has(m)).map(m=>m.name);
+  const list=a=>`<b>${a.length<=4?a.map(esc).join(", "):a.length+" models"}</b>`;
+  $(sel).innerHTML=`Artificial Analysis data as of <b>${esc(BENCH.aaii.asof)}</b> · ${pick.length-none.length-off.length} of ${pick.length} picked models drawn`+
+    (none.length?` · not drawn, no ${what} measured: ${list(none)}`:"")+(off.length?` · not drawn, measured only at effort levels left out: ${list(off)}`:"");
+}
+/* On phones the picker and controls open as a full-screen sheet from a "Models N" button. */
+const cmpSheet={open:false,from:null,y:0,mq:matchMedia("(max-width:700px)"),
+  show(btn){ if(this.open||!this.mq.matches) return; const s=$("#cmp");
+    this.open=true; this.from=btn||$(".cmpopen"); this.y=this.from.getBoundingClientRect().top;
+    s.classList.add("open"); s.setAttribute("role","dialog"); s.setAttribute("aria-modal","true"); document.documentElement.classList.add("cmplock");
+    $$(".cmpopen").forEach(b=>b.setAttribute("aria-expanded","true")); renderEffList(); s.scrollTop=0; $("#cmpdone").focus({preventScroll:true}); },
+  hide(){ if(!this.open) return; const s=$("#cmp");
+    this.open=false; s.classList.remove("open"); s.removeAttribute("role"); s.removeAttribute("aria-modal"); document.documentElement.classList.remove("cmplock");
+    $$(".cmpopen").forEach(b=>b.setAttribute("aria-expanded","false")); $("#efflist").hidden=true;
+    // the charts behind the sheet may have changed height: put the button that opened it back where it was
+    if(this.from.getClientRects().length){ scrollBy(0,this.from.getBoundingClientRect().top-this.y); this.from.focus({preventScroll:true}); }
+    secY=scrollY; }
+};
+{ const q=$("#effq"), list=$("#efflist"), sheet=$("#cmp"), open=()=>{list.hidden=false; renderEffList();};
+  const typing=e=>{const t=e.target; return t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));};
   q.onfocus=open; q.oninput=open;
-  q.onkeydown=e=>{ if(e.key==="Escape"){list.hidden=true; q.blur();} if(e.key==="Enter"){const b=$("#efflist button"); if(b&&q.value.trim()){effToggle(b.dataset.m); q.value=""; renderEffList();}} };
+  q.onkeydown=e=>{
+    if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); const had=q.value!==""; q.value="";
+      if(cmpSheet.open){ renderEffList(); if(!had) cmpSheet.hide(); } else { list.hidden=true; q.blur(); } }
+    if(e.key==="Enter"){const b=$("#efflist button"); if(b&&q.value.trim()){effToggle(b.dataset.m); q.value=""; renderEffList();}} };
   document.addEventListener("mousedown",e=>{ if(!e.target.closest(".pickadd")) list.hidden=true; });
-  $$(".pickbar [data-set]").forEach(b=>b.onclick=()=>effChange(effPreset(b.dataset.set)));
+  document.addEventListener("keydown",e=>{
+    if(e.key==="/"&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!typing(e)&&$("#p-quad").classList.contains("on")){
+      e.preventDefault(); if(cmpSheet.mq.matches) cmpSheet.show(); else q.scrollIntoView({block:"center"}); q.focus({preventScroll:true}); }
+    if(e.key==="Escape"&&cmpSheet.open) cmpSheet.hide();
+    if(e.key==="Tab"&&cmpSheet.open){ const f=$$("button,input",sheet).filter(x=>x.getClientRects().length), a=f[0], z=f[f.length-1];
+      if(!sheet.contains(document.activeElement)||(e.shiftKey?document.activeElement===a:document.activeElement===z)){ e.preventDefault(); (e.shiftKey?z:a).focus(); } }
+  });
+  $$(".cmpopen").forEach(b=>b.onclick=()=>cmpSheet.show(b));
+  $("#cmpdone").onclick=()=>cmpSheet.hide();
+  cmpSheet.mq.addEventListener("change",()=>cmpSheet.hide());
+  $$('[data-cmp="reset"]').forEach(b=>b.onclick=cmpReset);
+  $('[data-cmp="clear"]').onclick=()=>effChange([]);
+  $('[data-cmp="pareto"]').onclick=()=>cmpSet("pareto",!state.cmp.pareto);
+  $('[data-cmp="labels"]').onclick=()=>cmpSet("labels",!state.cmp.labels);
+  $$(".seg [data-scale]").forEach(b=>b.onclick=()=>cmpSet("linear",b.dataset.scale==="linear"));
 }
 function renderEffCost(){
-  if(!state.effSel){ let saved=null; try{saved=JSON.parse(localStorage.getItem(EFF_KEY));}catch(e){} effSetPicks(Array.isArray(saved)?saved:effPreset("default")); }
+  if(!state.effSel) effInit();
   renderEffPicker();
   const pick=[...state.effSel].map(n=>MODELS.find(m=>m.name===n));
   effLines("#c-effcost","#effkey2",pick,"cost",{fmt:money,title:"Cost per Intelligence Index task — log scale",
     aria:"Intelligence against cost per task at each effort level"});
+  effContext("#effctx-cost",pick,"cost","cost per index task");
   return pick;
 }
 function renderEffLines(){
   const pick=renderEffCost();
   effLines("#c-efflat","#effkey3",pick,"ttft",{fmt:v=>(v>=10?Math.round(v):+v.toFixed(1))+" s",title:"Seconds to first answer token — log scale",
     aria:"Intelligence against time to first answer token at each effort level"});
+  effContext("#effctx-lat",pick,"ttft","time to first answer token");
 }
 const EFF_XLABEL={cost:"Cost per index task",ttft:"Time to first answer token",speed:"Output speed"};
 function effLines(hostSel,keySel,pick,xk,o){
@@ -1922,14 +2066,93 @@ function renderSources(){
 }
 
 /* ---------------- tabs ---------------- */
-$$(".tab").forEach(t=>t.onclick=()=>{
-  $$(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
-  $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t.dataset.p));
-  render();
-});
+const curTab=()=>$('.tab[aria-selected="true"]').dataset.p;
+function setTab(p){
+  $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p===p));
+  $$(".panel").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
+}
+$$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); setTab(t.dataset.p); render(); secTrack(true); syncURL(); });
+
+/* ---------------- shareable URL ---------------- */
+/* The query string carries the tab, the chart section in view and the comparison (picked models, effort levels left out,
+   scale, Pareto line, labels); anything at its default is left out. Search text, hover, pinned details and the theme are not in it.
+   On load: state is applied, the page renders, and only then does it scroll to the named section and start tracking.
+   state.sec is the section the URL names (null = the first). It changes only when the visitor scrolls or follows a jump link,
+   never because a control or a late font changed the page height. */
+const TABQ={board:"board",quad:"charts",bench:"benchmarks",src:"sources"};
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9.]+/g,"-").replace(/^-+|-+$/g,"");
+const secCards=()=>$$("#p-quad .card[id^='ch-']").filter(c=>c.getClientRects().length);
+const secOff=()=>$(".top").offsetHeight+$(".rail").offsetHeight+12;       // just below the two sticky bars
+const secOK=id=>{const c=id&&document.getElementById("ch-"+id); return !!(c&&c.classList.contains("card")&&c.closest("#p-quad"));};
+state.sec=null;
+let secY=0, secPin=false, secInput=0, secSettled=false;
+function secGo(id){
+  const c=document.getElementById("ch-"+id); if(!c||!c.getClientRects().length) return;
+  scrollTo(0,Math.max(0,scrollY+c.getBoundingClientRect().top-secOff())); secY=scrollY; secPin=true;
+}
+function secTrack(force){
+  if(curTab()!=="quad"||cmpSheet.open) return;
+  if(!force){
+    if(Math.abs(scrollY-secY)<2) return;
+    // until fonts and the load event have settled the layout, only a scroll the visitor made may move a section that was landed on
+    if(secPin&&!secSettled&&performance.now()-secInput>1500) return;
+  }
+  secY=scrollY; secPin=false;
+  const off=secOff()+4, cs=secCards(); let top=null, row=[];
+  cs.forEach(c=>{ const t=c.getBoundingClientRect().top; if(t>off) return; if(top==null||t>top+2){top=t;row=[c];} else if(Math.abs(t-top)<=2) row.push(c); });
+  // cards that share a row share a position: keep the one already named if it is in that row
+  const hit=row.find(c=>c.id==="ch-"+state.sec)||row[0], id=hit&&hit!==cs[0]?hit.id.slice(3):null;
+  if(id!==state.sec){ state.sec=id; syncURL(); }
+}
+function syncURL(){
+  const q=[], c=state.cmp, t=curTab();
+  if(t!=="board") q.push("tab="+TABQ[t]);
+  if(t==="quad"){
+    if(state.sec) q.push("chart="+state.sec);
+    if(state.effSel&&[...state.effSel].join("|")!==effPreset("default").join("|")) q.push("models="+[...state.effSel].map(slug).join(","));
+    const h=EFF_ORDER.filter(e=>c.hideEff.has(e)); if(h.length) q.push("hide="+h.join(","));
+    if(c.linear) q.push("scale=linear"); if(c.pareto) q.push("pareto=1"); if(!c.labels) q.push("labels=0");
+  }
+  const u=location.pathname+(q.length?"?"+q.join("&"):"");
+  if(u!==location.pathname+location.search||location.hash) try{history.replaceState(history.state,"",u);}catch(e){}
+}
+// unknown tabs, sections, models and values are ignored; the page then falls back to its saved picks or its defaults
+function urlApply(){
+  let p; try{p=new URLSearchParams(location.search);}catch(e){p=new URLSearchParams("");}
+  const c=state.cmp, on=v=>v==="1"||v==="true", off=v=>v==="0"||v==="false";
+  let tab=Object.keys(TABQ).find(k=>TABQ[k]===p.get("tab")), sec=secOK(p.get("chart"))?p.get("chart"):null;
+  const hs=location.hash.slice(1); if(/^ch-/.test(hs)&&secOK(hs.slice(3))){ sec=hs.slice(3); tab="quad"; }   // an old #ch-… link
+  if(!tab&&sec) tab="quad";
+  if(tab) setTab(tab);
+  state.sec=tab==="quad"&&sec&&"ch-"+sec!==$("#p-quad .card[id^='ch-']").id?sec:null;
+  let names=null;
+  if(p.has("models")){ const by=new Map(MODELS.map(m=>[slug(m.name),m.name])), ids=p.get("models").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
+    names=[...new Set(ids.map(s=>by.get(s)).filter(Boolean))]; if(ids.length&&!names.length) names=null; }
+  effInit(names);
+  (p.get("hide")||"").split(",").forEach(e=>EFF_ORDER.includes(e)&&c.hideEff.add(e));
+  if(p.get("scale")==="linear") c.linear=true;
+  if(on(p.get("pareto"))) c.pareto=true;
+  if(off(p.get("labels"))) c.labels=false;
+  if(state.sec) try{history.scrollRestoration="manual";}catch(e){}
+}
+function urlLand(){
+  const land=()=>{ if(secPin&&state.sec&&curTab()==="quad"&&!cmpSheet.open) secGo(state.sec); };
+  if(state.sec){ secPin=true; land(); requestAnimationFrame(()=>requestAnimationFrame(land)); } else secY=scrollY;
+  syncURL();
+  // late fonts change text heights above the section: land again each time, unless the visitor has scrolled away meanwhile
+  let left=2; const done=()=>{ land(); if(!--left) secSettled=true; };
+  document.fonts&&document.fonts.ready?document.fonts.ready.then(done,done):done();
+  document.readyState==="complete"?done():addEventListener("load",done);
+  ["wheel","touchstart","touchmove","keydown","pointerdown"].forEach(ev=>addEventListener(ev,()=>{secInput=performance.now();},{passive:true,capture:true}));
+  let raf=0; addEventListener("scroll",()=>{ if(!raf) raf=requestAnimationFrame(()=>{raf=0; secTrack();}); },{passive:true});
+  $$("#jump a").forEach(a=>a.onclick=e=>{ const id=a.getAttribute("href").slice(4); if(!secOK(id)) return;
+    e.preventDefault(); secGo(id); state.sec=secCards()[0].id==="ch-"+id?null:id; syncURL(); });
+  addEventListener("hashchange",()=>{ const id=location.hash.slice(4); if(!/^#ch-/.test(location.hash)||!secOK(id)) return;
+    if(curTab()!=="quad"){ setTab("quad"); render(); } secGo(id); state.sec=secCards()[0].id==="ch-"+id?null:id; syncURL(); });
+}
 $("#xaxis").onchange=$("#yaxis").onchange=()=>renderQuad(filtered());
 let lastW=innerWidth; addEventListener("resize",()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>{
-  if(Math.abs(innerWidth-lastW)>40&&$("#p-quad").classList.contains("on")){ lastW=innerWidth; render(); } },150); });
+  if(Math.abs(innerWidth-lastW)>40&&$("#p-quad").classList.contains("on")){ lastW=innerWidth; const pin=secPin&&state.sec; render(); pin?secGo(state.sec):(secY=scrollY); } },150); });
 $("#foot-src").onclick=e=>{e.preventDefault(); $('.tab[data-p="src"]').click(); scrollTo(0,0);};
 
 
@@ -2015,11 +2238,13 @@ $("#nbench").textContent=Object.keys(BENCH).filter(k=>!isArch(k)).length+" activ
 renderSources();
 renderPicks();
 renderChanges();
+urlApply();
 render();
 addEventListener("resize",()=>{
   const h=$(".top").offsetHeight; document.documentElement.style.setProperty("--topH",h+"px");
 });
 document.documentElement.style.setProperty("--topH",$(".top").offsetHeight+"px");
+urlLand();
 </script>
 
 
