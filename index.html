@@ -244,13 +244,15 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .picklist p{margin:8px;font-size:12px;color:var(--ink-3)}
 .picknote{font-size:11.5px;color:var(--ink-3);margin-left:4px}
 .effline{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.effsvg:hover .effg,.effsvg.hl .effg{opacity:.18}
-.effsvg .effg:hover,.effsvg.hl .effg.on{opacity:1}
-.effsvg .effg:hover .effline,.effsvg.hl .effg.on .effline{stroke-width:3}
+.effsvg.hl .effs{opacity:.18}
+.effsvg.hl .effs.on{opacity:1}
+.effsvg.hl .effg.on .effline{stroke-width:3}
 .effbadge{fill:var(--surface);stroke-width:2.5}
-.effg{transition:opacity .12s}
+.effs{transition:opacity .12s}
+.effsvg.par .effline,.effsvg.par .effpt.dom{opacity:.3}
 .dumbline{stroke:var(--line-2);stroke-width:4;stroke-linecap:round}
 .effdot{stroke:var(--surface);stroke-width:1.5}
+.effsvg .effpt.act{stroke:var(--ink);stroke-width:2}
 .zebra{fill:var(--ink);opacity:.035}
 .tlist{display:block;max-width:300px;white-space:normal;margin-top:6px;line-height:1.45;color:var(--ink-2)}
 .stem{stroke:var(--line);stroke-width:1.5}
@@ -261,6 +263,53 @@ table.efftab th:first-child,table.efftab td:first-child{text-align:left}
 table.efftab td{padding:4px 14px 4px 0;text-align:right;border-bottom:1px dotted var(--line-2);font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
 table.efftab td:first-child{font-family:"IBM Plex Sans",sans-serif}
 .effh{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-2);font-weight:600;margin-top:4px}
+
+/* ---------- chart details ---------- */
+.effwrap,.effplot{position:relative}
+.effcross,.effring,.efffront,.effleader{pointer-events:none}
+.effxh{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:3 3}
+.effxv rect{fill:var(--ink)}
+.effxv text{fill:var(--surface);font:600 10.5px "IBM Plex Mono",monospace}
+.effring{fill:none;stroke:var(--ink);stroke-width:1.5}
+.efffront{fill:none;stroke:var(--ink);stroke-width:1.75;stroke-dasharray:5 4;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.effhit{fill:transparent;cursor:pointer}
+.effhit:focus-visible{outline:none;stroke:var(--accent);stroke-width:2}
+.efflab{cursor:pointer}
+.efflab rect{fill:transparent}
+.efflab text{fill:var(--ink);font:500 12px "IBM Plex Sans",sans-serif}
+.efflab[aria-pressed="true"] text{font-weight:700;text-decoration:underline}
+.efflab:focus-visible{outline:none}
+.efflab:focus-visible rect{stroke:var(--accent);stroke-width:2}
+.effleader{fill:none;stroke-width:.75;opacity:.55}
+.effmoren{fill:var(--ink-2);font:italic 500 11.5px "IBM Plex Sans",sans-serif}
+.effmore{display:flex;flex-wrap:wrap;gap:5px 6px;align-items:center;font-size:12px;color:var(--ink-2);margin:8px 0 0}
+.effmore button{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);
+  border-radius:999px;padding:1px 8px;font:inherit;cursor:pointer}
+.effmore button:hover{border-color:var(--ink-3)}
+.effmore button[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
+.effmore i,.effcard b i{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+.effnums.plain{list-style:none;padding-left:0}
+.efffrontlist{font-size:12.5px;color:var(--ink-2);margin:8px 0 0}
+.efffrontlist b{color:var(--ink)}
+.effcard{position:absolute;z-index:5;right:var(--cr);bottom:var(--cb);width:240px;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:var(--r);box-shadow:var(--shadow);padding:10px 12px;font-size:12.5px;pointer-events:none}
+.effcard[hidden],.effx[hidden]{display:none}
+.effcard.alt{right:auto;bottom:auto;left:var(--cl);top:var(--ct)}
+.effcard.pinned{pointer-events:auto;border-color:var(--ink-3)}
+.effcard b{display:flex;align-items:center;gap:6px;font-size:13px;padding-right:24px}
+.effcs{display:block;color:var(--ink-2);font-size:12px;margin:1px 0 6px}
+.effcard dl{margin:0 0 7px}
+.effcard dl div{display:flex;justify-content:space-between;gap:12px;color:var(--ink-2)}
+.effcard dt,.effcard dd{margin:0}
+.effcard dd{color:var(--ink);font-weight:600;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.effcard a{font-size:12px}
+.effhint{float:right;font-size:11.5px;color:var(--ink-3)}
+.effx{appearance:none;position:absolute;top:3px;right:3px;width:28px;height:28px;border:0;border-radius:4px;background:none;color:var(--ink-2);
+  font:inherit;font-size:18px;line-height:1;cursor:pointer}
+.effx:hover{color:var(--ink);background:var(--surface-2)}
+.effwrap.nar .effcard,.effwrap.nar .effcard.alt{left:0;right:0;top:100%;bottom:auto;width:auto;margin-top:4px;padding-right:46px}
+.effwrap.nar .effcard dl{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.effwrap.nar .effx{width:44px;height:44px;top:0;right:0;font-size:22px}
 
 details.archive{margin-top:30px;border-top:1px solid var(--line-2);padding-top:16px}
 details.archive summary{cursor:pointer;font-size:13px;color:var(--ink-2)}
@@ -560,8 +609,8 @@ details.changes summary b{color:var(--ink);font-weight:600}
    whichever models have a score.  Check with: node scripts/check-data.mjs
    ========================================================================= */
 
-const ASOF = "9 Nov 2026";
-const ASOF_NOTE = "9 Nov 2026: Fable 5.2, Muse Ember and Arete-27B added. Full-source audit of the existing board; verified AA v5.0.1, effort, ARC, MathArena, WeirdML, Vals and OpenRouter updates applied. Vendor results stay labelled and benchmark versions stay separate. Arena text is blocked and readable WebDev data is stale, so both retain their previous values/dates. Other unavailable or conflicting measurements are preserved; see Sources & caveats and the dated refresh audit.";
+const ASOF = "10 Nov 2026";
+const ASOF_NOTE = "10 Nov 2026: chart features only, no scores changed; data last refreshed 9 Nov 2026. 9 Nov 2026: Fable 5.2, Muse Ember and Arete-27B added. Full-source audit of the existing board; verified AA v5.0.1, effort, ARC, MathArena, WeirdML, Vals and OpenRouter updates applied. Vendor results stay labelled and benchmark versions stay separate. Arena text is blocked and readable WebDev data is stale, so both retain their previous values/dates. Other unavailable or conflicting measurements are preserved; see Sources & caveats and the dated refresh audit.";
 
 const BENCH = {
   frontiercode2:{l:"FrontierCode 2.0",s:"FrontierCode 2.0",g:"coding",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Anthropic’s maintainer-acceptance coding evaluation, version 2.0. Vendor-run launch table, 9 Nov 2026. Fable 5.2/5.1 use xhigh effort; Gemini 4 Carbon uses medium; other rows use the highest available effort. Not comparable to the original FrontierCode column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
@@ -1121,6 +1170,7 @@ const PRICES = {
 
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
+{d:"10 Nov 2026",items:[["feature","Charts: the two effort-line charts gain comparison controls and a shareable link. A Log/Linear switch, a Pareto line across the effort variants, a Labels toggle and one chip per effort level apply to both charts. Tier and open-weights chips add or remove whole groups without clearing other picks, and Reset comparison restores the models, effort levels, scale, Pareto line and labels. The address bar records the tab, the chart in view and these settings, so a copied link reopens the same view. Hovering a point shows crosshairs and a details card; a click, tap or Enter pins it, with a link to the source. Series labels sit in a column at the right, a click on one holds its highlight, and lines that do not fit are counted and listed under the chart. On phones the picker opens as a full-screen sheet. Each chart states the data date and names picked models it cannot draw."]]},
 {d:"9 Nov 2026",items:[["feature","Charts: the two effort-line charts give each model its own colour and show effort by dot size, so lines can be told apart. Their model picker lists every model with an Index score, including previous-generation ones and models measured at a single setting, with search, one-click removal and presets; picks are remembered in the browser. The default set is now worked out from the data instead of a fixed list. Dark-theme effort dots are brighter, a quadrant caption is left out when a dot sits on it, and long names on phones keep their last word."],["add","Claude Fable 5.2, released 9 Nov: 1M context; standard input/output $8/$40 per million tokens and $0.20 cache reads; optional fast mode $16/$80. All specifications and launch scores come from Anthropic’s primary pages."],["add","Muse Ember (Meta), released 9 Nov: verified as muse-ember-1.0, distinct from Ember-1. AA Index 36 at max for $0.14/task, two recorded efforts, and Vals TB4 39.39%. Meta’s exact context and both pricing tiers are recorded. Unavailable speed/latency stays blank."],["data","Added ten separately versioned launch-table columns, including FrontierCode 2.0, FrontierSWE v2, OSWorld 2.1 offline partial, AA-Briefcase v1.1 rubric and Elo, and HLE with tools. Comparator rows are marked vendor-reported; existing independent results are not replaced by vendor comparisons. Mythos-only results are excluded."],["move","Fable 5.1 retained under Previous gen after Fable 5.2’s release."],["data","Missing scores mean no verified score is recorded here, not proof that an evaluator has never run the model. Preserve prior measurements on stale, partial or unavailable sources."],["add","Arete-27B (Nous Research), announced 6 Nov: open-weight Qwen3.8-27B fine-tune, with a vendor-reported Terminal-Bench 2.1 score of 70%. No independent or context/pricing metrics were inferred."],["data","Reconciled four missing vendor tuples for GPT-6.1 Terra, GPT-6 Sol, Claude Haiku 4.5 and Claude Sonnet 5. Fable 5’s FrontierMath Tier 4 row follows the Astra comparison table at 90.2%, retaining the earlier 87.8% in its note. Removed Fable 5/5.1 ExploitGym tuples after the primary-source footnote identified them as Mythos runs."],["data","Artificial Analysis v5.0.1 and end-to-end performance re-read across all 88 baseline models: 84 exact/explicit-alias matches and four identity gaps preserved. All 60 existing effort rows were re-read; three extra efforts and Fable 5.2’s five effort levels are added. Conflicting evaluator, model identity, context and zero-price observations are held rather than silently substituted."],["rescale","All 40 stored MathArena expected-performance values updated after the November 9 refit. This is a changed test/fit, not a model improvement. WeirdML v3 follows its November 6 prepared data."],["data","ARC Prize standard-harness results and cost/effort pairs refreshed, including Fable 5.2 and Inkling 2 Small. OpenRouter Airline has 17 numeric changes and the omitted Kimi K3.1 Pro row. Vals adds independent Fable 5.2 and Inkling 2 Small results. Source-backed historical blanks are backfilled without reopening archived benchmark versions."],["data","Arena text is blocked and the readable WebDev snapshot is older than the maintained data: all Arena values and freshness dates are preserved. Coverage gaps, rejected candidates and source conflicts are detailed in docs/refresh-2026-11-09.md."]]},
  {d:"6 Nov 2026", items:[
   ["feature","Charts, fifth pass after a third design review. Log axes keep their round values first, so the latency axis shows 10 s and 100 s. On phones the effort-line charts put each line's number inside its end dot, stepping overlapping ones apart, and the price scatters keep faint quadrant captions. Two models at one point get a solid ring, and a label placed away from its dot gets a thin line to it."],
@@ -1783,10 +1833,10 @@ function cmpReset(){
   effSetPicks(effPreset("default")); try{localStorage.removeItem(EFF_KEY);}catch(e){}
   keepView(()=>{renderEffLines(); renderSpeedQ(filtered());}); syncURL();
 }
-function effHover(n){ $$(".effsvg").forEach(v=>{v.classList.toggle("hl",!!n); $$(".effg",v).forEach(g=>g.classList.toggle("on",g.dataset.m===n));}); }
 // rebuilding a row of buttons must not drop keyboard focus: put it back on the button with the same key
 function refill(host,html){ const a=document.activeElement, k=a&&host.contains(a)?a.dataset.k:null; host.innerHTML=html;
   if(k!=null){ const b=$$("[data-k]",host).find(x=>x.dataset.k===k); if(b) b.focus({preventScroll:true}); } }
+function effHover(n){ effUI.chip=n; effApply(); } // picked-model chips: highlight while hovered, then fall back to a latched label
 function renderEffList(){
   const q=$("#effq").value.trim().toLowerCase(), c=effCands().filter(m=>!q||(m.name+" "+m.prov).toLowerCase().includes(q));
   refill($("#efflist"),c.length?TIERS.map(([t,l])=>{const g=c.filter(m=>m.tier===t); return g.length?`<h4>${l}</h4>`+g.map(m=>
@@ -1874,46 +1924,180 @@ function renderEffLines(){
   effContext("#effctx-lat",pick,"ttft","time to first answer token");
 }
 const EFF_XLABEL={cost:"Cost per index task",ttft:"Time to first answer token",speed:"Output speed"};
+/* comparison settings shared with the controls above the chart; the defaults apply until state.cmp is declared */
+const effCmp=()=>{const c=state.cmp||{}; return {linear:!!c.linear,pareto:!!c.pareto,labels:c.labels!==false,hideEff:new Set(c.hideEff||[])};};
+/* pointer state for the two effort-line charts. hov: point under the pointer or keyboard focus; ser: series under the
+   pointer (line or label); chip: series hovered in the picker; latch: series held by a label click; pin: point whose card is kept */
+const effUI={charts:{},hov:null,ser:null,chip:null,latch:null,pin:null,touch:false};
+const EFF_HIT=13, EFF_GAP=18; // hit radius around a point and label spacing, in SVG units
+const effLevel=e=>EFF_NAME[e]+(e==="one"||e==="none"||e==="reasoning"?"":" effort");
+const effFields=r=>[["Index score",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first answer token",r.ttft!=null?r.ttft+" s":"—"]];
 function effLines(hostSel,keySel,pick,xk,o){
-  const host=$(hostSel);
-  const ms=pick.filter(m=>effRowsAll(m).some(r=>r[xk]!=null&&r[xk]>0));
-  const seen=new Set(); ms.forEach(m=>effRowsAll(m).forEach(r=>r[xk]!=null&&seen.add(r.e)));
+  const host=$(hostSel), U=effUI, cmp=effCmp();
+  delete U.charts[hostSel]; if(U.hov&&U.hov.host===hostSel) U.hov=null;
+  ["latch","ser","chip"].forEach(k=>{ if(U[k]&&!pick.some(m=>m.name===U[k])) U[k]=null; });
+  const rowsOf=m=>effRowsAll(m).filter(r=>r[xk]!=null&&r[xk]>0);
+  const meas=pick.filter(m=>rowsOf(m).length);
+  const series=meas.map(m=>({m,col:effColor(m.name),rs:rowsOf(m).filter(r=>!cmp.hideEff.has(r.e)).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e))})).filter(q=>q.rs.length);
+  const seen=new Set(series.flatMap(q=>q.rs.map(r=>r.e)));
   // colour names the model, so effort is carried by dot size
   $(keySel).innerHTML=EFF_ORDER.filter(e=>seen.has(e)).map(e=>`<span><i style="width:${EFF_R[e]*2}px;height:${EFF_R[e]*2}px;${e==="none"?"box-sizing:border-box;border:2px solid var(--ink-3)":"background:var(--ink-3)"}"></i>${EFF_NAME[e]}</span>`).join("");
-  if(!ms.length){host.innerHTML=`<p class="empty">${pick.length?"None of the picked models has this measured.":"Add at least one model above."}</p>`;return;}
-  const W=fitW(host,980),nar=W<600,H=nar?Math.round(W*1.15):560,ml=nar?46:62,mr=nar?14:120,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
-  const pts=ms.flatMap(m=>effRowsAll(m).filter(r=>r[xk]!=null&&r[xk]>0));
-  const x0=lx(Math.min(...pts.map(p=>p[xk])))-0.12, x1=lx(Math.max(...pts.map(p=>p[xk])))+0.12;
-  const ys=pts.map(p=>p.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
-  const X=v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih;
-  let s=`<svg class="effsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
-  pickTicks(logTicks(x0,x1),X,o.fmt).forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt}" x2="${X(v).toFixed(1)}" y2="${mt+ih}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt+ih+18}" text-anchor="middle">${o.fmt(v)}</text>`;});
-  niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${Y(v).toFixed(1)}" x2="${ml+iw}" y2="${Y(v).toFixed(1)}"/><text class="axlab" x="${ml-10}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${Math.round(v)}</text>`;});
-  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${esc(nar?o.title.replace(" — log scale"," (log)").replace("Intelligence Index ",""):o.title)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`;
+  if(!series.length){
+    host.innerHTML=`<p class="empty">${!pick.length?"Add at least one model above.":meas.length?"Every effort level measured for the picked models is hidden.":"None of the picked models has this measured."}</p>`;
+    if(U.pin&&U.pin.host===hostSel) U.pin=null; effApply(); return; }
+  const lab=cmp.labels, W=fitW(host,980),nar=W<600,H=nar?Math.round(W*1.15):560,ml=nar?46:62,mr=nar?14:lab?196:24,mt=22,mb=58,iw=W-ml-mr,ih=H-mt-mb, lx=Math.log10;
+  const P=series.flatMap(q=>q.rs.map(r=>({m:q.m,col:q.col,r,rad:EFF_R[r.e]}))), xs=P.map(p=>p.r[xk]);
+  const x0=cmp.linear?0:lx(Math.min(...xs))-0.12, x1=cmp.linear?Math.max(...xs)*1.05:lx(Math.max(...xs))+0.12;
+  const ys=P.map(p=>p.r.aaii), yp=(Math.max(...ys)-Math.min(...ys))*0.08||1, y0=Math.min(...ys)-yp, y1=Math.max(...ys)+yp;
+  const X=cmp.linear?v=>ml+(v-x0)/(x1-x0)*iw:v=>ml+(lx(v)-x0)/(x1-x0)*iw, Y=v=>mt+ih-(v-y0)/(y1-y0)*ih, f1=v=>v.toFixed(1);
+  P.forEach((p,i)=>{p.i=i; p.px=X(p.r[xk]); p.py=Y(p.r.aaii);});
+  // frontier over every drawn effort variant: no other variant scores at least as high for less
+  const front=cmp.pareto?paretoFront(P.map(p=>({x:p.r[xk],y:p.r.aaii,p})),"min").map(q=>q.p):[], onF=new Set(front);
+  const xf=v=>v?o.fmt(v):o.fmt(1).replace(/[\d.]+/,"0"), base=o.title.replace(/ — log scale$/,""), scale=cmp.linear?"linear":"log";
+  let ticks=cmp.linear?niceTicks(x0,x1,nar?4:7):pickTicks(logTicks(x0,x1),X,o.fmt);
+  if(cmp.linear){ const gap=tickGap(ticks,xf); let last=-1e9; ticks=ticks.filter(v=>X(v)-last>=gap&&(last=X(v),true)); }
+  let s=`<svg class="effsvg${cmp.pareto?" par":""}" viewBox="0 0 ${W} ${H}" role="group" aria-label="${esc(o.aria)}, ${scale} scale. Arrow keys move between points; Enter or Space keeps a point's details open.">`;
+  ticks.forEach(v=>{s+=`<line class="gridline" x1="${f1(X(v))}" y1="${mt}" x2="${f1(X(v))}" y2="${mt+ih}"/><text class="axlab" x="${f1(X(v))}" y="${mt+ih+18}" text-anchor="middle">${xf(v)}</text>`;});
+  niceTicks(y0,y1).forEach(v=>{s+=`<line class="gridline" x1="${ml}" y1="${f1(Y(v))}" x2="${ml+iw}" y2="${f1(Y(v))}"/><text class="axlab" x="${ml-10}" y="${f1(Y(v)+3.5)}" text-anchor="end">${Math.round(v)}</text>`;});
+  s+=`<line class="axline" x1="${ml}" y1="${mt+ih}" x2="${ml+iw}" y2="${mt+ih}"/><text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${esc(nar?base.replace("Intelligence Index ","")+` (${scale})`:base+` — ${scale} scale`)}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">AA Intelligence Index</text>`
+    +`<g class="effcross"></g>`;
+  if(front.length>1) s+=`<polyline class="efffront" points="${front.map(p=>f1(p.px)+","+f1(p.py)).join(" ")}"/>`;
   const ends=[];
-  ms.forEach(m=>{
-    const rs=effRowsAll(m).filter(r=>r[xk]!=null&&r[xk]>0).sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e)), col=effColor(m.name);
-    s+=`<g class="effg" data-m="${esc(m.name)}">`+(rs.length>1?`<polyline class="effline" stroke="${col}" points="${rs.map(r=>X(r[xk]).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`:"");
-    rs.forEach(r=>{
-      const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first answer token",r.ttft!=null?r.ttft+" s":"—"]]);
-      s+=r.e==="none"?`<circle data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="${EFF_R.none-1}" fill="var(--surface)" stroke="${col}" stroke-width="2"/>`
-        :`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r[xk]).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="${EFF_R[r.e]}" fill="${col}"/>`;
+  series.forEach(q=>{
+    const pp=P.filter(p=>p.m===q.m), top=pp[pp.length-1];
+    s+=`<g class="effg effs" data-m="${esc(q.m.name)}">`+(pp.length>1?`<polyline class="effline" stroke="${q.col}" points="${pp.map(p=>f1(p.px)+","+f1(p.py)).join(" ")}"/>`:"");
+    pp.forEach(p=>{ const at=`data-i="${p.i}" cx="${f1(p.px)}" cy="${f1(p.py)}"`, dom=cmp.pareto&&!onF.has(p)?" dom":"";
+      s+=(p.r.e==="none"?`<circle class="effpt${dom}" ${at} data-r="${p.rad-1}" r="${p.rad-1}" fill="var(--surface)" stroke="${q.col}" stroke-width="2"/>`
+        :`<circle class="effpt effdot${dom}" ${at} data-r="${p.rad}" r="${p.rad}" fill="${q.col}"/>`)
+        +(onF.has(p)?`<circle class="effring" cx="${f1(p.px)}" cy="${f1(p.py)}" r="${p.rad+3.5}"/>`:"");
     });
     s+="</g>";
-    const top=rs[rs.length-1]; ends.push({x:X(top[xk]),y:Y(top.aaii),r:EFF_R[top.e],label:m.name,raw:{y:top.aaii},e:top.e,col});
+    ends.push({x:top.px,y:top.py,r:top.rad,name:q.m.name,score:top.r.aaii,col:q.col});
   });
-  // badges that would overlap step up or down out of the way and keep a short line to their end dot
-  if(nar){ const put=[];
+  let unl=[]; // series drawn without a label
+  if(lab&&nar){ const put=[]; // badges that would overlap step up or down out of the way and keep a short line to their end dot
     ends.forEach((o,i)=>{ let bx=o.x, by=o.y;
       for(const dy of [0,-19,19,-38,38]){ by=Math.min(mt+ih-9,Math.max(mt+9,o.y+dy)); if(put.every(q=>Math.hypot(q.x-bx,q.y-by)>=19)) break; }
       put.push({x:bx,y:by});
-      if(by!==o.y) s+=`<line class="leader" x1="${o.x.toFixed(1)}" y1="${o.y.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/>`;
-      s+=`<circle class="effbadge" cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="9" stroke="${o.col}"/>`
-        +`<text class="endnum" x="${bx.toFixed(1)}" y="${(by+3.5).toFixed(1)}" text-anchor="middle">${i+1}</text>`;});}
-  else s+=placeLabels([...ends,...pts.map(p=>({x:X(p[xk]),y:Y(p.aaii),r:6,nolabel:true}))],{x0:ml,x1:W-4,y0:mt,y1:mt+ih},40,o=>o.label);
-  // on phones the line ends carry numbers, keyed in a list below, since full names don't fit
-  host.innerHTML=s+"</svg>"+(nar?`<ol class="effnums">${ms.map(m=>`<li><i style="background:${effColor(m.name)}"></i>${esc(m.name)}</li>`).join("")}</ol>`:""); wire(host);
+      s+=`<g class="effs" data-m="${esc(o.name)}">`+(by!==o.y?`<line class="leader" x1="${f1(o.x)}" y1="${f1(o.y)}" x2="${f1(bx)}" y2="${f1(by)}"/>`:"")
+        +`<circle class="effbadge" cx="${f1(bx)}" cy="${f1(by)}" r="9" stroke="${o.col}"/>`
+        +`<text class="endnum" x="${f1(bx)}" y="${f1(by+3.5)}" text-anchor="middle">${i+1}</text></g>`;});}
+  else if(lab){
+    /* label column: ordered by end point, pushed apart to EFF_GAP. When there are more lines than rows, the models with
+       a colour and then the highest end scores keep their labels, and the last row says how many have none */
+    const cap=Math.floor((ih-8)/EFF_GAP)+1, ty=mt+8, by=mt+ih, cx=ml+iw+32;
+    let keep=ends;
+    if(ends.length>cap){ keep=[...ends].sort((a,b)=>state.effCol.has(b.name)-state.effCol.has(a.name)||b.score-a.score).slice(0,cap-1); unl=ends.filter(e=>!keep.includes(e)); }
+    keep=[...keep].sort((a,b)=>a.y-b.y||b.score-a.score);
+    const yb=unl.length?by-EFF_GAP:by, blocks=[]; // clusters settle around the middle of their end points
+    keep.forEach((e,k)=>{ blocks.push({sum:e.y-k*EFF_GAP,n:1,k});
+      while(blocks.length>1){ const b=blocks[blocks.length-1], a=blocks[blocks.length-2]; if(a.sum/a.n<b.sum/b.n) break; a.sum+=b.sum; a.n+=b.n; blocks.pop(); } });
+    blocks.forEach(b=>{ for(let j=0;j<b.n;j++) keep[b.k+j].ly=b.sum/b.n+(b.k+j)*EFF_GAP; });
+    keep.forEach((e,k)=>{ e.ly=Math.max(e.ly,k?keep[k-1].ly+EFF_GAP:ty); });
+    for(let k=keep.length-1;k>=0;k--) keep[k].ly=Math.min(keep[k].ly,k<keep.length-1?keep[k+1].ly-EFF_GAP:yb);
+    keep.forEach(e=>{ const n=esc(e.name), t=fitName(e.name,mr-48);
+      s+=`<polyline class="effleader effs" data-m="${n}" stroke="${e.col}" points="${f1(e.x+e.r+2)},${f1(e.y)} ${cx-24},${f1(e.ly)} ${cx-9},${f1(e.ly)}"/>`
+        +`<g class="efflab effs" data-m="${n}" role="button" tabindex="0" aria-pressed="false" aria-label="Highlight ${n}">`
+        +`<rect x="${cx-9}" y="${f1(e.ly-EFF_GAP/2)}" width="${W-cx+7}" height="${EFF_GAP}" rx="3"/><circle cx="${cx}" cy="${f1(e.ly)}" r="4.5" fill="${e.col}"/>`
+        +`<text x="${cx+10}" y="${f1(e.ly+4)}">${esc(t)}${t!==e.name?`<title>${n}</title>`:""}</text></g>`; });
+    if(unl.length) s+=`<text class="effmoren" x="${cx-5}" y="${by+4}">+${unl.length} more, listed below</text>`;
+  }
+  // hit areas go last so they sit above everything; the pointer handlers pick the nearest point, not the topmost circle
+  P.forEach(p=>{ const r=p.r, bits=[`Index ${r.aaii}`,r.cost!=null?money(r.cost)+" per index task":"",r.speed!=null?r.speed+" tokens per second":"",r.ttft!=null?r.ttft+" seconds to first answer token":""].filter(Boolean);
+    s+=`<circle class="effhit" data-i="${p.i}" role="button" tabindex="${p.i?-1:0}" aria-pressed="false" aria-label="${esc(p.m.name+", "+effLevel(r.e)+": "+bits.join(", "))}" cx="${f1(p.px)}" cy="${f1(p.py)}" r="${EFF_HIT}"/>`; });
+  const chip=e=>`<button type="button" data-m="${esc(e.name)}" aria-pressed="false"><i style="background:${e.col}"></i>${esc(e.name)}</button>`;
+  host.innerHTML=`<div class="effwrap${nar?" nar":""}" style="max-width:${W}px;--cr:${f1((mr+12)/W*100)}%;--cb:${mb+12}px;--cl:${f1((ml+12)/W*100)}%;--ct:${mt+10}px">`
+    +`<div class="effplot">${s}</svg><div class="effcard" role="group" aria-label="Point details" hidden></div></div>`
+    +(front.length?`<p class="efffrontlist"><b>On the frontier, ${xk==="cost"?"cheapest":"shortest wait"} first:</b> ${front.map(p=>`${esc(p.m.name)} ${esc(EFF_NAME[p.r.e]).toLowerCase()} (${p.r.aaii} · ${o.fmt(p.r[xk])})`).join(" → ")}</p>`:"")
+    +(unl.length?`<p class="effmore"><span>${unl.length} of ${ends.length} lines drawn without a label — hover or click a name to find its line:</span>${unl.map(chip).join("")}</p>`:"")
+    // on phones the line ends carry numbers, keyed in a list below, since full names don't fit
+    +(nar?`<ol class="effnums${lab?"":" plain"}">${series.map(q=>`<li><i style="background:${q.col}"></i>${esc(q.m.name)}</li>`).join("")}</ol>`:"")+"</div>";
+  // the card sits in the lower right of the plot, or the upper left when fewer points would be under it there
+  const box=[{x0:ml+iw-262,x1:ml+iw-2,y0:mt+ih-212,y1:mt+ih-2},{x0:ml+2,x1:ml+262,y0:mt,y1:mt+210}], inBox=(p,b)=>p.px>b.x0&&p.px<b.x1&&p.py>b.y0&&p.py<b.y1,
+        under=b=>P.filter(p=>inBox(p,b)).length;
+  const svg=$("svg",host), c=U.charts[hostSel]={sel:hostSel,xk,fmt:o.fmt,P,g:{W,H,ml,mt,iw,ih,nar,box,inBox,alt:under(box[1])<under(box[0])},svg,wrap:$(".effwrap",host),plot:$(".effplot",host),card:$(".effcard",host),
+    cross:$(".effcross",host),parts:$$(".effs",host),labs:$$(".efflab,.effmore button",host),dots:$$(".effpt",host),hits:$$(".effhit",host),key:""};
+  effWire(c);
+  if(U.pin&&U.pin.host===hostSel&&!P.some(p=>p.m.name===U.pin.m&&p.r.e===U.pin.e)) U.pin=null; // the pinned point is no longer drawn
+  effApply();
 }
+/* nearest point to the pointer within rad SVG units, or -1. Points at the same spot go to the highlighted series. */
+function effNear(c,e,rad){
+  const b=c.svg.getBoundingClientRect(), k=c.g.W/b.width, x=(e.clientX-b.left)*k, y=(e.clientY-b.top)*k, pref=effUI.latch||effUI.chip;
+  let best=-1, bd=Infinity;
+  c.P.forEach(p=>{ const d=Math.hypot(p.px-x,p.py-y); if(d>rad) return;
+    if(d<bd-.5||(d<bd+.5&&p.m.name===pref&&c.P[best].m.name!==pref)){best=p.i; bd=Math.min(bd,d);} });
+  return best;
+}
+function effPin(sel,i){
+  const U=effUI, c=U.charts[sel], p=c.P[i];
+  U.pin=!p||(U.pin&&U.pin.host===sel&&U.pin.m===p.m.name&&U.pin.e===p.r.e)?null:{host:sel,m:p.m.name,e:p.r.e};
+  if(p) c.hits.forEach((h,k)=>h.setAttribute("tabindex",k===i?0:-1));
+  effApply();
+  if(U.pin&&c.g.nar) c.card.scrollIntoView({block:"nearest"}); // on a phone the card opens under the plot, which may be off screen
+}
+function effClose(){
+  const U=effUI, c=U.pin&&U.charts[U.pin.host]; if(!U.pin) return false;
+  const back=c&&c.card.contains(document.activeElement)&&c.hits[c.P.findIndex(p=>p.m.name===U.pin.m&&p.r.e===U.pin.e)];
+  U.pin=null; effApply(); if(back){ U.quiet=true; back.focus(); U.quiet=false; } // focus goes back to the point without reopening its card
+  return true;
+}
+const effLatch=n=>{effUI.latch=effUI.latch===n?null:n; effApply();};
+function effWire(c){
+  const U=effUI, svg=c.svg, sel=c.sel, hit=t=>t.classList&&t.classList.contains("effhit"), labOf=t=>t.closest&&t.closest(".efflab");
+  const set=(hov,ser)=>{ const h=U.hov; if((h?h.host+h.i:"")===(hov?hov.host+hov.i:"")&&U.ser===ser) return; U.hov=hov; U.ser=ser; effApply(); };
+  svg.onpointerdown=e=>{U.touch=e.pointerType==="touch";};
+  svg.onpointermove=e=>{ if(e.pointerType==="touch") return;
+    const i=effNear(c,e,EFF_HIT), g=i<0&&e.target.closest(".effg,.efflab");
+    set(i<0?null:{host:sel,i},g?g.dataset.m:null); };
+  svg.onpointerleave=e=>{ if(e.pointerType!=="touch") set(U.hov&&U.hov.host!==sel?U.hov:null,null); };
+  svg.onmousedown=e=>{ if(hit(e.target)) e.preventDefault(); }; // a click pins the nearest point; it must not focus whichever circle is on top
+  svg.onclick=e=>{ const l=labOf(e.target); if(l) return effLatch(l.dataset.m);
+    let i=effNear(c,e,U.touch?22:EFF_HIT);
+    if(i<0&&hit(e.target)&&!e.clientX&&!e.clientY) i=+e.target.dataset.i; // a click sent by assistive technology carries no position
+    if(U.touch) U.hov=null;
+    effPin(sel,i); };
+  svg.onkeydown=e=>{ const t=e.target, act=e.key==="Enter"||e.key===" ", l=labOf(t);
+    if(l&&act){ e.preventDefault(); effLatch(l.dataset.m); }
+    if(!hit(t)) return;
+    const i=+t.dataset.i, n=c.hits.length, j={ArrowRight:i+1,ArrowDown:i+1,ArrowLeft:i-1,ArrowUp:i-1,Home:0,End:n-1}[e.key];
+    if(act){ e.preventDefault(); effPin(sel,i); }
+    else if(j!=null){ e.preventDefault(); const k=Math.max(0,Math.min(n-1,j)); c.hits.forEach((h,q)=>h.setAttribute("tabindex",q===k?0:-1)); c.hits[k].focus(); } };
+  svg.addEventListener("focusin",e=>{ if(U.quiet) return; const l=labOf(e.target); if(hit(e.target)) set({host:sel,i:+e.target.dataset.i},null); else if(l) set(null,l.dataset.m); });
+  svg.addEventListener("focusout",()=>set(null,null));
+  c.card.onclick=e=>{ if(e.target.closest(".effx")) effClose(); };
+  $$(".effmore button",c.wrap).forEach(b=>{ b.onclick=()=>effLatch(b.dataset.m); b.onmouseenter=b.onfocus=()=>set(null,b.dataset.m); b.onmouseleave=b.onblur=()=>set(null,null); });
+}
+/* redraw the highlight, crosshairs and card of both charts from effUI */
+function effApply(){
+  const U=effUI, hc=U.hov&&U.charts[U.hov.host], hl=(hc&&hc.P[U.hov.i]?hc.P[U.hov.i].m.name:null)||U.ser||U.chip||U.latch||null;
+  Object.values(U.charts).forEach(c=>{
+    if(!c.svg.isConnected){ delete U.charts[c.sel]; return; }
+    c.svg.classList.toggle("hl",!!hl);
+    c.parts.forEach(g=>g.classList.toggle("on",g.dataset.m===hl));
+    c.labs.forEach(g=>g.setAttribute("aria-pressed",g.dataset.m===U.latch));
+    const pinI=U.pin&&U.pin.host===c.sel?c.P.findIndex(p=>p.m.name===U.pin.m&&p.r.e===U.pin.e):-1;
+    const i=hc===c&&c.P[U.hov.i]?U.hov.i:pinI, pinned=i>=0&&i===pinI, key=i<0?"":i+(pinned?"p":"h");
+    c.hits.forEach((h,k)=>h.setAttribute("aria-pressed",k===pinI));
+    c.card.classList.toggle("pinned",pinI>=0); // a kept card takes the pointer, so its close button and link can be reached
+    if(c.key===key) return; c.key=key;
+    c.dots.forEach(d=>{ const a=+d.dataset.i===i; d.classList.toggle("act",a); d.setAttribute("r",+d.dataset.r+(a?2.5:0)); });
+    if(i<0){ c.cross.innerHTML=""; c.card.hidden=true; return; }
+    const p=c.P[i], g=c.g, f1=v=>v.toFixed(1), xv=c.fmt(p.r[c.xk]), yv=String(p.r.aaii), xw=xv.length*6.4+10, yw=yv.length*6.4+10,
+          tx=Math.max(xw/2+1,Math.min(g.W-xw/2-1,p.px));
+    c.cross.innerHTML=`<line class="effxh" x1="${g.ml}" y1="${f1(p.py)}" x2="${f1(p.px)}" y2="${f1(p.py)}"/><line class="effxh" x1="${f1(p.px)}" y1="${f1(p.py)}" x2="${f1(p.px)}" y2="${g.mt+g.ih}"/>`
+      +`<g class="effxv"><rect x="${f1(g.ml-4-yw)}" y="${f1(p.py-8)}" width="${f1(yw)}" height="16" rx="3"/><text x="${f1(g.ml-4-yw/2)}" y="${f1(p.py+3.5)}" text-anchor="middle">${yv}</text>`
+      +`<rect x="${f1(tx-xw/2)}" y="${g.mt+g.ih+6}" width="${f1(xw)}" height="16" rx="3"/><text x="${f1(tx)}" y="${g.mt+g.ih+17.5}" text-anchor="middle">${esc(xv)}</text></g>`;
+    c.card.innerHTML=`<button type="button" class="effx" aria-label="Close details"${pinned?"":" hidden"}>×</button>`
+      +`<b><i style="background:${p.col}"></i>${esc(p.m.name)}</b><span class="effcs">${esc(effLevel(p.r.e))}${pinned?" · Pinned":""}</span>`
+      +`<dl>${effFields(p.r).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>`
+      +`<a href="${esc(BENCH.aaii.url)}" target="_blank" rel="noopener">Artificial Analysis</a>`+(pinned?"":`<span class="effhint">Click the point to keep this open</span>`);
+    c.card.classList.toggle("alt",!g.nar&&g.alt!==g.inBox(p,g.box[+g.alt])); // the other corner when the point itself is under the card
+    c.card.hidden=false;
+    if(g.nar) c.wrap.style.minHeight=(c.plot.offsetHeight+c.card.offsetHeight+8)+"px"; // room under the plot for the card
+  });
+}
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!effClose()&&effUI.latch&&!e.target.closest("input")) effLatch(effUI.latch); });
 
 /* ---------------- ranked at one effort level ---------------- */
 state.effLv="high";
