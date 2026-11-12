@@ -2889,9 +2889,11 @@ function urlApply(){
   const hs=location.hash.slice(1); if(/^ch-/.test(hs)&&secOK(hs.slice(3))){ sec=hs.slice(3); tab="quad"; }   // an old #ch-… link
   if(!tab&&sec) tab="quad";
   if(tab) setTab(tab);
-  // pricing lens and the visitor's plans: the link first, then what this browser saved, then the defaults
+  // pricing lens and the visitor's plans: the link first, then what this browser saved, then the defaults.
+  // A link to a chart that only the API lens shows (an older ?chart=price or #ch-price link) opens under that lens.
   const saved=k=>{try{return localStorage.getItem(k);}catch(e){return null;}}, ids=new Set(PLANS.map(x=>x.id));
-  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":saved(LENS_KEY)==="api"?"api":"sub";
+  const apiSec=!!sec&&document.getElementById("ch-"+sec).dataset.lens==="api";
+  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":apiSec||saved(LENS_KEY)==="api"?"api":"sub";
   let mine=null; if(p.has("plans")) mine=p.get("plans").split(","); else try{mine=JSON.parse(saved(PLAN_KEY));}catch(e){}
   state.mine=new Set((Array.isArray(mine)?mine:[]).filter(x=>ids.has(x)));
   state.onlyMine=on(p.get("mine"))&&state.mine.size>0;

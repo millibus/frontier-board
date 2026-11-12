@@ -117,6 +117,13 @@ try {
     if ((await again.evaluate(() => [...state.mine].join())) !== pid) bad("a link's plans= did not restore the picked plans, or kept an unknown id");
     if ((await again.inputValue("#sbplan")) !== pid) bad("a link's plan= did not select that plan");
     await again.close();
+    // a link from before the lens existed that names an API-price chart still lands on it
+    for (const old of ["?tab=charts&chart=price", "#ch-ppp"]) {
+      const o = await browser.newPage();
+      await o.goto(page.url().replace(/[?#].*$/, "") + old, { waitUntil: "load" });
+      if (!(await o.locator("#ch-" + old.replace(/.*[=-]/, "")).isVisible())) bad(`the older link ${old} opens with its chart hidden`);
+      await o.close();
+    }
     // the pricing lens: API brings back the blended price column and the API-price charts
     await page.click('#lens [data-v="api"]');
     if (!(await page.locator("#board thead th[data-k='price']").count()) || (await page.locator("#board thead th[data-k='plan']").count())) bad("the API lens does not swap the plan column for the blended price");
