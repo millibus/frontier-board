@@ -347,6 +347,29 @@ details.changes summary b{color:var(--ink);font-weight:600}
 .prose li{margin-bottom:6px}
 .prose code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--surface-3);padding:1px 5px;border-radius:3px;color:var(--ink)}
 .empty{padding:40px;text-align:center;color:var(--ink-3);font-size:13px}
+/* ---------- subscriptions ---------- */
+[data-lens-now="sub"] [data-lens="api"],[data-lens-now="api"] [data-lens="sub"]{display:none!important}
+.rail .seg button{font-size:12.5px}
+#minechip:empty{display:none}
+.mine{display:inline-block;margin-left:2px;color:var(--good);font-size:11px;font-weight:700}
+td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);margin-left:6px}
+.sbfam{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:6px 0;border-bottom:1px dotted var(--line-2)}
+.sbfam:last-child{border-bottom:0}
+.sbl{flex:0 0 220px;font-weight:600;font-size:13px;display:flex;gap:8px;align-items:baseline}
+.sbl i{display:inline-block;width:8px;height:8px;border-radius:2px;flex:none;align-self:center}
+.sbchips{display:flex;gap:6px;flex-wrap:wrap}
+.sbchips .chip .eff{font-family:"IBM Plex Mono",monospace;font-size:11px;color:inherit;opacity:.75}
+.legend .ringk{background:none;border:1.5px solid var(--ink);border-radius:50%;width:10px;height:10px}
+.sbh{font-size:16px;letter-spacing:-.015em;margin:26px 0 4px}
+.sbmodels{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:4px 0 6px}
+.sbmodels i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.pathline{fill:none;stroke-width:1.25;opacity:.55}
+#plantab td.l{white-space:normal}
+#plantab .have{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-3);border-radius:4px;width:22px;height:22px;font:inherit;font-size:12px;line-height:1;cursor:pointer;padding:0}
+#plantab .have[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:var(--surface)}
+#plantab tr.fam0 td{border-top:1px solid var(--line-2)}
+.detbox .dsrc{grid-column:1/-1;font-size:12px;color:var(--ink-3)}
+@media (max-width:700px){ .sbl{flex-basis:100%} }
 /* ---------- footer ---------- */
 .foot{max-width:1500px;margin:0 auto;padding:6px 22px 30px;font-size:12px;color:var(--ink-3)}
 .foot-in{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
@@ -423,6 +446,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
     <p class="sub" id="asofnote" style="margin:-6px 0 0;font-size:12px;max-width:none"></p>
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" data-p="board" aria-selected="true">Board</button>
+      <button class="tab" role="tab" data-p="subs" aria-selected="false">Subscriptions</button>
       <button class="tab" role="tab" data-p="quad" aria-selected="false">Charts</button>
       <button class="tab" role="tab" data-p="bench" aria-selected="false">Benchmarks</button>
       <button class="tab" role="tab" data-p="src" aria-selected="false">Sources &amp; caveats</button>
@@ -436,6 +460,8 @@ details.changes summary b{color:var(--ink);font-weight:600}
     <div class="fg"><label>Tier</label><span id="tierchips"></span></div>
     <div class="fg"><label>Weights</label><span id="wchips"></span></div>
     <div class="fg"><label for="provsel">Provider</label><select id="provsel"><option value="">All</option></select></div>
+    <div class="fg"><label id="lenslab">Pricing</label><span class="seg" id="lens" role="group" aria-labelledby="lenslab"><button type="button" data-v="sub" aria-pressed="true" title="Show what each model costs through a monthly subscription">Subscription</button><button type="button" data-v="api" aria-pressed="false" title="Show per-token API prices, as OpenRouter and the vendors' APIs charge them">API</button></span></div>
+    <div class="fg"><button type="button" class="chip" id="minechip" aria-pressed="false"></button></div>
     <span class="count"><b id="shown">0</b> shown</span>
   </div>
 </div>
@@ -445,14 +471,61 @@ details.changes summary b{color:var(--ink);font-weight:600}
     <div class="picks" id="picks"></div>
     <details class="changes" id="changes"></details>
     <div class="tablewrap"><table id="board"><thead></thead><tbody></tbody></table></div>
-    <p class="sub" style="margin-top:10px">Click any row to open every score that model has, each with its source and provenance. A dot beside a number means the figure is <span class="q ven" style="position:relative;top:-1px"></span> vendor-run or <span class="q unv" style="position:relative;top:-1px"></span> unverified rather than independently measured.</p>
+    <p class="sub" style="margin-top:10px">Click any row to open every score that model has, each with its source and provenance. A dot beside a number means the figure is <span class="q ven" style="position:relative;top:-1px"></span> vendor-run or <span class="q unv" style="position:relative;top:-1px"></span> unverified rather than independently measured. <span id="boardlens"></span></p>
+  </section>
+
+
+  <section class="panel" id="p-subs">
+    <div class="card" id="sb-mine">
+      <div class="cardhead"><div><h2>Your subscriptions</h2>
+        <p class="sub">Pick the plans you pay for. The Board then marks the models they include, and the charts below work out which model and effort level to run. Your picks stay in this browser and travel in the link. Prices are US list prices on monthly billing, before tax.</p></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Flat-rate plan</span><span><i style="background:var(--ink-3)"></i>Token-metered plan</span></div></div>
+      <div id="sbpick"></div>
+      <p class="sub cmpctx" id="sbsum"></p>
+    </div>
+
+    <div class="card" id="sb-ladder">
+      <div class="cardhead"><div><h2>What each monthly fee unlocks</h2>
+        <p class="sub" id="sbladder-sub"></p></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Flat-rate plan</span><span><i style="background:var(--ink-3)"></i>Token-metered plan</span><span><i class="lk"></i>Pareto frontier</span><span><i class="ringk"></i>Yours</span></div></div>
+      <div id="c-sbladder"></div>
+      <p class="sub frontlist" id="sbladder-front"></p>
+      <p class="sub frontlist" id="sbladder-metered"></p>
+    </div>
+
+    <div class="card" id="sb-use">
+      <div class="cardhead"><div><h2>Which model and effort to run on a plan</h2>
+        <p class="sub" id="sbuse-sub"></p></div>
+        <div class="legend"><span><i class="lk"></i>Pareto frontier</span></div></div>
+      <div class="fg" style="margin:12px 0 4px;flex-wrap:wrap">
+        <label for="sbplan">Plan</label><select id="sbplan"></select>
+        <label for="sbx" style="margin-left:14px">Against</label>
+        <select id="sbx"><option value="cost">Usage each task draws</option><option value="ttft">Waiting time</option></select>
+      </div>
+      <div class="sbmodels" id="sbmodels"></div>
+      <div id="c-sbuse"></div>
+      <p class="sub frontlist" id="sbuse-front"></p>
+      <p class="sub frontlist" id="sbuse-skip"></p>
+      <p class="sub frontlist" id="sbuse-miss"></p>
+    </div>
+
+    <div class="card" id="sb-tier">
+      <div class="cardhead"><div><h2>What a bigger tier buys</h2>
+        <p class="sub">Usage per dollar on each higher tier, against the same product's cheapest paid tier. 1.0× means the bigger plan costs exactly as much per unit of usage; 2.0× means each dollar buys twice as much. Only products whose vendor publishes a multiplier, a credit quota or a dollar allowance are shown.</p></div></div>
+      <div id="c-sbtier"></div>
+    </div>
+
+    <h2 class="sbh">Every plan</h2>
+    <p class="sub" style="margin-bottom:10px">One row per tier. <b>Top model</b> is the highest Index score the plan can reach at the effort levels it offers. <b>API break-even</b> is the monthly fee divided by what one Index task costs at API list prices with that model and effort: run more tasks than that in a month and the plan is cheaper than paying per token. Click a row for its models, limits and source. The filters at the top of the page don't apply to this tab.</p>
+    <div class="tablewrap"><table id="plantab"><thead></thead><tbody></tbody></table></div>
+    <p class="sub" style="margin-top:10px;max-width:none">◦ <b>Flat-rate</b> plans grant usage as rate-limit windows or a vendor credit quota; <b>token-metered</b> plans grant a dollar allowance spent at per-token prices. A dash means the vendor does not publish the figure. Plans sold only in yuan, plans closed to new customers and plans whose vendor names no model on this board are not listed; see Sources &amp; caveats.</p>
   </section>
 
   <section class="panel" id="p-quad">
     <nav class="jump" id="jump" aria-label="Charts">
       <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a><a href="#ch-efflat">Latency by effort</a><a href="#ch-efflevel">Same-effort ranking</a>
-      <a href="#ch-price">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
-      <a href="#ch-ttft">Latency</a><a href="#ch-blend">Price</a><a href="#ch-ctx">Context window</a><a href="#ch-ppp">Price of a point</a>
+      <a href="#ch-price" data-lens="api">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
+      <a href="#ch-ttft">Latency</a><a href="#ch-blend" data-lens="api">Price</a><a href="#ch-ctx">Context window</a><a href="#ch-ppp" data-lens="api">Price of a point</a>
     </nav>
 
     <div class="card" id="ch-index">
@@ -495,6 +568,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
           </div>
         </div>
       </div>
+      <p class="sub cmpctx" id="efflens"></p>
       <p class="sub cmpctx" id="effctx-cost"></p>
       <div id="c-effcost"></div>
     </div>
@@ -515,7 +589,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <div id="c-efflevel"></div>
     </div>
 
-    <div class="card" id="ch-price">
+    <div class="card" id="ch-price" data-lens="api">
       <div class="cardhead">
         <div>
           <h2>What intelligence costs</h2>
@@ -562,13 +636,13 @@ details.changes summary b{color:var(--ink);font-weight:600}
         <p class="sub">Seconds to the first answer token, quickest first, on a log scale so sub-second and multi-minute models both stay readable. For reasoning models at high effort this includes thinking time, which is why the slowest run to minutes.</p></div></div><div id="c-ttft"></div></div>
     </div>
     <div class="grid2">
-      <div class="card" id="ch-blend"><div class="cardhead"><div><h2>Price</h2>
+      <div class="card" id="ch-blend" data-lens="api"><div class="cardhead"><div><h2>Price</h2>
         <p class="sub">Blended dollars per million tokens, cheapest first, on a log scale — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
       <div class="card" id="ch-ctx"><div class="cardhead"><div><h2>Context window</h2>
         <p class="sub">Maximum input tokens, largest first. Three or more models with the same window share one row, split blue and orange by weights; click it to list them.</p></div></div><div id="c-ctx"></div></div>
     </div>
 
-    <div class="card" id="ch-ppp">
+    <div class="card" id="ch-ppp" data-lens="api">
       <div class="cardhead"><div><h2>Price of a point</h2>
         <p class="sub">Blended dollars per million tokens divided by index score — how much you pay per unit of measured capability. Lower is better; shows the 22 cheapest models in view.</p></div></div>
       <div id="ppp"></div>
@@ -582,16 +656,19 @@ details.changes summary b{color:var(--ink);font-weight:600}
       <h2>How to read this board</h2>
       <p>Every figure here was pulled from a live leaderboard or a provider's own publication on or before the snapshot date in the header — each benchmark shows its own source date on the Benchmarks tab and below. Nothing is estimated, interpolated, or filled in from memory — a model with no score on a benchmark shows a dash, not a guess.</p>
       <p>Three provenance levels are marked on every number. <b>Independent</b> means a third party ran the eval (Artificial Analysis, Vals AI, Scale, Snorkel, ARC Prize, the SWE-bench team, OpenRouter, the WeirdML author). <b>Vendor-run</b> means the number comes from the model maker's own announcement or model card, or from a competitor's comparison table — useful, but not neutral. <b>Unverified</b> means it was found in one place with no upstream citation. Numbers that appear only on aggregator sites are never used.</p>
+      <p>The board is built around <b>subscriptions</b>: what a monthly plan costs and which models it includes, read from each vendor's own pricing and help pages. Those figures are vendor-reported. Vendors publish prices and model lists but rarely the size of a plan's allowance, so the board never states how many tasks a flat-rate plan covers. Switch <b>Pricing</b> to API at the top of the page for per-token prices.</p>
     </div>
     <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Caveats worth knowing before you trust a column</h2>
     <div class="srcgrid" id="caveats" style="margin-bottom:26px"></div>
     <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Benchmark sources</h2>
-    <div class="srcgrid" id="srclist"></div>
+    <div class="srcgrid" id="srclist" style="margin-bottom:26px"></div>
+    <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Subscription plan sources</h2>
+    <div class="srcgrid" id="planlist"></div>
   </section>
 </main>
 <footer class="foot">
   <div class="foot-in">
-    <p><b>Data sources.</b> Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, and Håvard Tveit Ihle (WeirdML), plus the model vendors whose own comparison tables are marked vendor-run. Each benchmark's primary source is linked on the <a href="#" id="foot-src">Sources &amp; caveats</a> tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Check the original before relying on a number. This board is not affiliated with any of them.</p>
+    <p><b>Data sources.</b> Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, and Håvard Tveit Ihle (WeirdML), plus the model vendors whose own comparison tables are marked vendor-run. Each benchmark's primary source is linked on the <a href="#" id="foot-src">Sources &amp; caveats</a> tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Subscription prices, plan contents and limits come from each vendor's own pricing and help pages and count as vendor-reported. Check the original before relying on a number. This board is not affiliated with any of them.</p>
     <p>© 2026 millibus. All rights reserved. This covers the compilation, text and design of this page, not the third-party results it reports.</p>
   </div>
 </footer>
@@ -610,8 +687,8 @@ details.changes summary b{color:var(--ink);font-weight:600}
    whichever models have a score.  Check with: node scripts/check-data.mjs
    ========================================================================= */
 
-const ASOF = "10 Nov 2026";
-const ASOF_NOTE = "10 Nov 2026: Arena text (9 Nov) and WebDev (8 Nov) re-read after the 27 Oct snapshot; Fable 5.2 ARC-AGI-3 provider-adapter score corrected. Artificial Analysis, ARC Prize and the other sources were checked with no new rows since 9 Nov. Vendor results stay labelled and benchmark versions stay separate; see Sources & caveats and the dated refresh audit. The effort-line charts also gain comparison controls, a shareable link and pinned point details (no scores changed by that).";
+const ASOF = "11 Nov 2026";
+const ASOF_NOTE = "11 Nov 2026: subscription plans added (49 plans across 15 products, vendor pages read 11 Nov 2026) and the board now leads with subscription pricing; no benchmark score changed, and scores were last refreshed 10 Nov 2026. 10 Nov 2026: Arena text (9 Nov) and WebDev (8 Nov) re-read after the 27 Oct snapshot; Fable 5.2 ARC-AGI-3 provider-adapter score corrected. Artificial Analysis, ARC Prize and the other sources were checked with no new rows since 9 Nov. Vendor results stay labelled and benchmark versions stay separate; see Sources & caveats and the dated refresh audit. The effort-line charts also gain comparison controls, a shareable link and pinned point details (no scores changed by that).";
 
 const BENCH = {
   frontiercode2:{l:"FrontierCode 2.0",s:"FrontierCode 2.0",g:"coding",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Anthropic’s maintainer-acceptance coding evaluation, version 2.0. Vendor-run launch table, 9 Nov 2026. Fable 5.2/5.1 use xhigh effort; Gemini 4 Carbon uses medium; other rows use the highest available effort. Not comparable to the original FrontierCode column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
@@ -1169,8 +1246,255 @@ const PRICES = {
  "Grok 4.6":{in:2,out:6,cr:null,note:""}
 };
 
+/* ============================================================================
+   SUBSCRIPTIONS
+   What a person pays per month, and which board models that fee includes.
+   Everything here is vendor-reported: each family's own pricing, help and docs
+   pages, read on PLAN_ASOF.  Nothing is estimated: a limit, multiplier or effort
+   list the vendor does not publish is left out, never guessed.
+
+   PLAN_FAMILIES, one entry per product line:
+     kind    "flat"    = usage comes as rate-limit windows or a vendor credit quota
+             "metered" = a dollar allowance spent at per-token prices
+     eff     effort levels the plan's app or coding agent documents (omit if unpublished)
+     xu      what a plan's `x` counts: "× Pro", "credits a month", "$ of usage a month"
+     atList  true when metered usage is billed at the model maker's own list price
+     surf / burn / over = where it works, how usage is counted, what happens past the limit
+   PLANS, one entry per tier:
+     usd     monthly price in US dollars on monthly billing
+     yr      price of a year paid up front, where the vendor sells one
+     x       usage in the family's unit, only where the vendor publishes it
+     pin     effort levels the plan is fixed to, when the vendor fixes them
+     models  {board model name: "" or a short access note}; at least one
+     lim     limits as published · note = anything else worth knowing
+   ========================================================================= */
+const PLAN_ASOF = "11 Nov 2026";
+const E5 = ["low","medium","high","xhigh","max"];
+const PLAN_FAMILIES = {
+ claude:{vendor:"Anthropic",l:"Claude",kind:"flat",url:"https://claude.com/pricing",eff:E5,xu:"× Pro",
+  surf:"Claude apps and Claude Code, drawing on one shared pool.",
+  burn:"Usage is counted in tokens and weighted by model. Anthropic says Fable models use limits faster than other Claude models, that Opus costs several times more per turn than Sonnet, and that higher effort uses more tokens. It publishes no multipliers and no message counts.",
+  over:"Usage credits at standard API rates once a limit is reached."},
+ chatgpt:{vendor:"OpenAI",l:"ChatGPT",kind:"flat",url:"https://chatgpt.com/pricing/",eff:E5,
+  surf:"ChatGPT, ChatGPT Work and Codex (web, CLI, IDE). GPT-6.1 Sol and GPT-6.1 Terra are in Work and Codex only.",
+  burn:"Work and Codex meter tokens. OpenAI's credit rates per million tokens are 250 in and 1,250 out for GPT-6 Astra, 50 and 250 for GPT-6.1 Sol and GPT-6 Sol, 25 and 125 for GPT-6.1 Terra, and 2.5 and 12.5 for GPT-6 Luna: the same ratios as their API list prices. Fast mode uses the allowance 2.5 times as quickly.",
+  over:"Plus and Pro can buy credits once the allowance runs out. OpenAI publishes no dollar price per credit."},
+ google:{vendor:"Google",l:"Google AI",kind:"flat",url:"https://gemini.google/subscriptions/",eff:["low","medium","high"],xu:"× AI Pro",
+  surf:"Gemini app and Antigravity (app, CLI and IDE extensions).",
+  burn:"Limits are compute-based: a 5-hour window inside a weekly cap, with no counts published. Google says more advanced models and higher thinking levels use more. In Antigravity the Gemini quota is one pool drawn down according to API pricing.",
+  over:"AI credits on AI Pro and Ultra, for Flow and Antigravity, charged at standard API pricing. Google's pages disagree on whether credits extend the Gemini app."},
+ xsub:{vendor:"xAI",l:"The X Subscription",kind:"flat",url:"https://x.ai/pricing",eff:["low","medium","high","xhigh"],xu:"× Plus",
+  surf:"Grok apps, Grok Build and Cursor, drawing on one weekly pool.",
+  burn:"One weekly pool whose size is published only as a multiple of Plus. xAI says different models draw from it at different rates and publishes no rates. Claude, GPT and Gemini models in Cursor sit outside the pool: on Premium and above they are billed at API list price from prepaid credit.",
+  over:"Prepaid top-ups from $5. xAI says they cost more per action than included usage."},
+ musecode:{vendor:"Meta",l:"Muse Code",kind:"flat",url:"https://dev.meta.ai/docs/muse-code/subscriptions",eff:E5,xu:"× Everyday Usage",
+  surf:"The Muse Code CLI only.",
+  burn:"Five-hour and weekly resets. Meta publishes no per-model or per-effort rates for plan usage. Contributor mode, on by default, gives more usage in exchange for training on your content.",
+  over:"None inside a plan: upgrade, or wait for the limit to refresh."},
+ glm:{vendor:"Z.ai",l:"GLM Coding Plan",kind:"flat",url:"https://z.ai/subscribe",eff:["low","high","max"],xu:"× Lite",
+  surf:"Coding tools through a plan API key: Claude Code, Codex, OpenCode, Cursor, Cline and others Z.ai lists.",
+  burn:"Credits are charged per token, with GLM-5.3-Flash at a third of GLM-5.3's rate and off-peak usage at half rate. Both a 5-hour and a weekly credit limit apply.",
+  over:"None published. The plan key does not work for API calls outside the supported tools."},
+ kimi:{vendor:"Moonshot AI",l:"Kimi",kind:"flat",url:"https://www.kimi.com/membership/pricing",eff:["low","high","max"],
+  surf:"Kimi apps and Kimi Code (desktop, CLI, VS Code), plus Claude Code, Codex and OpenCode through a plan key.",
+  burn:"A rolling 5-hour window and a monthly total, with no weekly cap. Moonshot publishes no quota numbers, only relative figures on its plan cards, and says Highspeed variants use about twice the quota.",
+  over:"Extra usage packs at about API prices."},
+ mplan:{vendor:"MiniMax",l:"M Plan",kind:"flat",url:"https://www.minimax.io/m-plan",eff:E5,xu:"× Go",
+  surf:"MiniMax Code and the MiniMax CLI, plus Claude Code, Codex, Cursor and OpenCode through a plan key.",
+  burn:"A 5-hour window and a weekly window. MiniMax says higher reasoning effort can use more and publishes no rates or absolute quotas.",
+  over:"Add-on credits: $5 for 5,000, valid for a year."},
+ tokenplan:{vendor:"Alibaba",l:"Model Studio Token Plan",kind:"flat",url:"https://www.alibabacloud.com/help/en/model-studio/token-plan-personal-overview",xu:"credits a month",
+  surf:"Coding tools through a plan API key: Qwen Code, Claude Code, Codex, Cursor, Cline and others. Singapore region; not for scripts or app backends.",
+  burn:"Monthly credits with no weekly or 5-hour cap. Credits per request depend on the model, the tokens, thinking mode and tool calls; Alibaba publishes no conversion table.",
+  over:"Extra bundles: $15 for 20,000 credits, up to five."},
+ mimo:{vendor:"Xiaomi",l:"MiMo Token Plan",kind:"flat",url:"https://mimo.mi.com/docs/en-US/price/token-plan",xu:"credits a month",
+  surf:"MiMo Code and MiMo Desktop, plus Claude Code, Codex, OpenCode, Cline and others through a plan key.",
+  burn:"Monthly credits, charged per token: MiMo-V2.6-Pro costs three times MiMo-V2.6-Flash on uncached input and on output. Service stops when the month's credits are used.",
+  over:"None published."},
+ vibe:{vendor:"Mistral",l:"Mistral Vibe",kind:"flat",url:"https://mistral.ai/pricing",eff:["none","low","medium","high","xhigh","max"],
+  surf:"Vibe on web, mobile, CLI and IDE.",
+  burn:"Monthly usage shared across Studio, the API and Vibe Code. Mistral publishes no numeric coding quota and no per-model rates.",
+  over:"Pay-as-you-go can be switched on; otherwise Vibe Code can stop until the next billing period."},
+ step:{vendor:"StepFun",l:"Step Plan",kind:"flat",url:"https://platform.stepfun.ai/step-plan",xu:"credits a month",
+  surf:"Step Code, plus Claude Code, Cursor, Trae and OpenClaw through a plan key.",
+  burn:"Monthly credits with no time-window or request-frequency limits. StepFun says credits convert at approximately $1 per 7M.",
+  over:"Booster packs: $6.99 for 400M credits, valid 30 days."},
+ byteplus:{vendor:"ByteDance",l:"BytePlus Coding Plan",kind:"flat",url:"https://docs.byteplus.com/en/docs/modelark/coding-plan-personal-plan-overview",xu:"× Lite",
+  surf:"Coding tools through a plan key: Claude Code, Codex, Cursor, Cline, OpenCode and others. Not available for API calls.",
+  burn:"Request counts per 5 hours, per week and per month. BytePlus says DeepSeek V4 Pro has a relatively high deduction coefficient and uses quota quickly; it publishes no coefficients.",
+  over:"None published."},
+ copilot:{vendor:"GitHub",l:"GitHub Copilot",kind:"metered",atList:true,url:"https://docs.github.com/en/copilot/get-started/plans",xu:"$ of usage a month",
+  surf:"Copilot in editors, the CLI and on github.com.",
+  burn:"Tokens are billed at each model's list price and converted to AI credits at $0.01 each. Code completions are not metered. Unused credits do not carry over.",
+  over:"Extra credits at the same per-token rates."},
+ ollama:{vendor:"Ollama",l:"Ollama Cloud",kind:"metered",url:"https://ollama.com/pricing",xu:"$ of usage a month",
+  surf:"Ollama's cloud models, through its apps and API. No Claude, GPT-6, Gemini or Grok models.",
+  burn:"A monthly dollar allowance spent at Ollama's own per-token prices, which are not always the model maker's list price. Unused credits do not roll over.",
+  over:"Pay per token."}
+};
+const CL_BASE = {"Claude Opus 5.5":"","Claude Sonnet 5.5":"","Claude Haiku 5.5":"","Claude Opus 5":"","Claude Sonnet 5":""};
+const CL_FABLE = {"Claude Fable 5.2":"up to half the weekly limit","Claude Fable 5.1":"up to half the weekly limit","Claude Fable 5":"up to half the weekly limit"};
+const GPT_FREE = {"GPT-6 Luna":"chat per the pricing page; Work and Codex on the desktop app","GPT-5.6 Terra":"limited access, Work and Codex on desktop"};
+const GPT_PAID = {"GPT-6.1 Sol":"Work and Codex only","GPT-6.1 Terra":"Work and Codex only","GPT-6 Sol":"","GPT-6 Luna":"","GPT-5.6 Sol":"","GPT-5.6 Terra":"","GPT-5.6 Luna":""};
+const GROKS = {"Grok 4.7":"","Grok 4.6":"","Grok 4.5":""};
+const MUSES = {"Muse Wonder":"","Muse Ember":"","Muse Spark 1.3":"","Muse Spark 1.2":"default model"};
+const GLMS = {"GLM-5.3":"","GLM-5.3-Flash":""};
+const TOKENPLAN = {"Qwen3.8 Max":"","DeepSeek V4.1 Flash 1017":"","DeepSeek V4.1 Flash":"","DeepSeek V4 Pro":"","GLM-5.3":"","GLM-5.2":""};
+const MIMOS = {"MiMo-V2.6-Pro":"","MiMo-V2.6-Flash":""};
+const STEPS = {"Step 5 Preview":"","Step 3.7 Flash":""};
+const BYTEPLUS = {"DeepSeek V4.1 Flash":"","DeepSeek V4 Pro":"","DeepSeek V4 Flash":"","GLM-5.3-Flash":"","GLM-5.2":""};
+const COPILOT_PRO = {"Claude Sonnet 5.5":"","Claude Haiku 5.5":"","GPT-6.1 Terra":"","GPT-6 Luna":"","GPT-5.6 Terra":"","GPT-5.6 Luna":"","GPT-5.3 Codex":"","Grok 4.7":"","Grok 4.6":"","Kimi K3":""};
+const COPILOT_TOP = {"Claude Fable 5.2":"","Claude Fable 5.1":"","Claude Opus 5.5":"","Claude Opus 5":"","GPT-6.1 Sol":"","GPT-6 Astra":"","GPT-6 Sol":"","GPT-5.6 Sol":"","Gemini 4 Carbon":"","Gemini 4 Argon":"",...COPILOT_PRO};
+const OLLAMAS = {"Kimi K3.1 Pro":"","Kimi K3":"","Kimi K2.7 Code":"","DeepSeek V4.1 Flash":"","DeepSeek V4 Pro":"","GLM-5.3":"","GLM-5.3-Flash":"","MiMo-V2.6-Pro":"","MiMo-V2.6-Flash":"","MiniMax M3.1 Flash":"","MiniMax M3":"","Mistral Large 4":"","Muse Spark Open":"","Beam 1.0":"","gpt-oss-120b":""};
+const PLANS = [
+ {id:"claude-pro",fam:"claude",name:"Pro",usd:20,yr:200,x:1,models:CL_BASE,
+  lim:"A 5-hour session limit and a weekly limit across all models.",
+  note:"Fable models are not inside the plan's limits: on Pro they run on pay-as-you-go usage credits. Claude Code defaults to Opus 5.5 at medium effort."},
+ {id:"claude-max",fam:"claude",name:"Max",usd:100,x:5,models:{...CL_FABLE,...CL_BASE},
+  lim:"Five times Pro's usage every 5 hours and every week, with a separate weekly limit for Fable.",
+  note:"Formerly Max 5x. Monthly billing only. Also carries $100 a month of API credits, which cannot be spent in Claude Code or the apps."},
+ {id:"claude-ultra",fam:"claude",name:"Ultra",usd:200,x:10,models:{...CL_FABLE,...CL_BASE},
+  lim:"Ten times Pro's usage every week and, once the account is verified, no 5-hour limit. A separate weekly limit for Fable.",
+  note:"Formerly Max 20x. Monthly billing only. Also carries $200 a month of API credits, which cannot be spent in Claude Code or the apps."},
+
+ {id:"chatgpt-free",fam:"chatgpt",name:"Free",usd:0,models:GPT_FREE,
+  lim:"Unlimited everyday text chats. Work and Codex are limited, with no numbers published.",
+  note:"OpenAI's pricing page and its 7 Oct 2026 release note name GPT-6 Luna as the chat model on Free and Go; three help-centre articles name GPT-5.6 Luna. Chat offers one thinking setting, Think. No Codex cloud. May show ads."},
+ {id:"chatgpt-go",fam:"chatgpt",name:"Go",usd:8,models:GPT_FREE,
+  lim:"Unlimited everyday text chats with higher tool limits than Free. Work and Codex are limited, with no numbers published.",
+  note:"Same models as Free, and the same conflict between OpenAI's pages over which Luna serves chat. The plan can also be used in partner apps through Sign in with ChatGPT. May show ads."},
+ {id:"chatgpt-plus",fam:"chatgpt",name:"Plus",usd:20,models:{"GPT-6 Astra":"limited allowance, Work and Codex only",...GPT_PAID},
+  lim:"Estimated local messages per 5 hours in Work and Codex: GPT-6 Astra 5–45, GPT-6.1 Sol 15–160, GPT-6.1 Terra 35–285, GPT-6 Sol 15–150, GPT-6 Luna 350–3,000. A weekly limit also applies; its size is not published.",
+  note:"In Chat, Plus gets GPT-6 Sol at Instant, Medium and High, without Extra High or GPT-6 Pro. Monthly billing only."},
+ {id:"chatgpt-pro100",fam:"chatgpt",name:"Pro 100",usd:100,models:{"GPT-6 Astra":"",...GPT_PAID},
+  lim:"No 5-hour limit in Work and Codex; a weekly allowance whose size is not published. OpenAI says Pro 200 includes more usage than Pro 100 and gives no multiplier.",
+  note:"Chat adds Extra High and GPT-6 Pro (GPT-6 Astra) under a weekly cap. Also carries $100 a month of API credits, which do not raise ChatGPT or Codex limits."},
+ {id:"chatgpt-pro200",fam:"chatgpt",name:"Pro 200",usd:200,models:{"GPT-6 Astra":"",...GPT_PAID},
+  lim:"No 5-hour limit in Work and Codex; a weekly allowance whose size is not published. OpenAI says Pro 200 includes more usage than Pro 100 and gives no multiplier.",
+  note:"Chat adds Extra High and GPT-6 Pro (GPT-6 Astra) under a weekly cap. Also carries $200 a month of API credits, which do not raise ChatGPT or Codex limits."},
+ {id:"chatgpt-pro500",fam:"chatgpt",name:"Pro 500",usd:500,models:{"GPT-6 Astra":"",...GPT_PAID},
+  lim:"No 5-hour limit in Work and Codex; OpenAI calls it the highest included usage of the three Pro plans and gives no multiplier.",
+  note:"The only Pro plan with the Ultrafast speed tier. Also carries $500 a month of API credits, which do not raise ChatGPT or Codex limits."},
+
+ {id:"google-plus",fam:"google",name:"Plus",usd:4.99,models:{"Gemini 3.6 Flash":""},
+  lim:"Twice the allowance of an account with no plan, which is half of AI Pro's. 128K context.",
+  note:"Google's model help page also lists the Pro model (Gemini 3.1 Pro) for AI Plus, but its plan comparison table marks Pro models unavailable, so it is left out here. No AI credits."},
+ {id:"google-pro",fam:"google",name:"Pro",usd:19.99,yr:199.99,x:1,models:{"Gemini 4 Argon":"","Gemini 3.1 Pro":"","Gemini 3.6 Flash":""},
+  lim:"Four times the allowance of an account with no plan. 1M context.",
+  note:"Gemini 4 Carbon is not in this plan; it starts at AI Ultra."},
+ {id:"google-ultra5",fam:"google",name:"Ultra 5x",usd:99.99,x:5,models:{"Gemini 4 Carbon":"","Gemini 4 Argon":"","Gemini 3.6 Flash":""},
+  lim:"Five times AI Pro's limits, in the Gemini app and in Antigravity. 1M context.",
+  note:"Monthly billing only. Google offers Gemini 4 Carbon to Ultra subscribers in select countries."},
+ {id:"google-ultra20",fam:"google",name:"Ultra 20x",usd:199.99,x:20,models:{"Gemini 4 Carbon":"","Gemini 4 Argon":"","Gemini 3.6 Flash":""},
+  lim:"Twenty times AI Pro's limits, in the Gemini app and in Antigravity. 1M context.",
+  note:"Monthly billing only. Google offers Gemini 4 Carbon to Ultra subscribers in select countries."},
+
+ {id:"x-plus",fam:"xsub",name:"Plus",usd:8,yr:80,x:1,pin:["medium"],models:GROKS,
+  lim:"The base weekly pool, shared by Grok and Cursor. Its size is not published.",
+  note:"The coding agent runs at fixed settings on Plus: medium effort, Fast off and a 256K context window for Grok 4.7. xAI does not say which Grok chat modes Plus includes."},
+ {id:"x-premium",fam:"xsub",name:"Premium",usd:30,yr:300,x:4,models:GROKS,
+  lim:"Four times Plus's weekly pool.",
+  note:"Adds what xAI calls the latest Grok models in chat, plus Grok Bot and third-party models in Cursor at API list price. Sold to new customers since 12 Oct 2026 in place of SuperGrok, Cursor Pro and X Premium+."},
+ {id:"x-super",fam:"xsub",name:"Super",usd:100,yr:1000,x:15,models:GROKS,
+  lim:"Fifteen times Plus's weekly pool, with priority access at peak times.",note:""},
+ {id:"x-ultra",fam:"xsub",name:"Ultra",usd:200,yr:2000,x:50,models:GROKS,
+  lim:"Fifty times Plus's weekly pool.",
+  note:"xAI lists “most powerful Chat models” for Ultra without naming them."},
+
+ {id:"muse-everyday",fam:"musecode",name:"Everyday Usage",usd:5,x:1,models:MUSES,
+  lim:"10–50 prompts every 5 hours, with a weekly reset as well.",note:""},
+ {id:"muse-high",fam:"musecode",name:"High Usage",usd:15,x:5,models:MUSES,
+  lim:"Five times the Everyday Usage plan.",note:""},
+ {id:"muse-power",fam:"musecode",name:"Power Usage",usd:50,x:20,models:{"Muse Wonder Full":"",...MUSES},
+  lim:"Twenty times the Everyday Usage plan.",
+  note:"The cheapest plan with Muse Wonder Full, which Meta offers only in Muse Code on this plan and the one above."},
+ {id:"muse-maximum",fam:"musecode",name:"Maximum Usage",usd:200,x:80,models:{"Muse Wonder Full":"",...MUSES},
+  lim:"Eighty times the Everyday Usage plan.",note:""},
+
+ {id:"glm-lite",fam:"glm",name:"Lite",usd:18,x:1,models:GLMS,
+  lim:"2,000 credits per 5 hours and 10,000 a week.",
+  note:"Billed quarterly it is 20% less and yearly 30% less. Requests for GLM-5.2 are routed to GLM-5.3."},
+ {id:"glm-pro",fam:"glm",name:"Pro",usd:80,x:6,models:GLMS,
+  lim:"12,000 credits per 5 hours and 60,000 a week: six times Lite.",note:""},
+ {id:"glm-max",fam:"glm",name:"Max",usd:168,x:14,models:GLMS,
+  lim:"28,000 credits per 5 hours and 140,000 a week: fourteen times Lite.",note:""},
+
+ {id:"kimi-plus",fam:"kimi",name:"Plus",usd:19,yr:180,models:{"Kimi K3.1 Pro":"","Kimi K3":""},
+  lim:"The plan card says “More agent credits”. No number is published.",
+  note:"The 1M context window for K3.1 Pro and K3 starts at Pro. Kimi Code's default model is K2.8 Preview, which is not on this board."},
+ {id:"kimi-pro",fam:"kimi",name:"Pro",usd:39,yr:372,models:{"Kimi K3.1 Pro":"","Kimi K3":""},
+  lim:"The plan card says “2x agent credits”, without stating the baseline.",
+  note:"Adds the Highspeed variants, including K2.7 Code Highspeed; the standard-speed Kimi K2.7 Code is not in the plan."},
+ {id:"kimi-max",fam:"kimi",name:"Max",usd:99,yr:948,models:{"Kimi K3.1 Pro":"","Kimi K3":""},
+  lim:"The plan card says “5x agent credits”, without stating the baseline.",note:""},
+ {id:"kimi-ultra",fam:"kimi",name:"Ultra",usd:199,yr:1908,models:{"Kimi K3.1 Pro":"","Kimi K3":""},
+  lim:"The plan card says “10x agent credits”, without stating the baseline.",note:""},
+
+ {id:"mplan-go",fam:"mplan",name:"Go",usd:22,yr:220,x:1,models:{"MiniMax M3.1 Flash":""},
+  lim:"The base allowance, on a 5-hour and a weekly window. No absolute quota is published.",
+  note:"M3.1 Flash is the only text model MiniMax names for the plan; MiniMax M3 is not listed."},
+ {id:"mplan-explore",fam:"mplan",name:"Explore",usd:55,yr:550,x:3,models:{"MiniMax M3.1 Flash":""},
+  lim:"Three times Go.",note:""},
+ {id:"mplan-build",fam:"mplan",name:"Build",usd:132,yr:1320,x:7.5,models:{"MiniMax M3.1 Flash":""},
+  lim:"Seven and a half times Go.",note:""},
+
+ {id:"tokenplan-lite",fam:"tokenplan",name:"Lite",usd:6,x:20000,models:TOKENPLAN,
+  lim:"20,000 credits a month.",
+  note:"Alibaba's plan also serves DeepSeek and Zhipu models. It lists a qwen3.8-flash that could not be matched to this board's Qwen3.8 Flash Next, so that model is left out."},
+ {id:"tokenplan-essential",fam:"tokenplan",name:"Essential",usd:10,x:45000,models:TOKENPLAN,
+  lim:"45,000 credits a month.",note:""},
+ {id:"tokenplan-standard",fam:"tokenplan",name:"Standard",usd:18,x:80000,models:TOKENPLAN,
+  lim:"80,000 credits a month.",note:""},
+ {id:"tokenplan-pro",fam:"tokenplan",name:"Pro",usd:43,x:200000,models:TOKENPLAN,
+  lim:"200,000 credits a month.",note:"Alibaba raised every tier's quota and cut this tier's price on 9 Nov 2026."},
+
+ {id:"mimo-lite",fam:"mimo",name:"Lite",usd:6,yr:63.36,x:4.1e9,models:MIMOS,
+  lim:"4.1 billion credits a month.",note:""},
+ {id:"mimo-standard",fam:"mimo",name:"Standard",usd:16,yr:168.96,x:11e9,models:MIMOS,
+  lim:"11 billion credits a month.",note:""},
+ {id:"mimo-pro",fam:"mimo",name:"Pro",usd:50,yr:528,x:38e9,models:MIMOS,
+  lim:"38 billion credits a month.",note:""},
+ {id:"mimo-max",fam:"mimo",name:"Max",usd:100,yr:1056,x:82e9,models:MIMOS,
+  lim:"82 billion credits a month.",note:""},
+
+ {id:"vibe-pro",fam:"vibe",name:"Pro",usd:14.99,models:{"Mistral Large 4":"","Mistral Medium 3.5":""},
+  lim:"No numeric quota is published; the plan card says up to six times the free tier's messages.",
+  note:"The model list is the Vibe CLI's built-in catalogue; Mistral's pricing page names no models and does not say whether Large 4 and Medium 3.5 use the allowance at the same rate. Le Chat is now called Vibe."},
+
+ {id:"step-plus",fam:"step",name:"Flash Plus",usd:9.99,yr:95.99,x:1600e6,models:STEPS,
+  lim:"1,600M credits a month.",
+  note:"StepFun also prices a Flash Mini tier at $6.99 and a Flash Max tier at $99. Both were out of stock on monthly billing when the page was read, so they are not listed."},
+ {id:"step-pro",fam:"step",name:"Flash Pro",usd:29,yr:289,x:8000e6,models:STEPS,
+  lim:"8,000M credits a month.",note:""},
+
+ {id:"byteplus-lite",fam:"byteplus",name:"Lite",usd:10,x:1,models:BYTEPLUS,
+  lim:"About 1,900 requests per 5 hours, 12,000 a week and 24,000 a month.",
+  note:"The US-dollar plan does not include Doubao Seed 2.1 Pro, which is in ByteDance's yuan-priced Volcano Ark plan."},
+ {id:"byteplus-pro",fam:"byteplus",name:"Pro",usd:50,x:5,models:BYTEPLUS,
+  lim:"About 9,500 requests per 5 hours, 60,000 a week and 120,000 a month: five times Lite.",note:""},
+
+ {id:"copilot-pro",fam:"copilot",name:"Pro",usd:10,x:15,models:COPILOT_PRO,
+  lim:"1,000 AI credits plus a 500-credit flex allotment a month: $15 of usage at list token prices.",
+  note:"GitHub says the flex allotment may change. Copilot moved from premium requests to token billing on 1 Jun 2026."},
+ {id:"copilot-proplus",fam:"copilot",name:"Pro+",usd:39,x:70,models:COPILOT_TOP,
+  lim:"3,900 AI credits plus a 3,100-credit flex allotment a month: $70 of usage at list token prices.",
+  note:"The cheapest Copilot plan with the Fable, Opus, GPT-6 Sol and Astra, and Gemini 4 models."},
+ {id:"copilot-max",fam:"copilot",name:"Max",usd:100,x:200,models:COPILOT_TOP,
+  lim:"10,000 AI credits plus a 10,000-credit flex allotment a month: $200 of usage at list token prices.",note:""},
+
+ {id:"ollama-pro",fam:"ollama",name:"Pro",usd:20,yr:200,x:60,models:OLLAMAS,
+  lim:"$60 of usage credits a month.",note:""},
+ {id:"ollama-max",fam:"ollama",name:"Max",usd:100,x:300,models:OLLAMAS,
+  lim:"$300 of usage credits a month and ten concurrent requests.",note:""}
+];
+
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
+{d:"11 Nov 2026",items:[
+  ["feature","The board now leads with subscriptions instead of API prices. A Pricing switch at the top of every tab chooses Subscription (the default) or API. Under Subscription the Board's price column shows the cheapest monthly plan that includes each model, the picks at the top rank what a monthly fee reaches, and the three API-price charts are hidden; under API everything is as before. Each model's detail panel lists every plan that includes it."],
+  ["feature","New Subscriptions tab. Pick the plans you pay for and the Board marks the models you already have; an In my plans filter narrows every tab to them and the choice travels in the link. Four views: what each monthly fee unlocks (price against the top Index score a plan reaches, with a Pareto frontier of flat-rate plans); which model and effort level to run on a plan (every measured effort level against usage per task or waiting time, with the frontier and the settings it beats listed); what a bigger tier buys (usage per dollar against the entry tier, where the vendor publishes usage); and a table of every plan with its limits, API break-even and source. The effort-line charts gain a My plans group."],
+  ["add","Subscription data: 49 plans across 15 products, read on 11 Nov 2026 from each vendor's own pricing, help and docs pages and marked vendor-reported. Claude Pro $20, Max $100, Ultra $200. ChatGPT Free, Go $8, Plus $20, Pro $100, $200 and $500. Google AI Plus $4.99, AI Pro $19.99, AI Ultra $99.99 and $199.99. The X Subscription Plus $8, Premium $30, Super $100, Ultra $200. Muse Code $5, $15, $50, $200. GLM Coding Plan $18, $80, $168. Kimi $19, $39, $99, $199. MiniMax M Plan $22, $55, $132. Alibaba Model Studio Token Plan $6, $10, $18, $43. Xiaomi MiMo Token Plan $6, $16, $50, $100. Mistral Vibe Pro $14.99. StepFun Step Plan $9.99 and $29. BytePlus Coding Plan $10, $50. GitHub Copilot Pro $10, Pro+ $39, Max $100. Ollama Cloud Pro $20, Max $100."],
+  ["data","No benchmark score, price or effort row changed. Limits, multipliers and effort lists a vendor does not publish are left blank rather than estimated; plans sold only in yuan, closed to new customers, out of stock, or naming no model on this board are not listed. Sources & caveats gains five notes on reading subscription data and a list of plan sources."]]},
 {d:"10 Nov 2026",items:[
   ["data","Arena text (9 Nov: 9.11M votes, 421 models) replaces the 27 Oct page. Updated: Gemini 4 Carbon 1528→1526, Argon 1520→1522, GPT-6.1 Sol 1481→1482, Haiku 5.5 1425→1422, Sonnet 5.5 1477→1472, Opus 5.5 1509→1506, Muse Wonder 1507→1511, Fable 5.1 1504→1503, Kimi K3 1488→1487, Mistral Large 4 1432→1423 and 27 other rows by 1–9 points. Added: Kimi K3.1 Pro 1483 (3,443 votes) and Inkling 2 Small 1412 (preliminary, 2,668 votes). Opus 5 and GPT-5.5 keep their previous values because the variant behind them is not recorded."],
   ["data","WebDev Arena (8 Nov: 984,664 votes, 156 models) replaces the 27 Oct page. Updated: Opus 5.5 1810→1818, Sonnet 5.5 xhigh 1770→1774, Argon 1679→1683, GPT-6.1 Terra 1673→1679, Kimi K3.1 Pro 1695→1688 (no longer preliminary), Mistral Large 4 1544→1562, Qwen3.8 Max 1676→1677 and 42 other rows by 1–18 points. Added: Muse Ember 1608 (preliminary, 1,345 votes) and Inkling 2 Small 1649 (preliminary, 964 votes). Fable 5.2 appears only as an unranked AutoEval proxy score without human votes, so it stays blank."],
@@ -1419,17 +1743,46 @@ function filtered(){
     if(!state.weights.has(m.open?"open":"closed")) return false;
     if(state.prov && m.prov!==state.prov) return false;
     if(state.q && !(m.name+" "+m.prov).toLowerCase().includes(state.q)) return false;
+    if(state.onlyMine && !minePlans(m.name).length) return false;
     return true;
   });
 }
 
 /* ---------------- board table ---------------- */
-const COLS=Object.keys(BENCH).filter(k=>BENCH[k].col&&!BENCH[k].arch);
+const COLS_API=Object.keys(BENCH).filter(k=>BENCH[k].col&&!BENCH[k].arch);
+// under the subscription lens the blended API price column gives way to the cheapest plan that includes the model
+const boardCols=()=>state.lens==="api"?COLS_API:COLS_API.map(k=>k==="price"?"plan":k);
+const COLHEAD={plan:["Plan $/mo","Cheapest subscription that includes the model, monthly billing. Flat-rate plans come first; a token-metered plan is shown only when no flat-rate plan includes it."]};
 const isArch=k=>!!BENCH[k].arch;
+
+/* ---------------- subscriptions: shared lookups ---------------- */
+state.lens="sub"; state.mine=new Set(); state.onlyMine=false;
+const byName=Object.fromEntries(MODELS.map(m=>[m.name,m]));
+const planFam=p=>PLAN_FAMILIES[p.fam], planName=p=>planFam(p).l+" "+p.name, isFlat=p=>planFam(p).kind==="flat";
+const usd=v=>"$"+(Number.isInteger(v)?v.toLocaleString():v.toFixed(2));
+const plansOf=n=>PLANS.filter(p=>n in p.models).sort((a,b)=>a.usd-b.usd||PLANS.indexOf(a)-PLANS.indexOf(b));
+const cheapPlan=n=>{const ps=plansOf(n); return ps.find(isFlat)||ps[0]||null;};   // flat-rate first, metered only if nothing else
+const minePlans=n=>PLANS.filter(p=>state.mine.has(p.id)&&n in p.models);
+/* Every model and effort level a plan can run that Artificial Analysis has measured. A plan fixed to named levels (pin)
+   keeps only those rows; otherwise rows outside the levels its family documents are dropped, and a model measured at a
+   single unnamed setting stays. Nothing is assumed about a level that was not measured. */
+const PLAN_PTS=new Map();
+function planPts(p){
+  if(PLAN_PTS.has(p.id)) return PLAN_PTS.get(p.id);
+  const allow=p.pin||planFam(p).eff, out=[];
+  Object.keys(p.models).forEach(n=>effRowsAll(byName[n]).forEach(r=>{
+    if(r.aaii==null||(r.e==="one"?!!p.pin:allow&&!allow.includes(r.e))) return;
+    out.push({p,m:byName[n],r}); }));
+  PLAN_PTS.set(p.id,out); return out;
+}
+const planBest=p=>[...planPts(p)].sort((a,b)=>b.r.aaii-a.r.aaii||(a.r.cost??1e9)-(b.r.cost??1e9))[0]||null;
+const effTag=r=>r.e==="one"?"":" · "+r.e;
+
 function renderBoard(rows){
-  const th=$("#board thead"), tb=$("#board tbody");
+  const th=$("#board thead"), tb=$("#board tbody"), COLS=boardCols(), sv=(m,k)=>k==="plan"?(cheapPlan(m.name)||{}).usd??null:val(m,k);
+  if(!COLS.includes(state.sort)&&state.sort!=="name") state.sort=state.sort==="plan"?"price":state.sort==="price"?"plan":"aaii";
   th.innerHTML="<tr><th class='l'></th><th class='l' data-k='name'>Model <span class='arw'>▾</span></th>"+
-    COLS.map(k=>`<th data-k="${k}" title="${BENCH[k].l}">${BENCH[k].s} <span class="arw">▾</span></th>`).join("")+"</tr>";
+    COLS.map(k=>{const [s,l]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" title="${esc(l)}">${s} <span class="arw">▾</span></th>`;}).join("")+"</tr>";
   $$("#board thead th[data-k]").forEach(el=>{
     if(el.dataset.k===state.sort){el.setAttribute("data-active","");
       el.querySelector(".arw").textContent = state.dir<0?"▾":"▴";}
@@ -1442,13 +1795,17 @@ function renderBoard(rows){
   const k=state.sort;
   rows=[...rows].sort((a,b)=>{
     if(k==="name") return state.dir*a.name.localeCompare(b.name);
-    const av=val(a,k), bv=val(b,k);
+    const av=sv(a,k), bv=sv(b,k);
     if(av==null&&bv==null) return a.name.localeCompare(b.name);
     if(av==null) return 1; if(bv==null) return -1;
-    return state.dir*(av-bv);
+    return state.dir*(av-bv)||(k==="plan"?(val(b,"aaii")??-1)-(val(a,"aaii")??-1):0)||a.name.localeCompare(b.name);
   });
   tb.innerHTML=rows.map((m,i)=>{
+    const mine=minePlans(m.name);
     const cells=COLS.map(c=>{
+      if(c==="plan"){ const pl=cheapPlan(m.name), n=plansOf(m.name).length;
+        return pl?`<td class="mono" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span><span class="q ven" title="${QL.ven}"></span></td>`
+          :`<td class="mono na" title="No subscription on the board includes this model; it is reached through an API">—</td>`; }
       const v=val(m,c), q=qual(m,c);
       const et = c==="aaii"&&v!=null&&topEff(m) ? `<span class="eff">${topEff(m)}</span>` : "";
       return `<td class="mono${v==null?" na":""}">${fmt(v,BENCH[c].f)}${et}${v!=null&&q!=="ind"?`<span class="q ${q}" title="${QL[q]}"></span>`:""}</td>`;
@@ -1456,9 +1813,11 @@ function renderBoard(rows){
     const on = state.openRow===m.name;
     return `<tr data-m="${m.name}" class="${on?"open":""}">
       <td class="l mono rk">${i+1}</td>
-      <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span>${m.name}<span class="prov">${m.prov}</span></span></td>
+      <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span>${m.name}${mine.length?`<span class="mine" title="In your plans: ${esc(mine.map(planName).join(", "))}">✓</span>`:""}<span class="prov">${m.prov}</span></span></td>
       ${cells}</tr>`+(on?detailRow(m):"");
-  }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">Nothing matches those filters.</td></tr>`;
+  }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">${state.onlyMine&&!state.mine.size?"No plan is picked yet. Open the Subscriptions tab and pick the plans you pay for.":"Nothing matches those filters."}</td></tr>`;
+  $("#boardlens").textContent=state.lens==="api"?"Prices are per-token API prices; switch Pricing to Subscription to see which monthly plans include each model."
+    :"Plan $/mo is the cheapest subscription that includes the model (◦ marks a token-metered plan); ✓ marks a model in your own plans. Plan prices are vendor-reported.";
   $$("#board tbody tr[data-m]").forEach(tr=>tr.onclick=()=>{
     state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; render();
   });
@@ -1478,9 +1837,9 @@ function detailRow(m){
   const archK=Object.keys(BENCH).filter(k=>isArch(k)&&m.s[k]);
   if(archK.length) out+=`<p class="effh">Archived benchmarks</p>`+archK.map(k=>{const [v,q,src]=m.s[k];
     return `<div class="dline" style="opacity:.7"><span class="k">${BENCH[k].l}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;}).join("");
-  out+=listPrice(m);
+  out+=state.lens==="api"?listPrice(m)+subsList(m):subsList(m)+listPrice(m);
   const miss=Object.keys(BENCH).filter(k=>!m.s[k]&&!isArch(k)).map(k=>BENCH[k].s);
-  return `<tr class="det"><td colspan="${COLS.length+2}"><div class="detbox">
+  return `<tr class="det"><td colspan="${COLS_API.length+2}"><div class="detbox">
     <h3>${m.name}
       <span class="badge ${m.open?"open":"pro"}">${m.open?"Open weights":"Proprietary"}</span>
       <span class="prov" style="font-weight:400">${m.prov} · released ${m.rel||"—"}</span></h3>
@@ -1615,7 +1974,8 @@ function scatterSvg(pts,o){
       +"<!--Q0--><!--Q1--><!--Q2--><!--Q3-->";
   }
   s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
-  const front=o.front?new Set(paretoFront(pts,o.front)):new Set();
+  const front=o.front?new Set(paretoFront(o.frontOf?pts.filter(o.frontOf):pts,o.front)):new Set();
+  (o.paths||[]).forEach(q=>{ if(q.pts.length>1) s+=`<polyline class="pathline" stroke="${q.stroke}" points="${q.pts.map(a=>X(a.x).toFixed(1)+","+Y(a.y).toFixed(1)).join(" ")}"/>`; });
   (o.ghost||[]).forEach(({m,rows})=>{
     const rs=[...rows].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
     s+=`<polyline class="ghostline" points="${rs.map(r=>X(r.speed).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`
@@ -1633,20 +1993,20 @@ function scatterSvg(pts,o){
   const marks=[];
   pts.forEach(p=>{const m={...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)};
     const twin=marks.find(o=>Math.abs(o.x-m.x)<2.5&&Math.abs(o.y-m.y)<2.5);
-    if(twin){ twin.label+=" & "+m.label; twin.tip+=`<span class="tsep"></span>`+m.tip; twin.multi=true; twin.front=twin.front||m.front; return; }
+    if(twin){ twin.label+=" & "+m.label; twin.tip+=`<span class="tsep"></span>`+m.tip; twin.multi=true; twin.front=twin.front||m.front; twin.ring=twin.ring||m.ring; return; }
     // dots that touch keep their own dot and tooltip but share one label, so a name can't land beside the wrong dot
     const near=marks.find(o=>!o.nolabel&&Math.hypot(o.x-m.x,o.y-m.y)<o.r+m.r+1);
     if(near){ near.label+=" & "+m.label; m.nolabel=true; }
     marks.push(m);});
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`
-    +(m.multi?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
+    +((o.ownRing?m.ring:m.multi)?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
   const qw=t=>t.length*(nar?7:8.2)+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
     {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
   // a quadrant caption is left out when a dot sits on it
   if(o.quad){ const q=nar?' style="font-size:9px;opacity:.6"':"", at=[[ml+8,mt+16,""],[ml+iw-8,mt+16,' text-anchor="end"'],[ml+8,mt+ih-8,""],[ml+iw-8,mt+ih-8,' text-anchor="end"']];
     qb.forEach((b,i)=>{ const hit=marks.some(m=>m.x+m.r>b.x0&&m.x-m.r<b.x1&&m.y+m.r>b.y0&&m.y-m.r<b.y1);
       s=s.replace(`<!--Q${i}-->`,hit?"":`<text class="qlab"${q} x="${at[i][0]}" y="${at[i][1]}"${at[i][2]}>${o.quad[i]}</text>`); if(hit) b.x1=b.x0; }); }
-  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},nar?10:24,m=>m.label,qb,lineBoxes);
+  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},nar?10:o.maxLab||24,m=>m.label,qb,lineBoxes);
   return s+"</svg>";
 }
 const modelTip=(m,lines)=>`<b>${esc(m.name)}</b><span class="tl"><span>${esc(m.prov)}</span><span>${m.open?"Open weights":"Proprietary"}</span></span>`
@@ -1826,8 +2186,8 @@ function keepView(fn){
 function effChange(names){ effSetPicks(names); try{localStorage.setItem(EFF_KEY,JSON.stringify([...state.effSel]));}catch(e){} keepView(()=>{renderEffLines(); renderSpeedQ(filtered());}); syncURL(); }
 const effToggle=n=>effChange(state.effSel.has(n)?[...state.effSel].filter(x=>x!==n):[...state.effSel,n]);
 // the board's own groups add to or remove from the picks without clearing the rest
-const EFF_GROUPS=[...TIERS,["open","Open weights"]];
-const effGroup=k=>effCands().filter(m=>k==="open"?m.open:m.tier===k).map(m=>m.name);
+const EFF_GROUPS=[...TIERS,["open","Open weights"],["mine","My plans"]];   // "My plans" appears once the visitor has picked plans
+const effGroup=k=>effCands().filter(m=>k==="mine"?minePlans(m.name).length:k==="open"?m.open:m.tier===k).map(m=>m.name);
 function effBulk(k){ const g=effGroup(k), gs=new Set(g);
   effChange(g.every(n=>state.effSel.has(n))?[...state.effSel].filter(n=>!gs.has(n)):[...state.effSel,...g.filter(n=>!state.effSel.has(n))]); }
 function cmpSet(k,v){ const c=state.cmp; if(k==="hide") c.hideEff.has(v)?c.hideEff.delete(v):c.hideEff.add(v); else c[k]=v; keepView(renderEffLines); syncURL(); }
@@ -1920,6 +2280,7 @@ function renderEffCost(){
   effLines("#c-effcost","#effkey2",pick,"cost",{fmt:money,title:"Cost per Intelligence Index task — log scale",
     aria:"Intelligence against cost per task at each effort level"});
   effContext("#effctx-cost",pick,"cost","cost per index task");
+  $("#efflens").innerHTML=state.lens==="api"?"":"<b>On a subscription</b> nobody bills this figure, but vendors count plan usage in tokens weighted by model, so read it as how fast a setting draws down a plan's allowance. The Subscriptions tab draws the same comparison for one plan at a time.";
   return pick;
 }
 function renderEffLines(){
@@ -2227,6 +2588,11 @@ function barSvg(d,k){
 
 /* ---------------- sources & caveats ---------------- */
 const CAVEATS=[
+ ["A subscription price does not say how much you get","Vendors publish what a plan costs and which models it includes, but rarely the size of its allowance. Anthropic, Google and xAI state limits as multiples of another tier, OpenAI gives message ranges for Plus and no numbers for Pro, and none of them publishes a weekly total. So the board never says how many tasks a flat-rate plan covers, and the Pareto frontier of plans ranks what a fee unlocks, not how long it lasts."],
+ ["Usage per task is a stand-in, not a meter","On the Subscriptions tab the usage axis is Artificial Analysis's cost per Index task at API list prices. No flat-rate subscription bills that figure. It is used because vendors say plan usage is counted in tokens and weighted by model: Google's Antigravity quota is drawn down according to API pricing, OpenAI's credit rates keep the ratios of its API prices, and Anthropic says Fable and higher effort use limits faster. Caching, off-peak rates and plan-specific weights can move the real draw, so read it as a ranking of settings inside one plan."],
+ ["Token-metered plans are prepaid API usage","GitHub Copilot and Ollama Cloud grant a monthly dollar allowance and bill tokens against it. An expensive model is included in name but can use the allowance up in a few tasks, which is why those plans are drawn in grey and kept off the plan frontier. Copilot bills each model maker's list price, so the board can state how many Index tasks its allowance covers; Ollama sets its own per-token prices, so it cannot."],
+ ["Plan pages disagree, and promotions are not counted","OpenAI's pricing page names GPT-6 Luna for Free and Go while three of its help articles name GPT-5.6 Luna. Google's model help page lists its Pro model for AI Plus while its comparison table does not. xAI does not say which X Subscription tier unlocks each Grok chat mode. Each plan's note records the conflict and which page the board follows. Launch offers that widen a plan for a few days, such as Fable inside Claude Pro's limits in the week after 9 Nov 2026, are left out."],
+ ["What the plan list leaves out","A plan is listed only when its vendor sells it to individuals in US dollars and names at least one model on this board. That excludes Claude Free and Gemini without a plan (model versions not stated), Meta One and the Muse agent (no model named), the Tencent, Baidu and Volcano Ark plans (yuan only), SuperGrok, Cursor Pro and X Premium (closed to new customers), and StepFun's Flash Mini and Flash Max tiers (out of stock when read). DeepSeek, Thinking Machines, Reflection AI and Cohere sell no individual subscription. OpenRouter is not a subscription: it bills each provider's list price and adds a 5.5% fee when credits are bought, so the API pricing lens is the one that applies to it."],
  ["Source retrieval has limits","Some leaderboard pages require client-side rendering, block automated requests, or expose stale snapshots. The 9 Nov refresh preserves prior verified measurements when a current result cannot be confirmed. A retained value is not a new measurement; each column and row keeps its source/date. See docs/refresh-2026-11-09.md for the source-by-source audit."],
  ["Vendor tables are not independent evaluations","Anthropic’s 9 Nov Fable 5.2 announcement supplies the new coding, search, robotics, knowledge-work, vision and with-tools reasoning columns. They are all vendor-reported, including competitor rows and AA-Briefcase scores quoted by Anthropic. Existing independent Vals AI measurements are preserved instead of being overwritten by the launch comparison table. Quality dots and row notes identify each source."],
  ["The scaffold moves the score","Claude Fable 5 scores 83.8% on Terminal-Bench 2.1 under Claude Code and 80.4% under Terminus 2 — same model, 3.4 points from the harness alone. Cross-model comparisons on agentic benchmarks carry that noise."],
@@ -2251,7 +2617,218 @@ function renderSources(){
       <a href="${B.url}" target="_blank" rel="noopener">${B.url.replace(/^https:\/\//,"")}</a></div>`;
   });
   $("#srclist").innerHTML=out;
+  $("#planlist").innerHTML=Object.keys(PLAN_FAMILIES).map(f=>{const F=PLAN_FAMILIES[f], ps=PLANS.filter(p=>p.fam===f), lo=Math.min(...ps.map(p=>p.usd)), hi=Math.max(...ps.map(p=>p.usd));
+    return `<div class="srccard"><h3>${esc(F.l)}</h3><p>${esc(F.burn)}</p>
+      <p style="font-size:11.5px;color:var(--ink-3)">${esc(F.vendor)} · ${ps.length} plan${ps.length>1?"s":""}, ${lo===hi?usd(lo):usd(lo)+" to "+usd(hi)} a month · ${F.kind==="flat"?"flat-rate":"token-metered"} · vendor pages read ${PLAN_ASOF}</p>
+      <a href="${F.url}" target="_blank" rel="noopener">${F.url.replace(/^https:\/\//,"")}</a></div>`;}).join("");
 }
+
+/* ============================== subscriptions ============================== */
+/* The pricing lens ("sub" or "api"), the visitor's own plans and the Subscriptions tab. Plan data is PLAN_FAMILIES and
+   PLANS in the data block; nothing here estimates an allowance the vendor does not publish. */
+state.subPlan=null; state.subX="cost"; state.planOpen=null; state.planSort="fam"; state.planDir=1;
+const PLAN_KEY="fb-plans", LENS_KEY="fb-lens", FAM_ORDER=Object.keys(PLAN_FAMILIES);
+const myPlans=()=>PLANS.filter(p=>state.mine.has(p.id));
+// the cheapest paid tier of a product that states its usage: the yardstick for "per dollar"
+const famBase=f=>PLANS.filter(p=>p.fam===f&&p.x!=null&&p.usd>0).sort((a,b)=>a.usd-b.usd)[0]||null;
+const perDollar=p=>{const b=famBase(p.fam); return b&&p.x!=null&&p.usd>0?(p.x/p.usd)/(b.x/b.usd):null;};
+const bigN=v=>v>=1e9?+(v/1e9).toFixed(1)+"B":v>=1e6?(v/1e6).toLocaleString()+"M":v.toLocaleString();
+const planUse=(p,short)=>{ if(p.x==null) return null; const u=planFam(p).xu, t=u[0]==="×"?p.x+u:u[0]==="$"?"$"+p.x+u.slice(1):bigN(p.x)+" "+u;
+  return short?t.replace(" a month",""):t; };
+// the monthly fee in Index tasks at API list prices, with the plan's top model at its top effort
+const planBreak=p=>{const b=planBest(p); return b&&b.r.cost>0&&p.usd>0?p.usd/b.r.cost:null;};
+const tasksN=v=>v>=100?Math.round(v).toLocaleString():v>=10?v.toFixed(0):v.toFixed(1);
+const planTip=p=>{const b=planBest(p), F=planFam(p);
+  return `<b>${esc(planName(p))}</b><span class="tl"><span>${esc(F.vendor)}</span><span>${isFlat(p)?"Flat-rate":"Token-metered"}</span></span>`
+    +[["Price",usd(p.usd)+" a month"],["Top model",b?esc(b.m.name)+effTag(b.r):"—"],["Index",b?b.r.aaii:"—"],["Published usage",planUse(p)||"not published"],["Board models",Object.keys(p.models).length]]
+      .map(([k,v])=>`<span class="tl"><span>${k}</span><span>${v}</span></span>`).join("");};
+
+function renderRail(){
+  document.documentElement.setAttribute("data-lens-now",state.lens);
+  $$("#lens button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===state.lens));
+  const c=$("#minechip"), n=state.mine.size;
+  c.textContent=n?"In my plans · "+n:"Pick my plans"; c.setAttribute("aria-pressed",state.onlyMine);
+  c.title=n?"Show only the models your picked plans include, on every tab":"Open the Subscriptions tab and pick the plans you pay for";
+}
+function setLens(l){ state.lens=l; try{localStorage.setItem(LENS_KEY,l);}catch(e){} renderRail(); renderPicks(); render();
+  // a chart section the new lens hides can't stay in the URL: a reload would bring the old lens back with it
+  const sc=state.sec&&document.getElementById("ch-"+state.sec);
+  if(sc&&sc.dataset.lens&&sc.dataset.lens!==l){ state.sec=null; secTrack(true); }
+  syncURL(); }
+function mineChanged(){ try{localStorage.setItem(PLAN_KEY,JSON.stringify([...state.mine]));}catch(e){}
+  if(!state.mine.size) state.onlyMine=false; renderRail(); renderPicks(); render(); syncURL(); }
+const planToggle=id=>{ state.mine.has(id)?state.mine.delete(id):state.mine.add(id); mineChanged(); };
+$$("#lens button").forEach(b=>b.onclick=()=>setLens(b.dataset.v));
+$("#minechip").onclick=()=>{ if(!state.mine.size){ $('.tab[data-p="subs"]').click(); scrollTo(0,0); return; }
+  state.onlyMine=!state.onlyMine; renderRail(); render(); syncURL(); };
+
+/* ---------------- board: plans in a model's detail panel ---------------- */
+function subsList(m){
+  const ps=plansOf(m.name);
+  if(!ps.length) return `<p class="effh">Subscriptions</p><p class="dnote">No subscription on the board includes this model. It is reached through an API${m.open?" or by running the weights yourself":""}.</p>`;
+  return `<p class="effh">Subscriptions that include it · vendor pages, ${PLAN_ASOF}</p>`+ps.map(p=>{const note=p.models[m.name];
+    return `<div class="dline"><span class="k">${state.mine.has(p.id)?'<span class="mine" title="One of your plans">✓</span>':""}${esc(planName(p))}`
+      +`${isFlat(p)?"":'<span class="eff">token-metered</span>'}${note?`<span class="eff">${esc(note)}</span>`:""}${p.pin?`<span class="eff">${p.pin.join(", ")} effort only</span>`:""}</span>`
+      +`<span class="v mono">${usd(p.usd)}/mo</span></div>`;}).join("");
+}
+
+/* ---------------- board: subscription picks ---------------- */
+function subPicks(){
+  const flat=PLANS.filter(p=>isFlat(p)&&planBest(p)), rank=(a,b)=>b.r.aaii-a.r.aaii||a.p.usd-b.p.usd;
+  const under=c=>flat.filter(p=>p.usd<=c).map(planBest).sort(rank);
+  const P=[
+    ["Smartest on a plan",under(Infinity),"Highest Index score any flat-rate subscription reaches; ties go to the cheaper plan"],
+    ["Smartest for $20 or less",under(20),"Highest Index score among flat-rate plans at $20 a month or less"],
+    ["Smartest for $10 or less",under(10),"Highest Index score among flat-rate plans at $10 a month or less"],
+    ["Best open weights on a plan",flat.flatMap(planPts).filter(q=>q.m.open).sort(rank),"Highest Index score among open-weights models a flat-rate plan includes"]
+  ];
+  const mine=myPlans().flatMap(planPts).sort(rank);
+  let out=P.filter(p=>p[1].length).map(([lab,list,rule])=>{const q=list[0], r=list.find(x=>x.p.fam!==q.p.fam&&x.m!==q.m);
+    return `<button class="pick" data-m="${esc(q.m.name)}" title="${esc(rule)}"><span class="pl">${lab}</span>
+      <span class="pm"><span class="dot ${q.m.open?"o":"p"}"></span>${esc(q.m.name)}</span><span class="pv">Index ${q.r.aaii}${effTag(q.r)} · ${usd(q.p.usd)} ${esc(planName(q.p))}</span>
+      <span class="pr">${r?`Next: ${esc(r.m.name)}, ${usd(r.p.usd)} ${esc(planName(r.p))}`:""}</span></button>`;}).join("");
+  out+=mine.length?`<button class="pick" data-m="${esc(mine[0].m.name)}" title="The highest Index score across the plans you picked"><span class="pl">Best in your plans</span>
+      <span class="pm"><span class="dot ${mine[0].m.open?"o":"p"}"></span>${esc(mine[0].m.name)}</span><span class="pv">Index ${mine[0].r.aaii}${effTag(mine[0].r)} · ${esc(planName(mine[0].p))}</span>
+      <span class="pr">${state.mine.size} plan${state.mine.size>1?"s":""} picked</span></button>`
+    :`<button class="pick" data-go="subs" title="Pick the plans you pay for on the Subscriptions tab"><span class="pl">Best in your plans</span>
+      <span class="pm">Pick your plans</span><span class="pv">${PLANS.length} plans from ${FAM_ORDER.length} products</span><span class="pr">Opens the Subscriptions tab</span></button>`;
+  $("#picks").innerHTML=out;
+  $$("#picks .pick").forEach(b=>b.onclick=()=>b.dataset.go?$('.tab[data-p="subs"]').click():openModel(b.dataset.m));
+}
+
+/* ---------------- subscriptions tab ---------------- */
+function mineSummary(){
+  const mine=myPlans();
+  if(!mine.length) return "No plan picked yet. Pick what you pay for and the Board marks the models you already have.";
+  const tot=+mine.reduce((a,p)=>a+p.usd,0).toFixed(2), names=new Set(mine.flatMap(p=>Object.keys(p.models)));
+  const best=mine.flatMap(planPts).sort((a,b)=>b.r.aaii-a.r.aaii||a.p.usd-b.p.usd)[0];
+  let out=`<b>${usd(tot)} a month</b> for ${mine.length} plan${mine.length>1?"s":""} covering <b>${names.size}</b> board models.`;
+  if(!best) return out+" None of those models has an Index score at the settings the plans offer.";
+  out+=` The smartest setting you have is <b>${esc(best.m.name)}${effTag(best.r)}</b>, Index ${best.r.aaii}, on ${esc(planName(best.p))}.`;
+  const flat=PLANS.filter(p=>isFlat(p)&&p.usd>0&&!state.mine.has(p.id)&&planBest(p));
+  const same=flat.filter(p=>planBest(p).r.aaii>=best.r.aaii&&p.usd<best.p.usd).sort((a,b)=>a.usd-b.usd)[0];
+  const up=flat.filter(p=>planBest(p).r.aaii>best.r.aaii).sort((a,b)=>a.usd-b.usd||planBest(b).r.aaii-planBest(a).r.aaii)[0];
+  if(same) out+=` ${esc(planName(same))} reaches Index ${planBest(same).r.aaii} for ${usd(same.usd)} a month, with a different allowance.`;
+  if(up) out+=` The cheapest flat-rate step up is ${esc(planName(up))} at ${usd(up.usd)} a month: ${esc(planBest(up).m.name)}, Index ${planBest(up).r.aaii}.`;
+  return out;
+}
+function renderMine(){
+  refill($("#sbpick"),FAM_ORDER.map(f=>{const F=PLAN_FAMILIES[f];
+    return `<div class="sbfam"><span class="sbl"><i style="background:${F.kind==="flat"?"var(--accent)":"var(--ink-3)"}"></i>${esc(F.l)}<span class="prov">${esc(F.vendor)}</span></span><span class="sbchips">`
+      +PLANS.filter(p=>p.fam===f).map(p=>`<button type="button" class="chip" data-plan="${p.id}" data-k="${p.id}" aria-pressed="${state.mine.has(p.id)}" title="${esc(planName(p))}: ${state.mine.has(p.id)?"remove from":"add to"} your plans">${esc(p.name)} <span class="eff">${usd(p.usd)}</span></button>`).join("")
+      +"</span></div>";}).join(""));
+  $$("#sbpick .chip").forEach(b=>b.onclick=()=>planToggle(b.dataset.plan));
+  $("#sbsum").innerHTML=mineSummary();
+}
+/* every paid plan: monthly price against the best Index score it can reach. The frontier runs over flat-rate plans only. */
+function renderLadder(){
+  const host=$("#c-sbladder"), paid=PLANS.filter(p=>p.usd>0&&planBest(p)), free=PLANS.filter(p=>p.usd===0&&planBest(p));
+  const pts=paid.map(p=>{const b=planBest(p), mine=state.mine.has(p.id);
+    return {x:p.usd,y:b.r.aaii,r:mine?7:5.5,ring:mine,flat:isFlat(p),fill:isFlat(p)?"var(--accent)":"var(--ink-3)",label:planName(p),plan:p,best:b,tip:planTip(p)};});
+  host.innerHTML=scatterSvg(pts,{aria:"Monthly subscription price against the top Index score each plan reaches",host,H:540,maxLab:30,xfmt:money,yfmt:v=>String(Math.round(v)),
+    xtitle:"Monthly price, US dollars",ytitle:"Top Index score in the plan",front:"min",frontOf:q=>q.flat,ownRing:true});
+  wire(host);
+  $("#sbladder-sub").textContent="Each dot is a paid plan: its monthly price against the highest Artificial Analysis Index score it can reach at the effort levels it offers, on a log scale. "
+    +"The solid line is the Pareto frontier of flat-rate plans: no cheaper flat-rate plan reaches a higher score. Grey dots are token-metered plans, kept off the frontier because their fee buys a dollar allowance rather than a rate limit. "
+    +"The chart shows what a fee unlocks, not how much of it you get: vendors rarely publish the size of an allowance. A ring marks one of your plans; plans at the same price and score share a dot and a label."
+    +(free.length?" Free plans can't sit on a log axis: "+free.map(p=>`${planName(p)} reaches Index ${planBest(p).r.aaii} with ${planBest(p).m.name}`).join("; ")+".":"");
+  const front=paretoFront(pts.filter(q=>q.flat),"min");
+  $("#sbladder-front").innerHTML="<b>On the frontier, cheapest first:</b> "+front.map(q=>`${esc(q.label)} (${usd(q.x)} · Index ${q.y} · ${esc(q.best.m.name)}${effTag(q.best.r)})`).join(" → ");
+  const met=pts.filter(q=>!q.flat&&planFam(q.plan).atList&&q.best.r.cost>0);
+  $("#sbladder-metered").innerHTML=met.length?"<b>How far a metered allowance goes:</b> "+met.map(q=>`${esc(q.label)}'s $${q.plan.x} of usage covers about ${tasksN(q.plan.x/q.best.r.cost)} Index tasks a month with ${esc(q.best.m.name)}${effTag(q.best.r)}`).join("; ")+".":"";
+}
+/* one plan (or all the visitor's plans): every measured model and effort level, against how much usage a task draws or how long it waits */
+function renderUse(){
+  const sel=$("#sbplan"), mine=myPlans(), host=$("#c-sbuse"), xk=state.subX;
+  if(state.subPlan&&state.subPlan!=="mine"&&!PLANS.some(p=>p.id===state.subPlan)) state.subPlan=null;
+  if(state.subPlan==="mine"&&mine.length<2) state.subPlan=null;
+  // until the visitor chooses: their plans if they picked any, else the flat-rate plan with the highest Index score
+  const auto=mine.length>1?"mine":mine.length?mine[0].id:(PLANS.filter(p=>isFlat(p)&&planBest(p)).sort((a,b)=>planBest(b).r.aaii-planBest(a).r.aaii||a.usd-b.usd)[0]||PLANS[0]).id;
+  const cur=state.subPlan||auto, plans=cur==="mine"?mine:[PLANS.find(p=>p.id===cur)];
+  sel.innerHTML=(mine.length>1?`<option value="mine">All my plans (${mine.length})</option>`:"")
+    +FAM_ORDER.map(f=>`<optgroup label="${esc(PLAN_FAMILIES[f].l)}">`+PLANS.filter(p=>p.fam===f).map(p=>`<option value="${p.id}">${state.mine.has(p.id)?"✓ ":""}${esc(planName(p))} · ${usd(p.usd)}</option>`).join("")+"</optgroup>").join("");
+  sel.value=cur; $("#sbx").value=xk;
+  // one point per model and effort level; across several plans the cheapest plan that has it is named
+  const seen=new Map(); plans.flatMap(planPts).forEach(q=>{const k=q.m.name+"|"+q.r.e, o=seen.get(k); if(!o||q.p.usd<o.p.usd) seen.set(k,q);});
+  const all=[...seen.values()], top=m=>Math.max(...all.filter(q=>q.m===m).map(q=>q.r.aaii));
+  const models=[...new Set(all.map(q=>q.m))].sort((a,b)=>top(b)-top(a)||a.name.localeCompare(b.name)), col=m=>{const i=models.indexOf(m); return i<SERIES?`var(--s${i+1})`:"var(--ink-3)";};
+  const xf=xk==="cost"?money:v=>(v>=10?Math.round(v):+v.toFixed(1))+" s", nm=q=>esc(q.m.name)+effTag(q.r);
+  const pts=all.filter(q=>q.r[xk]>0).map(q=>({x:q.r[xk],y:q.r.aaii,r:EFF_R[q.r.e],fill:col(q.m),label:q.m.name+effTag(q.r),q,
+    tip:modelTip(q.m,[["Effort",EFF_NAME[q.r.e]],["Index",q.r.aaii],["Cost per index task",q.r.cost!=null?money(q.r.cost):"—"],["First answer token",q.r.ttft!=null?q.r.ttft+" s":"—"],["Plan",esc(planName(q.p))+" · "+usd(q.p.usd)]])}));
+  const one=plans.length===1?plans[0]:null, F=one&&planFam(one);
+  $("#sbuse-sub").textContent=(xk==="cost"
+    ?"Every effort level Artificial Analysis has measured for the models in the chosen plan, against what one Index task costs at API list prices. A flat-rate plan does not bill that figure, but vendors count plan usage in tokens and weight it by model, so it stands in for how fast a setting draws down the allowance. "
+    :"Every effort level Artificial Analysis has measured for the models in the chosen plan, against seconds to the first answer token. On a subscription the wait is the cost you feel on every task. ")
+    +"The line is the Pareto frontier: the settings no "+(xk==="cost"?"lighter":"quicker")+" setting matches. Anything under the line "+(xk==="cost"?"draws more usage":"waits longer")+" for a lower score. Bigger dots are higher effort, and a thin line joins one model's levels."
+    +(xk==="cost"&&!one?" Each plan has its own allowance, so across plans read usage as API-equivalent cost, not as one shared pool.":"")
+    +(xk==="cost"&&F&&F.atList?` On this plan the dollars are real: tokens are billed at list prices against the $${one.x} monthly allowance.`:"");
+  $("#sbmodels").innerHTML=models.map(m=>`<span><i style="background:${col(m)}"></i>${esc(m.name)}</span>`).join("");
+  const skipped=plans.flatMap(p=>Object.keys(p.models)).filter((n,i,a)=>a.indexOf(n)===i&&!pts.some(q=>q.q.m.name===n));
+  $("#sbuse-miss").innerHTML=skipped.length?`<b>Not drawn</b>, no Index score${xk==="cost"?" or cost":" or latency"} measured at the settings ${one?"the plan offers":"these plans offer"}: ${skipped.map(esc).join(", ")}.`:"";
+  if(!pts.length){ host.innerHTML='<p class="empty">Artificial Analysis has not measured any of this plan\'s models at the settings it offers.</p>'; $("#sbuse-front").innerHTML=$("#sbuse-skip").innerHTML=""; return; }
+  const lv=e=>EFF_ORDER.indexOf(e), paths=models.map(m=>({stroke:col(m),pts:pts.filter(q=>q.q.m===m).sort((a,b)=>lv(a.q.r.e)-lv(b.q.r.e))}));
+  host.innerHTML=scatterSvg(pts,{aria:"Index score against "+(xk==="cost"?"usage per task":"waiting time")+" for each model and effort level in the plan",host,H:520,maxLab:18,paths,
+    xfmt:xf,yfmt:v=>String(Math.round(v)),xtitle:xk==="cost"?"Usage per task: API-equivalent dollars per Index task":"Seconds to first answer token",ytitle:"AA Intelligence Index",front:"min"});
+  wire(host);
+  const front=paretoFront(pts,"min");
+  $("#sbuse-front").innerHTML=`<b>Worth running, ${xk==="cost"?"lightest":"quickest"} first:</b> `+front.map(q=>`${nm(q.q)} (${q.y} · ${xf(q.x)})`).join(" → ");
+  const beaten=pts.filter(q=>!front.includes(q)).map(q=>({q,by:front.filter(f=>f.y>=q.y&&f.x<=q.x).sort((a,b)=>b.y-a.y||a.x-b.x)[0]})).filter(d=>d.by)
+    .sort((a,b)=>b.q.y-a.q.y||b.q.x-a.q.x).slice(0,4);
+  $("#sbuse-skip").innerHTML=beaten.length?"<b>Beaten on both counts:</b> "+beaten.map(d=>`${nm(d.q.q)} (${d.q.y} · ${xf(d.q.x)}) by ${nm(d.by.q)} (${d.by.y} · ${xf(d.by.x)})`).join("; ")+".":"";
+}
+function renderTier(){
+  const host=$("#c-sbtier");
+  host.innerHTML=hbarSvg(PLANS.filter(p=>{const b=famBase(p.fam); return b&&b!==p&&perDollar(p)!=null;}).map(p=>{const v=perDollar(p), b=famBase(p.fam);
+    return {name:planName(p),v,fill:isFlat(p)?"var(--accent)":"var(--ink-3)",label:v.toFixed(2)+"×",
+      tip:`<b>${esc(planName(p))}</b>`+[["Price",usd(p.usd)+" a month"],["Published usage",planUse(p)],["Entry tier",esc(planName(b))+" · "+usd(b.usd)],["Entry tier's usage",planUse(b)],["Usage per dollar",v.toFixed(2)+"× the entry tier"]]
+        .map(([k,x])=>`<span class="tl"><span>${k}</span><span>${x}</span></span>`).join("")};}),
+    {aria:"Usage per dollar on each higher tier against the product's cheapest paid tier",host,W:980,ml:250,mr:110,rowH:21,tfmt:v=>v+"×"});
+  wire(host);
+}
+const PLAN_COLS=[["have","","l"],["fam","Plan","l"],["usd","$/mo",""],["top","Top model","l"],["idx","Index",""],["n","Models",""],["use","Published usage",""],["per","Per $ vs entry tier",""],["brk","API break-even",""]];
+const PLAN_VAL={fam:p=>PLANS.indexOf(p),usd:p=>p.usd,idx:p=>planBest(p)?planBest(p).r.aaii:null,n:p=>Object.keys(p.models).length,per:perDollar,brk:planBreak};
+function planDetail(p){
+  const F=planFam(p), b=planBest(p), k=planBreak(p), allow=p.pin||F.eff;
+  const mods=Object.keys(p.models).map(n=>{const ps=planPts(p).filter(q=>q.m.name===n).sort((x,y)=>y.r.aaii-x.r.aaii), hi=ps[0], lo=ps[ps.length-1];
+    const v=!ps.length?(effRowsAll(byName[n]).length?"not measured at these settings":"no Index score"):ps.length>1&&lo.r.aaii!==hi.r.aaii?lo.r.aaii+"–"+hi.r.aaii:String(hi.r.aaii);
+    const lv=ps.length>1?ps.length+" effort levels":hi&&hi.r.e!=="one"?hi.r.e:"";
+    return `<div class="dline"><span class="k">${esc(n)}${p.models[n]?`<span class="eff">${esc(p.models[n])}</span>`:""}${lv?`<span class="eff">${lv}</span>`:""}</span><span class="v mono${ps.length?"":" na"}"${ps.length?"":' style="font-weight:400;font-size:12px"'}>${v}</span></div>`;}).join("");
+  return `<tr class="det"><td colspan="${PLAN_COLS.length}"><div class="detbox">
+    <h3>${esc(planName(p))} <span class="badge ${isFlat(p)?"pro":"open"}">${isFlat(p)?"Flat-rate":"Token-metered"}</span><span class="badge ven">vendor-reported</span>
+      <span class="prov" style="font-weight:400">${esc(F.vendor)} · ${usd(p.usd)} a month${p.yr?" · "+usd(p.yr)+" for a year paid up front":""}</span></h3>
+    <p class="dnote"><b>Limits.</b> ${esc(p.lim)}</p>
+    <p class="dnote"><b>How usage is counted.</b> ${esc(F.burn)}</p>
+    <p class="dnote"><b>Past the limit.</b> ${esc(F.over)}</p>
+    <p class="dnote"><b>Where it works.</b> ${esc(F.surf)} ${p.pin?"Effort is fixed at "+p.pin.join(", ")+".":allow?"Effort levels documented: "+allow.map(e=>EFF_NAME[e].toLowerCase()).join(", ")+".":"The vendor documents no effort levels for the plan."}</p>
+    ${p.note?`<p class="dnote">${esc(p.note)}</p>`:""}
+    ${k!=null?`<p class="dnote"><b>Against the API.</b> One Index task with ${esc(b.m.name)}${effTag(b.r)} costs ${money(b.r.cost)} at API list prices, so the ${usd(p.usd)} fee equals ${tasksN(k)} such tasks a month.${!isFlat(p)&&F.atList?` The $${p.x} allowance covers about ${tasksN(p.x/b.r.cost)} of them.`:""}</p>`:""}
+    <p class="effh">Board models, with the Index score each reaches on this plan</p>${mods}
+    <p class="dsrc">Source: <a href="${F.url}" target="_blank" rel="noopener">${F.url.replace(/^https:\/\//,"")}</a> and the vendor's help and docs pages, read ${PLAN_ASOF}.</p>
+  </div></td></tr>`;
+}
+function renderPlanTable(){
+  const th=$("#plantab thead"), tb=$("#plantab tbody"), k=state.planSort, f=PLAN_VAL[k];
+  th.innerHTML="<tr>"+PLAN_COLS.map(([c,l,cl])=>`<th class="${cl}"${PLAN_VAL[c]?` data-k="${c}"`:""}${c===k?" data-active":""}${c==="have"?' title="Your plans"':""}>${l}${PLAN_VAL[c]?` <span class="arw">${c===k&&state.planDir>0?"▴":"▾"}</span>`:""}</th>`).join("")+"</tr>";
+  $$("#plantab thead th[data-k]").forEach(el=>el.onclick=()=>{ const c=el.dataset.k;
+    if(state.planSort===c) state.planDir*=-1; else { state.planSort=c; state.planDir=c==="idx"||c==="n"||c==="per"?-1:1; } renderPlanTable(); });
+  const rows=[...PLANS].sort((a,b)=>{const av=f(a), bv=f(b); if(av==null&&bv==null) return PLANS.indexOf(a)-PLANS.indexOf(b); if(av==null) return 1; if(bv==null) return -1;
+    return state.planDir*(av-bv)||PLANS.indexOf(a)-PLANS.indexOf(b);});
+  tb.innerHTML=rows.map((p,i)=>{const b=planBest(p), F=planFam(p), on=state.planOpen===p.id, has=state.mine.has(p.id), pd=perDollar(p), br=planBreak(p), nu='<td class="mono na" title="Not published by the vendor">—</td>';
+    return `<tr data-plan="${p.id}" class="${on?"open":""}${k==="fam"&&state.planDir>0&&i&&rows[i-1].fam!==p.fam?" fam0":""}">
+      <td class="l"><button type="button" class="have" data-have="${p.id}" aria-pressed="${has}" aria-label="${esc(planName(p))}: ${has?"remove from":"add to"} your plans" title="${has?"One of your plans. Select to remove it":"Add to your plans"}">${has?"✓":"+"}</button></td>
+      <td class="l"><span class="mname"><span class="dot" style="background:${isFlat(p)?"var(--accent)":"var(--ink-3)"}" title="${isFlat(p)?"Flat-rate":"Token-metered"}"></span>${esc(planName(p))}<span class="prov">${esc(F.vendor)}</span></span></td>
+      <td class="mono">${usd(p.usd)}<span class="q ven" title="${QL.ven}"></span></td>
+      ${b?`<td class="l">${esc(b.m.name)}${b.r.e!=="one"?`<span class="eff">${b.r.e}</span>`:""}</td><td class="mono">${b.r.aaii}</td>`:'<td class="l na" title="No model in the plan has an Index score at the settings it offers">—</td><td class="mono na">—</td>'}
+      <td class="mono">${Object.keys(p.models).length}</td>
+      ${p.x!=null?`<td class="mono">${planUse(p,1)}</td>`:nu}
+      ${pd!=null?`<td class="mono">${famBase(p.fam)===p?"entry":pd.toFixed(2)+"×"}</td>`:nu}
+      ${br!=null?`<td class="mono">${tasksN(br)} tasks</td>`:'<td class="mono na">—</td>'}</tr>`+(on?planDetail(p):"");}).join("");
+  $$("#plantab tbody tr[data-plan]").forEach(tr=>tr.onclick=()=>{ state.planOpen=state.planOpen===tr.dataset.plan?null:tr.dataset.plan; renderPlanTable(); });
+  $$("#plantab .have").forEach(b=>b.onclick=e=>{ e.stopPropagation(); planToggle(b.dataset.have); });
+}
+function renderSubs(){ renderMine(); renderLadder(); renderUse(); renderTier(); renderPlanTable(); }
+$("#sbplan").onchange=e=>{ state.subPlan=e.target.value; renderUse(); syncURL(); };
+$("#sbx").onchange=e=>{ state.subX=e.target.value; renderUse(); syncURL(); };
 
 /* ---------------- tabs ---------------- */
 const curTab=()=>$('.tab[aria-selected="true"]').dataset.p;
@@ -2267,7 +2844,7 @@ $$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); setTab(t.dataset.p); rend
    On load: state is applied, the page renders, and only then does it scroll to the named section and start tracking.
    state.sec is the section the URL names (null = the first). It changes only when the visitor scrolls or follows a jump link,
    never because a control or a late font changed the page height. */
-const TABQ={board:"board",quad:"charts",bench:"benchmarks",src:"sources"};
+const TABQ={board:"board",subs:"subscriptions",quad:"charts",bench:"benchmarks",src:"sources"};
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9.]+/g,"-").replace(/^-+|-+$/g,"");
 const secCards=()=>$$("#p-quad .card[id^='ch-']").filter(c=>c.getClientRects().length);
 const secOff=()=>$(".top").offsetHeight+$(".rail").offsetHeight+12;       // just below the two sticky bars
@@ -2295,6 +2872,10 @@ function secTrack(force){
 function syncURL(){
   const q=[], c=state.cmp, t=curTab();
   if(t!=="board") q.push("tab="+TABQ[t]);
+  if(state.lens==="api") q.push("lens=api");
+  if(state.mine.size) q.push("plans="+PLANS.filter(p=>state.mine.has(p.id)).map(p=>p.id).join(","));
+  if(state.onlyMine) q.push("mine=1");
+  if(t==="subs"){ if(state.subPlan) q.push("plan="+state.subPlan); if(state.subX==="ttft") q.push("against=wait"); }
   if(t==="quad"){
     if(state.sec) q.push("chart="+state.sec);
     if(state.effSel&&[...state.effSel].join("|")!==effPreset("default").join("|")) q.push("models="+[...state.effSel].map(slug).join(","));
@@ -2312,6 +2893,16 @@ function urlApply(){
   const hs=location.hash.slice(1); if(/^ch-/.test(hs)&&secOK(hs.slice(3))){ sec=hs.slice(3); tab="quad"; }   // an old #ch-… link
   if(!tab&&sec) tab="quad";
   if(tab) setTab(tab);
+  // pricing lens and the visitor's plans: the link first, then what this browser saved, then the defaults.
+  // A link to a chart that only the API lens shows (an older ?chart=price or #ch-price link) opens under that lens.
+  const saved=k=>{try{return localStorage.getItem(k);}catch(e){return null;}}, ids=new Set(PLANS.map(x=>x.id));
+  const apiSec=!!sec&&document.getElementById("ch-"+sec).dataset.lens==="api";
+  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":apiSec||saved(LENS_KEY)==="api"?"api":"sub";
+  let mine=null; if(p.has("plans")) mine=p.get("plans").split(","); else try{mine=JSON.parse(saved(PLAN_KEY));}catch(e){}
+  state.mine=new Set((Array.isArray(mine)?mine:[]).filter(x=>ids.has(x)));
+  state.onlyMine=on(p.get("mine"))&&state.mine.size>0;
+  if(p.get("plan")==="mine"||ids.has(p.get("plan"))) state.subPlan=p.get("plan");
+  if(p.get("against")==="wait") state.subX="ttft";
   state.sec=tab==="quad"&&sec&&"ch-"+sec!==$("#p-quad .card[id^='ch-']").id?sec:null;
   let names=null;
   if(p.has("models")){ const by=new Map(MODELS.map(m=>[slug(m.name),m.name])), ids=p.get("models").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
@@ -2341,7 +2932,7 @@ function urlLand(){
 }
 $("#xaxis").onchange=$("#yaxis").onchange=()=>renderQuad(filtered());
 let lastW=innerWidth; addEventListener("resize",()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>{
-  if(Math.abs(innerWidth-lastW)>40&&$("#p-quad").classList.contains("on")){ lastW=innerWidth; const pin=secPin&&state.sec; render(); pin?secGo(state.sec):(secY=scrollY); } },150); });
+  if(Math.abs(innerWidth-lastW)>40&&($("#p-quad").classList.contains("on")||$("#p-subs").classList.contains("on"))){ lastW=innerWidth; const pin=secPin&&state.sec; render(); pin?secGo(state.sec):(secY=scrollY); } },150); });
 $("#foot-src").onclick=e=>{e.preventDefault(); $('.tab[data-p="src"]').click(); scrollTo(0,0);};
 
 
@@ -2361,14 +2952,16 @@ function openModel(name){
   const m=MODELS.find(x=>x.name===name); if(!m) return;
   state.tiers.add(m.tier); state.q=""; $("#q").value=""; state.prov=""; $("#provsel").value="";
   state.weights.add(m.open?"open":"closed");
+  if(state.onlyMine&&!minePlans(name).length){ state.onlyMine=false; renderRail(); }
   buildChips($("#tierchips"),TIERS,state.tiers); buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights);
   $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p==="board"));
   $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-board"));
-  state.openRow=name; render();
+  state.openRow=name; render(); syncURL();
   const tr=[...$$("#board tbody tr[data-m]")].find(r=>r.dataset.m===name);
   if(tr) tr.scrollIntoView({behavior:"smooth",block:"center"});
 }
 function renderPicks(){
+  if(state.lens!=="api") return subPicks();
   const cur=MODELS.filter(m=>m.tier!=="legacy"), has=k=>cur.filter(m=>val(m,k)!=null);
   const byDesc=(a,k)=>[...a].sort((x,y)=>val(y,k)-val(x,k)), byAsc=(a,k)=>[...a].sort((x,y)=>val(x,k)-val(y,k));
   const idx=has("aaii"), top=byDesc(idx,"aaii")[0], medI=(()=>{const v=idx.map(m=>val(m,"aaii")).sort((a,b)=>a-b);return v[Math.floor(v.length/2)];})();
@@ -2417,6 +3010,7 @@ function render(){
   $("#shown").textContent=rows.length;
   const active=$('.tab[aria-selected="true"]').dataset.p;
   if(active==="board") renderBoard(rows);
+  if(active==="subs") renderSubs();
   if(active==="quad") renderCharts(rows);
   if(active==="bench") renderBench(rows);
 }
@@ -2428,6 +3022,8 @@ renderSources();
 renderPicks();
 renderChanges();
 urlApply();
+renderRail();
+renderPicks();
 render();
 addEventListener("resize",()=>{
   const h=$(".top").offsetHeight; document.documentElement.style.setProperty("--topH",h+"px");

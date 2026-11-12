@@ -2,7 +2,7 @@
 
 The full project rules are in `CLAUDE.md`. Read it before reviewing or editing anything. This file restates what a reviewer must check, so Codex applies the same rules.
 
-Everything the site serves is in `index.html` (HTML, CSS, JS and the data blocks `ASOF`, `BENCH`, `MODELS`, `EFFORT`, `PRICES`, `CHANGELOG`, `CAVEATS`). There is no build step and there are no dependencies. `scripts/` holds dev-only checks.
+Everything the site serves is in `index.html` (HTML, CSS, JS and the data blocks `ASOF`, `BENCH`, `MODELS`, `EFFORT`, `PRICES`, `PLAN_ASOF`, `PLAN_FAMILIES`, `PLANS`, `CHANGELOG`, `CAVEATS`). There is no build step and there are no dependencies. `scripts/` holds dev-only checks.
 
 ## Review guidelines
 
@@ -12,6 +12,8 @@ Flag these as P1 (they break the board's sourcing rules or the page):
 - A score that is estimated or guessed. A missing score must be omitted.
 - A new benchmark id used without a `BENCH` entry and a `BENCH_ORDER` entry.
 - An `EFFORT` first row that doesn't match the model's `aaii` and `costTask`, or names that don't match across `MODELS`, `EFFORT` and `PRICES`.
+- Subscription data (`PLAN_FAMILIES`, `PLANS`) taken from anywhere but the vendor's own pricing, help or docs pages, or a plan's usage figure `x`, effort list or limit that the vendor does not publish and the PR estimated or derived from another tier.
+- A plan that lists a model no vendor page names for it, or a launch promotion counted as part of a plan.
 - A data change without a `CHANGELOG` entry, or `ASOF` not equal to the newest `CHANGELOG` date.
 - A JavaScript error, a broken tab, or a change that drops `<!doctype html>`, the charset or viewport meta, the `<title>`, the light/dark theme tokens, the footer's source credits, or the copyright line `© 2026 millibus. All rights reserved.`
 - Deleting `.nojekyll`, or adding a LICENSE file.
@@ -22,6 +24,7 @@ Flag these as P2:
 - A model note, `BENCH` description, warning or caveat that quotes a number the data no longer has, or claims a figure the model has no tuple for.
 - Wording that ages: ranks ("second on WebDev"), "today", "newest", "N days old", promo deadlines.
 - A `ctx` value not marked `ven`.
+- A plan change without `PLAN_ASOF` bumped to the day the vendor pages were read, or a plan listed that is sold only in another currency, closed to new customers or out of stock, or names no model on the board.
 - A `none` (non-reasoning) row added back to GPT-6 Luna's `EFFORT` data; the owner asked for it off the board.
 - A new independent evaluator supplying scores without being added to the footer list and the README.
 
@@ -33,7 +36,7 @@ Don't flag:
 
 ```
 node scripts/check-data.mjs    # data consistency, no dependencies
-node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, header matches data
+node scripts/smoke.mjs         # headless Chromium: all five tabs, the Subscriptions tab and pricing lens, no errors, header matches data
 ```
 
 Both must pass, and the `checks` GitHub Actions workflow runs them on every PR. `smoke.mjs` needs Playwright and a Chromium; set `CHROMIUM_PATH` if the browser isn't at `/opt/pw-browsers/chromium`. Never run `playwright install`.

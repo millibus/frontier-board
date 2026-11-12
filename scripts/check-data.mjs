@@ -20,8 +20,8 @@ function slice(from, to) {
 }
 const dataJs = slice("const ASOF", "/* ============================== rendering");
 const cavJs = slice("const CAVEATS=", "function renderSources");
-const D = vm.runInNewContext(`(function(){${dataJs}\n${cavJs}\nreturn {ASOF,ASOF_NOTE,BENCH,MODELS,EFFORT,PRICES,CHANGELOG,CAVEATS};})()`);
-const { ASOF, ASOF_NOTE, BENCH, MODELS, EFFORT, PRICES, CHANGELOG, CAVEATS } = D;
+const D = vm.runInNewContext(`(function(){${dataJs}\n${cavJs}\nreturn {ASOF,ASOF_NOTE,BENCH,MODELS,EFFORT,PRICES,CHANGELOG,CAVEATS,PLAN_ASOF,PLAN_FAMILIES,PLANS};})()`);
+const { ASOF, ASOF_NOTE, BENCH, MODELS, EFFORT, PRICES, CHANGELOG, CAVEATS, PLAN_ASOF, PLAN_FAMILIES, PLANS } = D;
 const listConst = name => {
   const m = html.match(new RegExp(`const ${name}=\\[([\\s\\S]*?)\\];`));
   if (!m) throw new Error(`Could not find ${name}`);
@@ -122,6 +122,47 @@ for (const [n, p] of Object.entries(PRICES)) {
   for (const f of ["in", "out"]) if (typeof p[f] !== "number") err(`PRICES["${n}"]: ${f} must be a number`);
 }
 
+/* ---------- subscriptions: PLAN_FAMILIES & PLANS ---------- */
+const planAsof = latestDate(PLAN_ASOF);
+if (!planAsof) err(`PLAN_ASOF "${PLAN_ASOF}" is unreadable — use "D Mon YYYY"`);
+else if (latestDate(ASOF) && planAsof > latestDate(ASOF)) err(`PLAN_ASOF "${PLAN_ASOF}" is later than ASOF "${ASOF}"`);
+for (const [f, F] of Object.entries(PLAN_FAMILIES)) {
+  const id = `PLAN_FAMILIES.${f}`;
+  for (const k of ["vendor", "l", "url", "surf", "burn", "over"]) if (typeof F[k] !== "string" || !F[k]) err(`${id}: missing ${k}`);
+  if (!["flat", "metered"].includes(F.kind)) err(`${id}: kind must be "flat" or "metered"`);
+  if (!/^https:\/\//.test(F.url || "")) err(`${id}: url must be an https link to the vendor's own page`);
+  if (F.eff && (!Array.isArray(F.eff) || !F.eff.length)) err(`${id}: eff must be a non-empty list, or left out when the vendor publishes none`);
+  for (const e of F.eff || []) if (!EFF_ORDER.includes(e)) err(`${id}: effort level "${e}" is not in EFF_ORDER`);
+  if (F.atList && F.kind !== "metered") err(`${id}: atList only applies to a metered family`);
+  if (!PLANS.some(p => p.fam === f)) err(`${id}: no plan uses this family`);
+}
+const planIds = new Set();
+for (const p of PLANS) {
+  const id = `PLANS["${p.id}"]`, F = PLAN_FAMILIES[p.fam];
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.id || "")) err(`${id}: id must be lower-case words joined by hyphens (it goes in the URL)`);
+  if (planIds.has(p.id)) err(`${id}: duplicate plan id`);
+  planIds.add(p.id);
+  if (p.id === "mine") err(`${id}: "mine" is reserved for the visitor's own plans`);
+  if (!F) { err(`${id}: unknown family "${p.fam}"`); continue; }
+  if (typeof p.name !== "string" || !p.name) err(`${id}: missing name`);
+  if (typeof p.usd !== "number" || !Number.isFinite(p.usd) || p.usd < 0) err(`${id}: usd must be the monthly price, a number of dollars`);
+  if (p.yr != null && (typeof p.yr !== "number" || !Number.isFinite(p.yr) || p.yr <= p.usd || p.yr > p.usd * 12)) err(`${id}: yr ${p.yr} is not a plausible price for a year (more than a month, at most twelve)`);
+  if (p.x != null && (typeof p.x !== "number" || !Number.isFinite(p.x) || !(p.x > 0))) err(`${id}: x must be a positive number, or left out when the vendor publishes no usage figure`);
+  if (p.x != null && !F.xu) err(`${id}: has x but its family has no xu unit`);
+  if (p.pin && (!Array.isArray(p.pin) || !p.pin.length)) err(`${id}: pin must be a non-empty list of effort levels`);
+  for (const e of p.pin || []) if (!EFF_ORDER.includes(e)) err(`${id}: pinned effort level "${e}" is not in EFF_ORDER`);
+  if (typeof p.lim !== "string" || !p.lim) err(`${id}: missing lim (the limits as the vendor publishes them)`);
+  if (typeof p.note !== "string") err(`${id}: note must be a string ("" if there is nothing to add)`);
+  const ms = Object.entries(p.models || {});
+  if (!ms.length) err(`${id}: must include at least one model on the board`);
+  for (const [n, note] of ms) {
+    if (!byName[n]) { err(`${id}: no model named "${n}"`); continue; }
+    if (typeof note !== "string") err(`${id}: the access note for "${n}" must be a string`);
+    const rel = relDate(byName[n].rel);
+    if (planAsof && rel && rel > planAsof) err(`${id}: "${n}" was released ${byName[n].rel}, after PLAN_ASOF "${PLAN_ASOF}"`);
+  }
+}
+
 /* ---------- ASOF & CHANGELOG ---------- */
 if (!CHANGELOG.length) err("CHANGELOG is empty");
 else {
@@ -154,5 +195,5 @@ if (!html.includes("© 2026 millibus. All rights reserved.")) err("Copyright lin
 const nTuples = MODELS.reduce((a, m) => a + Object.keys(m.s || {}).length, 0);
 for (const w of warnings) console.log("warn  " + w);
 for (const e of errors) console.log("ERROR " + e);
-console.log(`${MODELS.length} models · ${Object.keys(BENCH).length} benchmarks · ${nTuples} scores · ASOF ${ASOF} — ${errors.length} error(s), ${warnings.length} warning(s)`);
+console.log(`${MODELS.length} models · ${Object.keys(BENCH).length} benchmarks · ${nTuples} scores · ${PLANS.length} plans · ASOF ${ASOF} — ${errors.length} error(s), ${warnings.length} warning(s)`);
 process.exit(errors.length ? 1 : 0);

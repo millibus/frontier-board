@@ -4,7 +4,7 @@ alwaysApply: true
 ---
 # frontier-board
 
-Single-page LLM benchmark aggregator. Everything the site serves is in `index.html` (HTML, CSS, JS and the BENCH / MODELS / EFFORT / PRICES / CHANGELOG data blocks). No build step, no dependencies; `.nojekyll` must stay. `CLAUDE.md` defines the data formats, quality tags (`ind` / `ven` / `unv`) and update checklist; follow it.
+Single-page LLM benchmark aggregator. Everything the site serves is in `index.html` (HTML, CSS, JS and the BENCH / MODELS / EFFORT / PRICES / PLAN_FAMILIES / PLANS / CHANGELOG data blocks). No build step, no dependencies; `.nojekyll` must stay. `CLAUDE.md` defines the data formats, quality tags (`ind` / `ven` / `unv`) and update checklist; follow it.
 
 ## Local checks
 - `node scripts/check-data.mjs` - validates the data blocks (no dependencies). Run it before every PR.

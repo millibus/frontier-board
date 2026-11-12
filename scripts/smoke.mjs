@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Headless-Chromium smoke test for index.html: serves the repo over local HTTP,
-   clicks every tab, and fails on page errors, an empty board, or a header that
+   clicks every tab, exercises the Subscriptions tab and the pricing lens, and fails on page errors, an empty board, or a header that
    doesn't match the data.  Uses an existing playwright / playwright-core install
    (local or global); nothing is added to the site.
    Usage: node scripts/smoke.mjs   (CHROMIUM_PATH overrides the browser binary) */
@@ -28,6 +28,7 @@ const { chromium } = loadPlaywright();
 const html = readFileSync(join(root, "index.html"), "utf8");
 const ASOF = html.match(/const ASOF = "([^"]+)"/)[1];
 const nModels = (html.slice(html.indexOf("const MODELS"), html.indexOf("const EFFORT")).match(/\{name:"/g) || []).length;
+const nPlans = (html.slice(html.indexOf("const PLANS"), html.indexOf("const CHANGELOG")).match(/\{id:"/g) || []).length;
 
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 const server = createServer((req, res) => {
@@ -62,7 +63,7 @@ try {
   await page.locator("#board tbody tr[data-m]").first().click();
   if (!(await page.locator("#board .detbox").count())) problems.push("clicking a row did not open its detail panel");
 
-  for (const t of ["quad", "bench", "src", "board"]) {
+  for (const t of ["subs", "quad", "bench", "src", "board"]) {
     await page.click(`.tab[data-p="${t}"]`);
     const on = await page.locator(`#p-${t}.on`).count();
     if (!on) problems.push(`tab ${t} did not open`);
@@ -70,6 +71,85 @@ try {
   if (!(await page.locator("#c-index svg").count())) problems.push("Charts tab rendered no Intelligence Index chart");
   if (!(await page.locator("#benchhost .card").count())) problems.push("Benchmarks tab rendered no cards");
   if (!(await page.locator("#caveats .srccard").count())) problems.push("Sources tab rendered no caveats");
+  if (!(await page.locator("#planlist .srccard").count())) problems.push("Sources tab rendered no subscription plan sources");
+
+  /* ---------- subscriptions: the tab, the visitor's plans, the pricing lens (begin) ---------- */
+  {
+    const bad = m => problems.push("subscriptions: " + m);
+    const pressed = (s, v) => page.getAttribute(s, "aria-pressed").then(a => a === v);
+    await page.click('.tab[data-p="subs"]');
+    if ((await page.locator("#plantab tbody tr[data-plan]").count()) !== nPlans) bad(`plan table does not have ${nPlans} rows`);
+    if ((await page.locator("#sbpick .chip").count()) !== nPlans) bad(`plan picker does not have ${nPlans} chips`);
+    for (const c of ["#c-sbladder", "#c-sbuse", "#c-sbtier"]) if (!(await page.locator(`${c} svg`).count())) bad(`${c} drew no chart`);
+    if (!(await page.locator("#c-sbladder .frontline").count())) bad("the plan chart has no Pareto frontier");
+    if (await page.locator("#c-sbladder .ring").count()) bad("the plan chart rings a plan as yours before any plan is picked");
+    if (!(await page.locator("#c-sbuse .frontline").count())) bad("the model-and-effort chart has no Pareto frontier");
+    if (!(await page.textContent("#sbuse-front")).includes("→")) bad("the model-and-effort chart lists no frontier settings");
+    // every plan must chart without an error, and say so when nothing it offers has been measured
+    const each = await page.evaluate(() => PLANS.map(p => { state.subPlan = p.id; renderUse();
+      return document.querySelector("#c-sbuse svg") || document.querySelector("#c-sbuse .empty") ? null : p.id; }).filter(Boolean));
+    if (each.length) bad(`these plans drew neither a chart nor a notice: ${each.join(", ")}`);
+    await page.evaluate(() => { state.subPlan = null; renderUse(); });
+    // a row opens its detail with a link to the vendor's page
+    const first = page.locator("#plantab tbody tr[data-plan]").first(), pid = await first.getAttribute("data-plan");
+    await first.click();
+    const href = await page.locator("#plantab .detbox .dsrc a").getAttribute("href").catch(() => null);
+    if (!href || !href.startsWith("https://")) bad("an opened plan row shows no source link");
+    // picking a plan: the chip, the summary, the URL, the Board marks and the filter
+    await page.click(`#sbpick [data-plan="${pid}"]`);
+    if (!(await pressed(`#sbpick [data-plan="${pid}"]`, "true"))) bad("a picked plan chip is not pressed");
+    if (!page.url().includes(`plans=${pid}`)) bad(`picking a plan did not put plans=${pid} in the URL`);
+    if (!(await page.textContent("#sbsum")).includes("a month")) bad("the summary does not total the picked plans");
+    const nIn = await page.evaluate(id => Object.keys(PLANS.find(p => p.id === id).models).length, pid);
+    await page.click('.tab[data-p="board"]');
+    if (!(await page.locator("#board thead th[data-k='plan']").count())) bad("the Board has no plan column under the subscription lens");
+    if (!(await page.locator("#board .mine").count())) bad("the Board marks no model as in the picked plan");
+    await page.evaluate(() => { state.tiers = new Set(["frontier", "challenger", "legacy"]); });
+    await page.click("#minechip");
+    const shown = +(await page.textContent("#shown"));
+    if (shown !== nIn) bad(`In my plans shows ${shown} models, the plan has ${nIn}`);
+    if (!page.url().includes("mine=1")) bad("the In my plans filter is not in the URL");
+    // opening a model the plan leaves out clears the filter, and the URL must say so too
+    const outside = await page.evaluate(id => MODELS.find(m => m.tier !== "legacy" && !(m.name in PLANS.find(p => p.id === id).models)).name, pid);
+    await page.evaluate(n => openModel(n), outside);
+    if (page.url().includes("mine=1")) bad("opening a model outside the picked plans cleared the filter but left mine=1 in the URL");
+    await page.click("#minechip");
+    if (!page.url().includes("mine=1")) bad("the In my plans filter is not in the URL after it is turned back on");
+    await page.click("#minechip");
+    await page.evaluate(() => { state.tiers = new Set(["frontier", "challenger"]); render(); });
+    // the link restores the plans in a fresh page
+    const again = await browser.newPage();
+    await again.goto(page.url().replace(/\?.*$/, "") + `?tab=subscriptions&plans=${pid},not-a-plan&plan=${pid}`, { waitUntil: "load" });
+    if ((await again.evaluate(() => [...state.mine].join())) !== pid) bad("a link's plans= did not restore the picked plans, or kept an unknown id");
+    if ((await again.inputValue("#sbplan")) !== pid) bad("a link's plan= did not select that plan");
+    await again.close();
+    // a link from before the lens existed that names an API-price chart still lands on it
+    for (const old of ["?tab=charts&chart=price", "#ch-ppp"]) {
+      const o = await browser.newPage();
+      await o.goto(page.url().replace(/[?#].*$/, "") + old, { waitUntil: "load" });
+      if (!(await o.locator("#ch-" + old.replace(/.*[=-]/, "")).isVisible())) bad(`the older link ${old} opens with its chart hidden`);
+      await o.close();
+    }
+    // the pricing lens: API brings back the blended price column and the API-price charts
+    await page.click('#lens [data-v="api"]');
+    if (!(await page.locator("#board thead th[data-k='price']").count()) || (await page.locator("#board thead th[data-k='plan']").count())) bad("the API lens does not swap the plan column for the blended price");
+    if (!page.url().includes("lens=api")) bad("the API lens is not in the URL");
+    await page.click('.tab[data-p="quad"]');
+    for (const c of ["#ch-price", "#ch-blend", "#ch-ppp"]) if (!(await page.locator(c).isVisible())) bad(`${c} is hidden under the API lens`);
+    // an API-only chart named in the URL is dropped when the lens it needs is switched off
+    await page.click('#jump a[href="#ch-ppp"]');
+    if (!page.url().includes("chart=ppp")) bad("following the Price of a point jump link did not put chart=ppp in the URL");
+    // read the URL in the same task as the click: a later scroll event can hide the bug by re-tracking the section
+    const afterLens = await page.evaluate(() => { document.querySelector('#lens [data-v="sub"]').click(); return location.search; });
+    if (/chart=(price|blend|ppp)/.test(afterLens)) bad(`switching to the subscription lens left an API-only chart in the URL: ${afterLens}`);
+    for (const c of ["#ch-price", "#ch-blend", "#ch-ppp"]) if (await page.locator(c).isVisible()) bad(`${c} is shown under the subscription lens`);
+    if (!(await page.locator('#cmpgroups [data-g="mine"]').count())) bad("the effort charts offer no My plans group once a plan is picked");
+    // leave the page as it was found: no plans, subscription lens, Board tab
+    await page.evaluate(id => { planToggle(id); try { localStorage.removeItem("fb-plans"); localStorage.removeItem("fb-lens"); } catch (e) {} }, pid);
+    await page.click('.tab[data-p="board"]');
+    if (/plans=|lens=|mine=/.test(page.url())) bad(`clearing the plans left "${page.url().split("?")[1] || ""}" in the URL`);
+  }
+  /* ---------- subscriptions (end) ---------- */
 
   /* ---------- effort-line charts: drawing, point details, hit testing (begin) ---------- */
   {
@@ -346,7 +426,7 @@ try {
   }
   /* ===== comparison controls + shareable URL: end ===== */
 
-  console.log(`${rows} board rows · ${nm} models · ASOF ${asof}`);
+  console.log(`${rows} board rows · ${nm} models · ${nPlans} plans · ASOF ${asof}`);
 } finally {
   await browser.close();
   server.close();
