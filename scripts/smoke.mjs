@@ -82,6 +82,7 @@ try {
     if ((await page.locator("#sbpick .chip").count()) !== nPlans) bad(`plan picker does not have ${nPlans} chips`);
     for (const c of ["#c-sbladder", "#c-sbuse", "#c-sbtier"]) if (!(await page.locator(`${c} svg`).count())) bad(`${c} drew no chart`);
     if (!(await page.locator("#c-sbladder .frontline").count())) bad("the plan chart has no Pareto frontier");
+    if (await page.locator("#c-sbladder .ring").count()) bad("the plan chart rings a plan as yours before any plan is picked");
     if (!(await page.locator("#c-sbuse .frontline").count())) bad("the model-and-effort chart has no Pareto frontier");
     if (!(await page.textContent("#sbuse-front")).includes("→")) bad("the model-and-effort chart lists no frontier settings");
     // every plan must chart without an error, and say so when nothing it offers has been measured

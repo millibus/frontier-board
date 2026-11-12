@@ -2002,7 +2002,7 @@ function scatterSvg(pts,o){
     if(near){ near.label+=" & "+m.label; m.nolabel=true; }
     marks.push(m);});
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`
-    +(m.multi||m.ring?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
+    +((o.ownRing?m.ring:m.multi)?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
   const qw=t=>t.length*(nar?7:8.2)+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
     {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
   // a quadrant caption is left out when a dot sits on it
@@ -2725,11 +2725,11 @@ function renderLadder(){
   const pts=paid.map(p=>{const b=planBest(p), mine=state.mine.has(p.id);
     return {x:p.usd,y:b.r.aaii,r:mine?7:5.5,ring:mine,flat:isFlat(p),fill:isFlat(p)?"var(--accent)":"var(--ink-3)",label:planName(p),plan:p,best:b,tip:planTip(p)};});
   host.innerHTML=scatterSvg(pts,{aria:"Monthly subscription price against the top Index score each plan reaches",host,H:540,maxLab:30,xfmt:money,yfmt:v=>String(Math.round(v)),
-    xtitle:"Monthly price, US dollars",ytitle:"Top Index score in the plan",front:"min",frontOf:q=>q.flat});
+    xtitle:"Monthly price, US dollars",ytitle:"Top Index score in the plan",front:"min",frontOf:q=>q.flat,ownRing:true});
   wire(host);
   $("#sbladder-sub").textContent="Each dot is a paid plan: its monthly price against the highest Artificial Analysis Index score it can reach at the effort levels it offers, on a log scale. "
     +"The solid line is the Pareto frontier of flat-rate plans: no cheaper flat-rate plan reaches a higher score. Grey dots are token-metered plans, kept off the frontier because their fee buys a dollar allowance rather than a rate limit. "
-    +"The chart shows what a fee unlocks, not how much of it you get: vendors rarely publish the size of an allowance."
+    +"The chart shows what a fee unlocks, not how much of it you get: vendors rarely publish the size of an allowance. A ring marks one of your plans; plans at the same price and score share a dot and a label."
     +(free.length?" Free plans can't sit on a log axis: "+free.map(p=>`${planName(p)} reaches Index ${planBest(p).r.aaii} with ${planBest(p).m.name}`).join("; ")+".":"");
   const front=paretoFront(pts.filter(q=>q.flat),"min");
   $("#sbladder-front").innerHTML="<b>On the frontier, cheapest first:</b> "+front.map(q=>`${esc(q.label)} (${usd(q.x)} · Index ${q.y} · ${esc(q.best.m.name)}${effTag(q.best.r)})`).join(" → ");
