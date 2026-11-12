@@ -109,6 +109,12 @@ try {
     const shown = +(await page.textContent("#shown"));
     if (shown !== nIn) bad(`In my plans shows ${shown} models, the plan has ${nIn}`);
     if (!page.url().includes("mine=1")) bad("the In my plans filter is not in the URL");
+    // opening a model the plan leaves out clears the filter, and the URL must say so too
+    const outside = await page.evaluate(id => MODELS.find(m => m.tier !== "legacy" && !(m.name in PLANS.find(p => p.id === id).models)).name, pid);
+    await page.evaluate(n => openModel(n), outside);
+    if (page.url().includes("mine=1")) bad("opening a model outside the picked plans cleared the filter but left mine=1 in the URL");
+    await page.click("#minechip");
+    if (!page.url().includes("mine=1")) bad("the In my plans filter is not in the URL after it is turned back on");
     await page.click("#minechip");
     await page.evaluate(() => { state.tiers = new Set(["frontier", "challenger"]); render(); });
     // the link restores the plans in a fresh page
@@ -130,7 +136,12 @@ try {
     if (!page.url().includes("lens=api")) bad("the API lens is not in the URL");
     await page.click('.tab[data-p="quad"]');
     for (const c of ["#ch-price", "#ch-blend", "#ch-ppp"]) if (!(await page.locator(c).isVisible())) bad(`${c} is hidden under the API lens`);
-    await page.click('#lens [data-v="sub"]');
+    // an API-only chart named in the URL is dropped when the lens it needs is switched off
+    await page.click('#jump a[href="#ch-ppp"]');
+    if (!page.url().includes("chart=ppp")) bad("following the Price of a point jump link did not put chart=ppp in the URL");
+    // read the URL in the same task as the click: a later scroll event can hide the bug by re-tracking the section
+    const afterLens = await page.evaluate(() => { document.querySelector('#lens [data-v="sub"]').click(); return location.search; });
+    if (/chart=(price|blend|ppp)/.test(afterLens)) bad(`switching to the subscription lens left an API-only chart in the URL: ${afterLens}`);
     for (const c of ["#ch-price", "#ch-blend", "#ch-ppp"]) if (await page.locator(c).isVisible()) bad(`${c} is shown under the subscription lens`);
     if (!(await page.locator('#cmpgroups [data-g="mine"]').count())) bad("the effort charts offer no My plans group once a plan is picked");
     // leave the page as it was found: no plans, subscription lens, Board tab

@@ -2650,7 +2650,11 @@ function renderRail(){
   c.textContent=n?"In my plans · "+n:"Pick my plans"; c.setAttribute("aria-pressed",state.onlyMine);
   c.title=n?"Show only the models your picked plans include, on every tab":"Open the Subscriptions tab and pick the plans you pay for";
 }
-function setLens(l){ state.lens=l; try{localStorage.setItem(LENS_KEY,l);}catch(e){} renderRail(); renderPicks(); render(); syncURL(); }
+function setLens(l){ state.lens=l; try{localStorage.setItem(LENS_KEY,l);}catch(e){} renderRail(); renderPicks(); render();
+  // a chart section the new lens hides can't stay in the URL: a reload would bring the old lens back with it
+  const sc=state.sec&&document.getElementById("ch-"+state.sec);
+  if(sc&&sc.dataset.lens&&sc.dataset.lens!==l){ state.sec=null; secTrack(true); }
+  syncURL(); }
 function mineChanged(){ try{localStorage.setItem(PLAN_KEY,JSON.stringify([...state.mine]));}catch(e){}
   if(!state.mine.size) state.onlyMine=false; renderRail(); renderPicks(); render(); syncURL(); }
 const planToggle=id=>{ state.mine.has(id)?state.mine.delete(id):state.mine.add(id); mineChanged(); };
@@ -2952,7 +2956,7 @@ function openModel(name){
   buildChips($("#tierchips"),TIERS,state.tiers); buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights);
   $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p==="board"));
   $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-board"));
-  state.openRow=name; render();
+  state.openRow=name; render(); syncURL();
   const tr=[...$$("#board tbody tr[data-m]")].find(r=>r.dataset.m===name);
   if(tr) tr.scrollIntoView({behavior:"smooth",block:"center"});
 }
