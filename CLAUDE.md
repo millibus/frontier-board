@@ -20,7 +20,7 @@ Single-page LLM board built around subscriptions: what a monthly plan costs, whi
     - `x` is the plan's usage in the family's `xu` unit ("× Pro", "credits a month", "$ of usage a month"). Enter it only when the vendor publishes the figure. Never derive it from another tier or estimate it.
     - `pin` is for a plan the vendor fixes to named effort levels. A model is then charted only at those levels, and not at all if they were never measured.
     - `lim` quotes the limits as published. Don't count launch promotions that widen a plan for a few days.
-  - Don't list a plan that is sold only in another currency, is closed to new customers, or names no model on the board. Say what was left out in the "What the plan list leaves out" caveat.
+  - Don't list a plan that is sold only in another currency, is closed to new customers or out of stock, or names no model on the board. Say what was left out in the "What the plan list leaves out" caveat.
 - `CHANGELOG`: newest first: `{d:"8 Oct 2026", items:[[tag, "text"], ...]}`, where tag is one of `add`, `data`, `rescale`, `move` (tier change) or `feature`.
 
 Each score is `benchId: [value, quality, optional source note]`, where quality is:
