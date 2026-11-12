@@ -1,6 +1,6 @@
 # Frontier Board
 
-Single-page LLM benchmark aggregator, published with GitHub Pages from `main` (root) at https://millibus.github.io/frontier-board/. Everything the site serves lives in `index.html` (HTML, CSS, JS, data). There is no build step and no dependencies. `.nojekyll` must stay. `scripts/` holds dev-only checks and `.github/workflows/checks.yml` runs them in CI; neither is loaded by the page.
+Single-page LLM board built around subscriptions: what a monthly plan costs, which models it includes, and how those models score. Published with GitHub Pages from `main` (root) at https://millibus.github.io/frontier-board/. Everything the site serves lives in `index.html` (HTML, CSS, JS, data). There is no build step and no dependencies. `.nojekyll` must stay. `scripts/` holds dev-only checks and `.github/workflows/checks.yml` runs them in CI; neither is loaded by the page.
 
 ## Data blocks (inside the `<script>` in index.html)
 
@@ -11,6 +11,16 @@ Single-page LLM benchmark aggregator, published with GitHub Pages from `main` (r
 - `MODELS`: one entry per model: `name`, `prov`, `tier` (frontier/challenger/legacy), `open`, `rel` (YYYY-MM-DD), `note`, and `s`, the scores map.
 - `EFFORT`: per-model reasoning-effort rows: `[level, index, cost per task, tok/s, TTFT s]`. The first row must match the model's `aaii` and `costTask`. Leave out GPT-6 Luna's non-reasoning (`none`) row even when Artificial Analysis publishes one; the owner asked for it off the board.
 - `PRICES`: per-model `{in, out, cr, note}` in $ per 1M tokens.
+- `PLAN_ASOF`, `PLAN_FAMILIES`, `PLANS`: the subscription data. All of it is vendor-reported: read it from the vendor's own pricing, help and docs pages, never from news or comparison sites, and bump `PLAN_ASOF` to the day the pages were read.
+  - `PLAN_FAMILIES`: one entry per product line (Claude, ChatGPT, Google AI, …): `vendor`, `l` (label), `kind`, `url` (the vendor's pricing page), `surf` (where the plan works), `burn` (how usage is counted), `over` (what happens past the limit), and optionally `eff`, `xu`, `atList`.
+    - `kind` is `flat` when usage comes as rate-limit windows or a vendor credit quota, `metered` when the fee buys a dollar allowance spent at per-token prices. Metered plans are drawn in grey and kept off the plan frontier. Set `atList` only when a metered plan bills the model maker's own list price; the page then states how many Index tasks the allowance covers.
+    - `eff` lists the effort levels the plan's app or coding agent documents, using `EFF_ORDER` names. Leave it out when the vendor publishes none; the page then shows every measured level.
+  - `PLANS`: one entry per tier: `id` (lower-case, hyphenated; it goes in the URL), `fam`, `name`, `usd` (monthly price on monthly billing, US list price), `models`, `lim`, `note`, and optionally `yr`, `x`, `pin`.
+    - `models` maps board model names to `""` or a short access note ("up to half the weekly limit"). A plan needs at least one board model. Include a model only when a vendor page names it for that plan; when two vendor pages disagree, follow one and say so in `note`.
+    - `x` is the plan's usage in the family's `xu` unit ("× Pro", "credits a month", "$ of usage a month"). Enter it only when the vendor publishes the figure. Never derive it from another tier or estimate it.
+    - `pin` is for a plan the vendor fixes to named effort levels. A model is then charted only at those levels, and not at all if they were never measured.
+    - `lim` quotes the limits as published. Don't count launch promotions that widen a plan for a few days.
+  - Don't list a plan that is sold only in another currency, is closed to new customers, or names no model on the board. Say what was left out in the "What the plan list leaves out" caveat.
 - `CHANGELOG`: newest first: `{d:"8 Oct 2026", items:[[tag, "text"], ...]}`, where tag is one of `add`, `data`, `rescale`, `move` (tier change) or `feature`.
 
 Each score is `benchId: [value, quality, optional source note]`, where quality is:
@@ -31,12 +41,14 @@ Model notes, `BENCH` descriptions/warnings and `CAVEATS` go stale faster than th
 
 ## Updating the board
 
+0. The page has two pricing lenses. Subscription is the default: the Board's price column is the cheapest plan that includes each model and the API-price charts are hidden. API shows per-token prices as before. Elements marked `data-lens="api"` or `data-lens="sub"` show under that lens only.
 1. Research new models and independent results: Artificial Analysis, Arena text and WebDev, ARC Prize, OpenRouter τ²-bench, plus vendor announcements (those are `ven`).
 2. Never use numbers found only on aggregator sites: llm-stats, benchlm, modelcap, benchgecko, neosignal, localaimaster. This applies to prose (caveats, descriptions) as well as score tuples. Don't cite them at all.
 3. Edit the data blocks in `index.html`, including each touched column's `BENCH.asof` and any notes the new numbers contradict.
-4. Add a `CHANGELOG` entry (also when nothing changed, as earlier entries do), and bump `ASOF` and `ASOF_NOTE`.
-5. Verify before pushing (below).
-6. Commit and push to `main`. Pages redeploys automatically.
+4. Re-read the subscription pages when a vendor launches a model or changes its plans: update `PLANS`, the family's `burn`/`over` text and `PLAN_ASOF`, and add a new model to every plan that names it.
+5. Add a `CHANGELOG` entry (also when nothing changed, as earlier entries do), and bump `ASOF` and `ASOF_NOTE`.
+6. Verify before pushing (below).
+7. Commit and push to `main`. Pages redeploys automatically.
 
 ## Merging a PR
 
@@ -46,7 +58,7 @@ When a change goes through a pull request, the Codex review bot reviews it autom
 
 ```
 node scripts/check-data.mjs    # data consistency, no dependencies
-node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, header matches data (CHROMIUM_PATH=/usr/bin/google-chrome on the box)
+node scripts/smoke.mjs         # headless Chromium: all five tabs, the Subscriptions tab and pricing lens, no errors, header matches data (CHROMIUM_PATH=/usr/bin/google-chrome on the box)
 ```
 
 - `check-data.mjs` fails on:
@@ -56,6 +68,7 @@ node scripts/smoke.mjs         # headless Chromium: all four tabs, no errors, he
   - an unreadable `asof`, or a model released after its column's `asof`;
   - a note quoting an Index score the model doesn't have;
   - `ctx` not marked `ven`;
+  - a plan with an unknown family or model, no model at all, a malformed id, price, `yr` or `x`, an effort level outside `EFF_ORDER`, a missing `lim`, or a model released after `PLAN_ASOF`; `PLAN_ASOF` later than `ASOF`;
   - any banned aggregator name;
   - a missing copyright line.
 
