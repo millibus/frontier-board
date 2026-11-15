@@ -90,12 +90,37 @@ try {
       return document.querySelector("#c-sbuse svg") || document.querySelector("#c-sbuse .empty") ? null : p.id; }).filter(Boolean));
     if (each.length) bad(`these plans drew neither a chart nor a notice: ${each.join(", ")}`);
     await page.evaluate(() => { state.subPlan = null; renderUse(); });
+    // the budget shortlist: three answer cards, a bigger budget never lowers the winner, the budget travels in the link
+    if ((await page.locator("#sbcards .sb-card").count()) !== 3) bad("the ≤$20 budget does not show three answer cards");
+    const winAt = async c => { await page.click(`#sbbudget [data-cap="${c}"]`); return +(await page.textContent("#sbcards .sb-card.win .sb-ix b")); };
+    const w20 = await winAt(20), wAny = await winAt("Infinity");
+    if (!(wAny >= w20)) bad(`the Any budget's winner (Index ${wAny}) scores below the ≤$20 winner (${w20})`);
+    if (!page.url().includes("budget=any")) bad("the budget is not in the URL");
+    await page.click('#sbbudget [data-cap="20"]');
+    // two plans to compare: the tray, then a sheet with both plans and their effort levels; Escape and a tab switch close it
+    const cmpIds = await page.$$eval("#sbcards [data-sbcmp]", bs => bs.slice(0, 2).map(b => b.dataset.sbcmp));
+    for (const id of cmpIds) await page.click(`#sbcards [data-sbcmp="${id}"]`);
+    if (!(await page.locator("#sbtray").isVisible())) bad("picking two plans to compare shows no compare tray");
+    await page.click("#sbgo");
+    if (!(await page.locator("#sbsheet").isVisible())) bad("the compare sheet did not open");
+    if ((await page.locator("#sbgrid .gh").count()) !== 2) bad("the compare sheet does not show the two plans");
+    if (!(await page.locator("#sbgrid .sb-eff i").count())) bad("the compare sheet draws no effort levels");
+    await page.keyboard.press("Escape");
+    if (await page.locator("#sbsheet").isVisible()) bad("Escape did not close the compare sheet");
+    await page.click("#sbgo");
+    await page.evaluate(() => document.querySelector('.tab[data-p="board"]').click());
+    if (await page.evaluate(() => !document.querySelector("#sbsheet").hidden)) bad("switching tabs left the compare sheet open");
+    await page.click('.tab[data-p="subs"]');
+    await page.click("#sbclr");
+    if (await page.locator("#sbtray").isVisible()) bad("clearing the comparison left the tray up");
     // a row opens its detail with a link to the vendor's page
+    await page.click("#sbd-all > summary");
     const first = page.locator("#plantab tbody tr[data-plan]").first(), pid = await first.getAttribute("data-plan");
     await first.click();
     const href = await page.locator("#plantab .detbox .dsrc a").getAttribute("href").catch(() => null);
     if (!href || !href.startsWith("https://")) bad("an opened plan row shows no source link");
     // picking a plan: the chip, the summary, the URL, the Board marks and the filter
+    await page.click("#sbpickb");
     await page.click(`#sbpick [data-plan="${pid}"]`);
     if (!(await pressed(`#sbpick [data-plan="${pid}"]`, "true"))) bad("a picked plan chip is not pressed");
     if (!page.url().includes(`plans=${pid}`)) bad(`picking a plan did not put plans=${pid} in the URL`);

@@ -370,6 +370,101 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
 #plantab tr.fam0 td{border-top:1px solid var(--line-2)}
 .detbox .dsrc{grid-column:1/-1;font-size:12px;color:var(--ink-3)}
 @media (max-width:700px){ .sbl{flex-basis:100%} }
+/* subscriptions: budget shortlist, your plans, compare tray and sheet, go-deeper sections */
+#p-subs .sb-h{font-size:22px;letter-spacing:-.02em}
+#p-subs .sb-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 16px}
+#p-subs .sb-seg{display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px}
+#p-subs .sb-seg button{appearance:none;border:0;background:none;font:inherit;font-size:13px;font-weight:500;color:var(--ink-2);padding:5px 13px;border-radius:999px;cursor:pointer;white-space:nowrap}
+#p-subs .sb-seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+#p-subs .sb-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sb-card{border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;min-width:0;background:var(--surface)}
+.sb-card.win{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.sb-card .sb-lab{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.sb-card.win .sb-lab{color:var(--accent-ink)}
+.sb-card h3{font-size:16px;letter-spacing:-.01em}
+.sb-card h3 .prov{font:400 12px "IBM Plex Sans",sans-serif;color:var(--ink-3);margin-left:6px}
+.sb-card .sb-price{font:600 22px "IBM Plex Mono",monospace;letter-spacing:-.02em}
+.sb-card .sb-price small{font:400 12px "IBM Plex Sans",sans-serif;color:var(--ink-3);letter-spacing:0}
+.sb-card .sb-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;border-top:1px solid var(--line);padding-top:10px}
+.sb-card .sb-top b{display:block;font-weight:600;font-size:13.5px}
+.sb-card .sb-top span{font-size:12px;color:var(--ink-3)}
+.sb-card .sb-ix{text-align:right;flex:none}
+.sb-card .sb-ix b{font:600 26px "IBM Plex Mono",monospace;color:var(--accent-ink)}
+.sb-card .sb-meta{font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px;flex:1}
+.sb-acts{display:flex;gap:6px;flex-wrap:wrap}
+.sb-btn{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:5px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
+.sb-btn:hover{border-color:var(--ink-3);color:var(--ink)}
+.sb-btn.own[aria-pressed="true"]{border-color:var(--good);background:var(--good-wash);color:var(--good);font-weight:600}
+.sb-btn.cmpb[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
+#p-subs .sb-list{margin-top:12px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+#p-subs .sb-list:empty{display:none}
+.sb-row{display:grid;grid-template-columns:24px minmax(0,1.5fr) 82px minmax(110px,1fr) minmax(0,1.3fr) auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:13px}
+.sb-row:first-child{border-top:0}
+.sb-row:hover{background:var(--surface-2)}
+.sb-row .rk{font:500 12px "IBM Plex Mono",monospace;color:var(--ink-3)}
+.sb-row .nm b{font-weight:600}.sb-row .nm small{display:block;font-size:11.5px;color:var(--ink-3)}
+.sb-row .pr{font:600 13px "IBM Plex Mono",monospace}
+.sb-row .mdl{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-ixm{display:flex;align-items:center;gap:8px}
+.sb-ixm b{font:600 13px "IBM Plex Mono",monospace;width:22px;text-align:right}
+.sb-meter{flex:1;height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden}
+.sb-meter i{display:block;height:100%;border-radius:3px;background:var(--accent)}
+.sb-meter.met i{background:var(--ink-3)}
+.sb-more-b{appearance:none;display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface-2);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}
+#p-subs .sb-foot{max-width:none;margin:10px 0 0;font-size:12.5px}
+#p-subs .sb-foot:empty{display:none}
+#p-subs .sb-foot button{appearance:none;border:0;background:none;padding:0;font:inherit;color:var(--accent-ink);text-decoration:underline;cursor:pointer}
+#sb-mine{margin-top:16px;padding:14px 20px}
+.sb-minehead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.sb-minehead .cmpctx{margin:0;flex:1;min-width:240px;font-size:13px}
+details.sb-more{border-top:1px solid var(--line)}
+details.sb-more:last-of-type{border-bottom:1px solid var(--line)}
+details.sb-more>summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:14px 4px}
+details.sb-more>summary::-webkit-details-marker{display:none}
+details.sb-more>summary::before{content:"+";font:500 15px "IBM Plex Mono",monospace;color:var(--ink-3);width:14px}
+details.sb-more[open]>summary::before{content:"–"}
+details.sb-more>summary b{font:600 15px Archivo,sans-serif;letter-spacing:-.01em}
+details.sb-more>summary span{font-size:12.5px;color:var(--ink-3)}
+details.sb-more>summary:hover b{color:var(--accent-ink)}
+details.sb-more[open]{padding-bottom:18px}
+#p-subs .sbh{margin:28px 0 6px}
+.sb-tray{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:10px;max-width:calc(100% - 32px);
+  background:var(--ink);color:var(--surface);border-radius:10px;padding:8px 10px 8px 16px;box-shadow:var(--shadow);font-size:13px}
+.sb-tray[hidden]{display:none}
+.sb-tray #sbtrayn{font-weight:600;white-space:nowrap}
+.sb-traychips{display:flex;gap:6px;overflow-x:auto;min-width:0}
+.sb-traychips span{background:color-mix(in srgb,var(--surface) 16%,transparent);border-radius:999px;padding:2px 9px;font-size:12px;white-space:nowrap}
+.sb-tray button{appearance:none;font:inherit;font-size:13px;font-weight:600;border-radius:6px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.sb-traygo{border:0;background:var(--surface);color:var(--ink)}
+.sb-trayclr{border:1px solid color-mix(in srgb,var(--surface) 35%,transparent);background:none;color:var(--surface)}
+.sb-sheet{position:fixed;inset:0;z-index:60;background:rgba(10,12,16,.5);display:flex;align-items:flex-end;justify-content:center}
+.sb-sheet[hidden]{display:none}
+.sb-sheetin{background:var(--surface);width:min(1180px,100%);max-height:88vh;overflow:auto;border-radius:12px 12px 0 0;padding:20px 22px 28px;box-shadow:var(--shadow)}
+.sb-sheethead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.sb-sheethead h2{font-size:18px}
+.sb-grid{display:grid;overflow-x:auto}
+.sb-grid>div{padding:9px 12px;border-bottom:1px solid var(--line);font-size:13px;min-width:0}
+.sb-grid .gk{color:var(--ink-3);font-size:12px}
+.sb-grid .gh{font:600 15px Archivo,sans-serif}
+.sb-grid .gh small{display:block;font:400 12px "IBM Plex Sans",sans-serif;color:var(--ink-3)}
+.sb-grid .gt{color:var(--ink-2);font-size:12.5px}
+.sb-eff{display:grid;grid-template-columns:minmax(0,112px) minmax(0,1fr);gap:0 8px;align-items:center}
+.sb-eff .m{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 0}
+.sb-eff .tr{position:relative;height:26px}
+.sb-eff .tr::before{content:"";position:absolute;left:0;right:0;top:13px;height:1px;background:var(--line)}
+.sb-eff .tr .sp{position:absolute;top:12px;height:3px;background:var(--accent-wash)}
+.sb-eff .tr i{position:absolute;top:13px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid var(--accent);background:var(--surface)}
+.sb-eff .tr i.on{background:var(--accent)}
+.sb-eff .ax{grid-column:2;display:flex;justify-content:space-between;font:10.5px "IBM Plex Mono",monospace;color:var(--ink-3);padding-top:2px}
+html.sblock{overflow:hidden}
+#p-subs:has(#sbtray:not([hidden])){padding-bottom:76px}
+@media (max-width:860px){
+  #p-subs .sb-cards{grid-template-columns:1fr}
+  .sb-row{grid-template-columns:20px minmax(0,1fr) auto;grid-template-areas:"rk nm pr" "rk ix ix" "rk md ac";row-gap:6px}
+  .sb-row .rk{grid-area:rk;align-self:start}.sb-row .nm{grid-area:nm}.sb-row .pr{grid-area:pr}.sb-row .sb-ixm{grid-area:ix}.sb-row .mdl{grid-area:md}.sb-row .sb-acts{grid-area:ac}
+  .sb-sheetin{padding:16px 14px 24px}
+  .sb-tray{gap:8px;padding:8px 8px 8px 12px}.sb-traychips{display:none}
+}
 /* ---------- footer ---------- */
 .foot{max-width:1500px;margin:0 auto;padding:6px 22px 30px;font-size:12px;color:var(--ink-3)}
 .foot-in{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
@@ -476,14 +571,30 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
 
 
   <section class="panel" id="p-subs">
-    <div class="card" id="sb-mine">
-      <div class="cardhead"><div><h2>Your subscriptions</h2>
-        <p class="sub">Pick the plans you pay for. The Board then marks the models they include, and the charts below work out which model and effort level to run. Your picks stay in this browser and travel in the link. Prices are US list prices on monthly billing, before tax.</p></div>
-        <div class="legend"><span><i style="background:var(--accent)"></i>Flat-rate plan</span><span><i style="background:var(--ink-3)"></i>Token-metered plan</span></div></div>
-      <div id="sbpick"></div>
-      <p class="sub cmpctx" id="sbsum"></p>
+    <div class="card" id="sb-ask">
+      <div class="cardhead"><div><h2 class="sb-h">What can you spend a month?</h2>
+        <p class="sub">The smartest model each product gives you inside that budget, ranked by Artificial Analysis Index at the effort levels the plan offers. US list prices on monthly billing, before tax, read from vendor pages on <span id="sbasof"></span>.</p></div></div>
+      <div class="sb-ctl">
+        <div class="sb-seg" id="sbbudget" role="group" aria-label="Monthly budget"></div>
+        <button type="button" class="chip" id="sbflat" aria-pressed="true" title="Token-metered plans buy a dollar allowance spent at per-token prices rather than a rate limit">Flat-rate only</button>
+      </div>
+      <div class="sb-cards" id="sbcards"></div>
+      <div class="sb-list" id="sbshort"></div>
+      <p class="sub sb-foot" id="sbout"></p>
     </div>
 
+    <div class="card" id="sb-mine">
+      <div class="sb-minehead"><p class="sub cmpctx" id="sbsum"></p>
+        <button type="button" class="chip" id="sbpickb" aria-expanded="false" aria-controls="sbpickbox"></button></div>
+      <div id="sbpickbox" hidden>
+        <p class="sub" style="margin:10px 0 4px">Pick the plans you pay for. The Board then marks the models they include, and the In my plans filter narrows every tab to them. Your picks stay in this browser and travel in the link.</p>
+        <div class="legend" style="margin-bottom:6px"><span><i style="background:var(--accent)"></i>Flat-rate plan</span><span><i style="background:var(--ink-3)"></i>Token-metered plan</span></div>
+        <div id="sbpick"></div>
+      </div>
+    </div>
+
+    <h2 class="sbh">Go deeper</h2>
+    <details class="sb-more" id="sbd-ladder"><summary><b>Price against score, every plan</b><span>Which flat-rate plans no cheaper plan beats</span></summary>
     <div class="card" id="sb-ladder">
       <div class="cardhead"><div><h2>What each monthly fee unlocks</h2>
         <p class="sub" id="sbladder-sub"></p></div>
@@ -491,8 +602,9 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
       <div id="c-sbladder"></div>
       <p class="sub frontlist" id="sbladder-front"></p>
       <p class="sub frontlist" id="sbladder-metered"></p>
-    </div>
+    </div></details>
 
+    <details class="sb-more" id="sbd-use"><summary><b>Which model and effort to run on a plan</b><span>Every measured setting in one plan, against usage per task or waiting time</span></summary>
     <div class="card" id="sb-use">
       <div class="cardhead"><div><h2>Which model and effort to run on a plan</h2>
         <p class="sub" id="sbuse-sub"></p></div>
@@ -507,18 +619,26 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
       <p class="sub frontlist" id="sbuse-front"></p>
       <p class="sub frontlist" id="sbuse-skip"></p>
       <p class="sub frontlist" id="sbuse-miss"></p>
-    </div>
+    </div></details>
 
+    <details class="sb-more" id="sbd-tier"><summary><b>What a bigger tier buys</b><span>Usage per dollar against each product's entry tier, where the vendor publishes usage</span></summary>
     <div class="card" id="sb-tier">
       <div class="cardhead"><div><h2>What a bigger tier buys</h2>
         <p class="sub">Usage per dollar on each higher tier, against the same product's cheapest paid tier. 1.0× means the bigger plan costs exactly as much per unit of usage; 2.0× means each dollar buys twice as much. Only products whose vendor publishes a multiplier, a credit quota or a dollar allowance are shown.</p></div></div>
       <div id="c-sbtier"></div>
-    </div>
+    </div></details>
 
-    <h2 class="sbh">Every plan</h2>
+    <details class="sb-more" id="sbd-all"><summary><b>Every plan</b><span id="sball-hint">Limits, published usage, API break-even and source for every tier</span></summary>
     <p class="sub" style="margin-bottom:10px">One row per tier. <b>Top model</b> is the highest Index score the plan can reach at the effort levels it offers. <b>API break-even</b> is the monthly fee divided by what one Index task costs at API list prices with that model and effort: run more tasks than that in a month and the plan is cheaper than paying per token. Click a row for its models, limits and source. The filters at the top of the page don't apply to this tab.</p>
     <div class="tablewrap"><table id="plantab"><thead></thead><tbody></tbody></table></div>
     <p class="sub" style="margin-top:10px;max-width:none">◦ <b>Flat-rate</b> plans grant usage as rate-limit windows or a vendor credit quota; <b>token-metered</b> plans grant a dollar allowance spent at per-token prices. A dash means the vendor does not publish the figure. Plans sold only in yuan, plans closed to new customers and plans whose vendor names no model on this board are not listed; see Sources &amp; caveats.</p>
+    </details>
+
+    <div class="sb-tray" id="sbtray" hidden><span id="sbtrayn"></span><span class="sb-traychips" id="sbtraychips"></span>
+      <button type="button" class="sb-traygo" id="sbgo">Compare</button><button type="button" class="sb-trayclr" id="sbclr">Clear</button></div>
+    <div class="sb-sheet" id="sbsheet" hidden><div class="sb-sheetin" role="dialog" aria-modal="true" aria-labelledby="sbsheeth">
+      <div class="sb-sheethead"><h2 id="sbsheeth">Side by side</h2><button type="button" class="chip" id="sbclose">Close</button></div>
+      <div class="sb-grid" id="sbgrid"></div></div></div>
   </section>
 
   <section class="panel" id="p-quad">
@@ -687,8 +807,8 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
    whichever models have a score.  Check with: node scripts/check-data.mjs
    ========================================================================= */
 
-const ASOF = "11 Nov 2026";
-const ASOF_NOTE = "11 Nov 2026: subscription plans added (49 plans across 15 products, vendor pages read 11 Nov 2026) and the board now leads with subscription pricing; no benchmark score changed, and scores were last refreshed 10 Nov 2026. 10 Nov 2026: Arena text (9 Nov) and WebDev (8 Nov) re-read after the 27 Oct snapshot; Fable 5.2 ARC-AGI-3 provider-adapter score corrected. Artificial Analysis, ARC Prize and the other sources were checked with no new rows since 9 Nov. Vendor results stay labelled and benchmark versions stay separate; see Sources & caveats and the dated refresh audit. The effort-line charts also gain comparison controls, a shareable link and pinned point details (no scores changed by that).";
+const ASOF = "15 Nov 2026";
+const ASOF_NOTE = "15 Nov 2026: layout change only, no data changed. The Subscriptions tab now opens on one question, a monthly budget, and answers it with the best plan from each product; plans can be set side by side, and the charts and the full plan table sit in sections that open on demand. Data last refreshed 11 Nov 2026 (subscription plans, vendor pages read that day) and 10 Nov 2026 (benchmark scores). 11 Nov 2026: subscription plans added (49 plans across 15 products) and the board now leads with subscription pricing.";
 
 const BENCH = {
   frontiercode2:{l:"FrontierCode 2.0",s:"FrontierCode 2.0",g:"coding",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Anthropic’s maintainer-acceptance coding evaluation, version 2.0. Vendor-run launch table, 9 Nov 2026. Fable 5.2/5.1 use xhigh effort; Gemini 4 Carbon uses medium; other rows use the highest available effort. Not comparable to the original FrontierCode column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
@@ -1490,6 +1610,9 @@ const PLANS = [
 
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
+{d:"15 Nov 2026",items:[
+  ["feature","The Subscriptions tab is quieter. It opens on a budget (free, $10, $20, $50, $100, $200 or any) and answers with the plan from each product that reaches the highest Index score inside it: the top three as cards, the rest as a ranked list with the first few shown. Each plan can be marked as yours or set side by side with up to three others; the side-by-side view lists price, top model, published usage, value against the entry tier, API break-even, limits and source, and draws every measured effort level so the settings worth running stand out. The plan picker, the price-against-score chart (now labelling the frontier first), the model-and-effort chart, the bigger-tier chart and the table of every plan are unchanged but folded into sections that open on demand. The budget travels in the link. Layout change only: no score, price or plan changed."]
+]},
 {d:"11 Nov 2026",items:[
   ["feature","The board now leads with subscriptions instead of API prices. A Pricing switch at the top of every tab chooses Subscription (the default) or API. Under Subscription the Board's price column shows the cheapest monthly plan that includes each model, the picks at the top rank what a monthly fee reaches, and the three API-price charts are hidden; under API everything is as before. Each model's detail panel lists every plan that includes it."],
   ["feature","New Subscriptions tab. Pick the plans you pay for and the Board marks the models you already have; an In my plans filter narrows every tab to them and the choice travels in the link. Four views: what each monthly fee unlocks (price against the top Index score a plan reaches, with a Pareto frontier of flat-rate plans); which model and effort level to run on a plan (every measured effort level against usage per task or waiting time, with the frontier and the settings it beats listed); what a bigger tier buys (usage per dollar against the entry tier, where the vendor publishes usage); and a table of every plan with its limits, API break-even and source. The effort-line charts gain a My plans group."],
@@ -2659,7 +2782,7 @@ function mineChanged(){ try{localStorage.setItem(PLAN_KEY,JSON.stringify([...sta
   if(!state.mine.size) state.onlyMine=false; renderRail(); renderPicks(); render(); syncURL(); }
 const planToggle=id=>{ state.mine.has(id)?state.mine.delete(id):state.mine.add(id); mineChanged(); };
 $$("#lens button").forEach(b=>b.onclick=()=>setLens(b.dataset.v));
-$("#minechip").onclick=()=>{ if(!state.mine.size){ $('.tab[data-p="subs"]').click(); scrollTo(0,0); return; }
+$("#minechip").onclick=()=>{ if(!state.mine.size){ $('.tab[data-p="subs"]').click(); openPicker(); return; }
   state.onlyMine=!state.onlyMine; renderRail(); render(); syncURL(); };
 
 /* ---------------- board: plans in a model's detail panel ---------------- */
@@ -2693,7 +2816,7 @@ function subPicks(){
     :`<button class="pick" data-go="subs" title="Pick the plans you pay for on the Subscriptions tab"><span class="pl">Best in your plans</span>
       <span class="pm">Pick your plans</span><span class="pv">${PLANS.length} plans from ${FAM_ORDER.length} products</span><span class="pr">Opens the Subscriptions tab</span></button>`;
   $("#picks").innerHTML=out;
-  $$("#picks .pick").forEach(b=>b.onclick=()=>b.dataset.go?$('.tab[data-p="subs"]').click():openModel(b.dataset.m));
+  $$("#picks .pick").forEach(b=>b.onclick=()=>b.dataset.go?($('.tab[data-p="subs"]').click(),openPicker()):openModel(b.dataset.m));
 }
 
 /* ---------------- subscriptions tab ---------------- */
@@ -2719,18 +2842,19 @@ function renderMine(){
       +"</span></div>";}).join(""));
   $$("#sbpick .chip").forEach(b=>b.onclick=()=>planToggle(b.dataset.plan));
   $("#sbsum").innerHTML=mineSummary();
+  $("#sbpickb").textContent=state.mine.size?"Edit your plans":"Pick your plans"; $("#sbasof").textContent=PLAN_ASOF;
 }
 /* every paid plan: monthly price against the best Index score it can reach. The frontier runs over flat-rate plans only. */
 function renderLadder(){
   const host=$("#c-sbladder"), paid=PLANS.filter(p=>p.usd>0&&planBest(p)), free=PLANS.filter(p=>p.usd===0&&planBest(p));
   const pts=paid.map(p=>{const b=planBest(p), mine=state.mine.has(p.id);
     return {x:p.usd,y:b.r.aaii,r:mine?7:5.5,ring:mine,flat:isFlat(p),fill:isFlat(p)?"var(--accent)":"var(--ink-3)",label:planName(p),plan:p,best:b,tip:planTip(p)};});
-  host.innerHTML=scatterSvg(pts,{aria:"Monthly subscription price against the top Index score each plan reaches",host,H:540,maxLab:30,xfmt:money,yfmt:v=>String(Math.round(v)),
+  host.innerHTML=scatterSvg(pts,{aria:"Monthly subscription price against the top Index score each plan reaches",host,H:540,maxLab:12,xfmt:money,yfmt:v=>String(Math.round(v)),
     xtitle:"Monthly price, US dollars",ytitle:"Top Index score in the plan",front:"min",frontOf:q=>q.flat,ownRing:true});
   wire(host);
   $("#sbladder-sub").textContent="Each dot is a paid plan: its monthly price against the highest Artificial Analysis Index score it can reach at the effort levels it offers, on a log scale. "
     +"The solid line is the Pareto frontier of flat-rate plans: no cheaper flat-rate plan reaches a higher score. Grey dots are token-metered plans, kept off the frontier because their fee buys a dollar allowance rather than a rate limit. "
-    +"The chart shows what a fee unlocks, not how much of it you get: vendors rarely publish the size of an allowance. A ring marks one of your plans; plans at the same price and score share a dot and a label."
+    +"The chart shows what a fee unlocks, not how much of it you get: vendors rarely publish the size of an allowance. A ring marks one of your plans; plans at the same price and score share a dot and a label. Frontier plans are labelled first; hover any dot for the rest."
     +(free.length?" Free plans can't sit on a log axis: "+free.map(p=>`${planName(p)} reaches Index ${planBest(p).r.aaii} with ${planBest(p).m.name}`).join("; ")+".":"");
   const front=paretoFront(pts.filter(q=>q.flat),"min");
   $("#sbladder-front").innerHTML="<b>On the frontier, cheapest first:</b> "+front.map(q=>`${esc(q.label)} (${usd(q.x)} · Index ${q.y} · ${esc(q.best.m.name)}${effTag(q.best.r)})`).join(" → ");
@@ -2826,7 +2950,112 @@ function renderPlanTable(){
   $$("#plantab tbody tr[data-plan]").forEach(tr=>tr.onclick=()=>{ state.planOpen=state.planOpen===tr.dataset.plan?null:tr.dataset.plan; renderPlanTable(); });
   $$("#plantab .have").forEach(b=>b.onclick=e=>{ e.stopPropagation(); planToggle(b.dataset.have); });
 }
-function renderSubs(){ renderMine(); renderLadder(); renderUse(); renderTier(); renderPlanTable(); }
+/* ---------------- subscriptions: budget shortlist, compare tray and sheet ---------------- */
+/* The tab opens on one question, the monthly budget, and answers it with one plan per product: the tier with the highest
+   Index score inside the budget (ties go to the cheaper tier). Up to four plans can be set side by side. */
+state.subCap=20; state.subFlat=true; state.subMore=false; state.subCmp=new Set();
+const SUB_CAPS=[0,10,20,50,100,200,Infinity], SUB_CMP_MAX=4, SUB_SHOW=8;
+const capLab=c=>c===0?"Free":c===Infinity?"Any":"≤ "+usd(c);
+const feeTxt=p=>p.usd?usd(p.usd):"Free";
+const subFits=(p,flat)=>p.usd<=state.subCap&&planBest(p)&&(!flat||isFlat(p));
+const byScore=(a,b)=>planBest(b).r.aaii-planBest(a).r.aaii||a.usd-b.usd;
+const subShort=()=>FAM_ORDER.map(f=>PLANS.filter(p=>p.fam===f&&subFits(p,state.subFlat)).sort(byScore)[0]).filter(Boolean).sort(byScore);
+const ownBtn=p=>{const has=state.mine.has(p.id);
+  return `<button type="button" class="sb-btn own" data-own="${p.id}" data-k="own-${p.id}" aria-pressed="${has}" title="${has?"One of your plans. Select to remove it":"Add to your plans"}">${has?"✓ Yours":"I pay for this"}</button>`;};
+const cmpBtn=p=>{const on=state.subCmp.has(p.id), full=!on&&state.subCmp.size>=SUB_CMP_MAX;
+  return `<button type="button" class="sb-btn cmpb" data-sbcmp="${p.id}" data-k="cmp-${p.id}" aria-pressed="${on}"${full?` disabled title="Up to ${SUB_CMP_MAX} plans side by side"`:""}>${on?"✓ Comparing":"Compare"}</button>`;};
+function renderShort(){
+  const cap=state.subCap, list=subShort(), nM=n=>n+" board model"+(n>1?"s":"");
+  refill($("#sbbudget"),SUB_CAPS.map(c=>`<button type="button" data-cap="${c}" data-k="cap-${c}" aria-pressed="${c===cap}">${capLab(c)}</button>`).join(""));
+  $("#sbflat").setAttribute("aria-pressed",state.subFlat);
+  const win=cap===0?"Smartest free plan":cap===Infinity?"Smartest at any price":`Smartest for ${usd(cap)} a month or less`;
+  refill($("#sbcards"),list.slice(0,3).map((p,i)=>{const b=planBest(p), F=planFam(p);
+    return `<div class="sb-card${i?"":" win"}"><span class="sb-lab">${i?"Next best, another product":win}</span>
+      <h3>${esc(planName(p))}<span class="prov">${esc(F.vendor)}${isFlat(p)?"":" · token-metered"}</span></h3>
+      <div class="sb-price">${feeTxt(p)}<small>${p.usd?" a month":""}</small></div>
+      <div class="sb-top"><div><span>Top model</span><b>${esc(b.m.name)}</b><span>${b.r.e!=="one"?esc(EFF_NAME[b.r.e])+" effort":"&nbsp;"}</span></div>
+        <div class="sb-ix"><b>${b.r.aaii}</b><span>Index</span></div></div>
+      <div class="sb-meta">${nM(Object.keys(p.models).length)} · ${p.x!=null?esc(planUse(p)):"usage not published"}</div>
+      <div class="sb-acts">${ownBtn(p)}${cmpBtn(p)}</div></div>`;}).join("")
+    ||`<p class="empty" style="grid-column:1/-1">No ${state.subFlat?"flat-rate ":""}plan on the board fits this budget.</p>`);
+  const rest=list.slice(3), vis=state.subMore?rest:rest.slice(0,SUB_SHOW-3);
+  refill($("#sbshort"),vis.map((p,i)=>{const b=planBest(p), F=planFam(p);
+    return `<div class="sb-row"><span class="rk">${i+4}</span>
+      <div class="nm"><b>${esc(F.l)}</b> ${esc(p.name)}<small>${esc(F.vendor)}${isFlat(p)?"":" · token-metered"}</small></div>
+      <div class="pr">${feeTxt(p)}</div>
+      <div class="sb-ixm"><span class="sb-meter${isFlat(p)?"":" met"}"><i style="width:${(b.r.aaii/70*100).toFixed(1)}%"></i></span><b>${b.r.aaii}</b></div>
+      <div class="mdl">${esc(b.m.name)}${effTag(b.r)}<span style="color:var(--ink-3)">${Object.keys(p.models).length>1?" · +"+(Object.keys(p.models).length-1)+" more":""}</span></div>
+      <div class="sb-acts">${ownBtn(p)}${cmpBtn(p)}</div></div>`;}).join("")
+    +(rest.length>vis.length?`<button type="button" class="sb-more-b" id="sbmore" data-k="more">Show ${rest.length-vis.length} more product${rest.length-vis.length>1?"s":""} in this budget</button>`:""));
+  // what the shortlist leaves out: metered plans under the flat-rate filter, and products with nothing this cheap
+  const met=state.subFlat?PLANS.filter(p=>!isFlat(p)&&subFits(p,false)):[], shown=new Set(list.map(p=>p.fam));
+  const none=FAM_ORDER.filter(f=>!shown.has(f)&&(!state.subFlat||PLAN_FAMILIES[f].kind==="flat")&&PLANS.some(p=>p.fam===f&&planBest(p)));
+  const from=f=>PLANS.filter(p=>p.fam===f&&planBest(p)).sort((a,b)=>a.usd-b.usd)[0];
+  $("#sbout").innerHTML=[met.length?`${met.length} token-metered plan${met.length>1?"s":""} also fit${met.length>1?"":"s"}, reaching Index ${Math.max(...met.map(p=>planBest(p).r.aaii))}. <button type="button" data-k="showmet" id="sbshowmet">Include them</button>`:"",
+    none.length&&cap!==Infinity?`Nothing in this budget from ${none.map(f=>`${esc(PLAN_FAMILIES[f].l)} (from ${feeTxt(from(f))})`).join(", ")}.`:""].filter(Boolean).join("<br>");
+  renderTray();
+}
+function renderTray(){
+  const n=state.subCmp.size, t=$("#sbtray");
+  t.hidden=!n; $("#sbtrayn").textContent=`Compare ${n} of ${SUB_CMP_MAX}`;
+  $("#sbtraychips").innerHTML=PLANS.filter(p=>state.subCmp.has(p.id)).map(p=>`<span>${esc(planName(p))}</span>`).join("");
+  $("#sbgo").disabled=n<2; $("#sbgo").title=n<2?"Pick one more plan to compare":"";
+}
+/* one row per model, a dot per effort level placed by its Index score; filled dots are the plan's Pareto frontier
+   on usage per task: no lighter setting in the plan scores as high */
+function sbEff(p,lo,hi){
+  const pts=planPts(p); if(!pts.length) return `<span class="gt">Artificial Analysis has not measured this plan's models at the settings it offers.</span>`;
+  const on=new Set(paretoFront(pts.filter(q=>q.r.cost>0).map(q=>({x:q.r.cost,y:q.r.aaii,q})),"min").map(d=>d.q));
+  const top=m=>Math.max(...pts.filter(q=>q.m===m).map(q=>q.r.aaii)), ms=[...new Set(pts.map(q=>q.m))].sort((a,b)=>top(b)-top(a));
+  const pos=v=>((v-lo)/(hi-lo)*100).toFixed(1), R=e=>e==="one"?10:7+Math.max(0,EFF_ORDER.indexOf(e))*1.5;
+  return `<div class="sb-eff">`+ms.slice(0,6).map(m=>{const r=pts.filter(q=>q.m===m), a=Math.min(...r.map(q=>q.r.aaii)), b=Math.max(...r.map(q=>q.r.aaii));
+    return `<span class="m" title="${esc(m.name)}">${esc(m.name)}</span><span class="tr"><span class="sp" style="left:${pos(a)}%;width:${(pos(b)-pos(a)).toFixed(1)}%"></span>`
+      +r.map(q=>`<i class="${on.has(q)?"on":""}" style="left:${pos(q.r.aaii)}%;width:${R(q.r.e)}px;height:${R(q.r.e)}px" data-tip="${esc(modelTip(m,[["Effort",EFF_NAME[q.r.e]],["Index",q.r.aaii],["Cost per index task",q.r.cost!=null?money(q.r.cost):"—"],["On this plan",on.has(q)?"Worth running":"A lighter setting scores as high"]]))}"></i>`).join("")+`</span>`;}).join("")
+    +`<span class="ax"><span>${Math.round(lo)}</span><span>Index</span><span>${Math.round(hi)}</span></span></div>`
+    +(ms.length>6?`<span class="gt">+${ms.length-6} more model${ms.length>7?"s":""}; the plan table lists them all.</span>`:"");
+}
+function renderSheet(){
+  const ps=PLANS.filter(p=>state.subCmp.has(p.id)), all=ps.flatMap(planPts).map(q=>q.r.aaii);
+  const lo=all.length?Math.floor(Math.min(...all)-2):0, hi=all.length?Math.ceil(Math.max(...all)+2):70;
+  const rows=[["Price",p=>`<b class="mono">${feeTxt(p)}</b>${p.usd?" a month":""}`],
+    ["Top model",p=>{const b=planBest(p); return b?`${esc(b.m.name)}${effTag(b.r)} · <b class="mono">${b.r.aaii}</b>`:"—";}],
+    ["Board models",p=>Object.keys(p.models).length],
+    ["Published usage",p=>p.x!=null?esc(planUse(p)):'<span class="gt">not published</span>'],
+    ["Per $ vs entry tier",p=>{const v=perDollar(p); return v==null?"—":famBase(p.fam)===p?"entry tier":v.toFixed(2)+"×";}],
+    ["API break-even",p=>{const k=planBreak(p); return k!=null?tasksN(k)+" Index tasks a month":"—";}],
+    ["Which setting to run",p=>sbEff(p,lo,hi)],
+    ["Limits",p=>`<span class="gt">${esc(p.lim)}</span>`],
+    ["Past the limit",p=>`<span class="gt">${esc(planFam(p).over)}</span>`],
+    ["Source",p=>`<a href="${planFam(p).url}" target="_blank" rel="noopener">${esc(planFam(p).url.replace(/^https:\/\//,""))}</a>`]];
+  const g=$("#sbgrid"); g.style.gridTemplateColumns=`minmax(96px,130px) repeat(${ps.length},minmax(200px,1fr))`;
+  g.innerHTML=`<div></div>`+ps.map(p=>`<div class="gh">${esc(planName(p))}<small>${esc(planFam(p).vendor)} · ${isFlat(p)?"flat-rate":"token-metered"}</small></div>`).join("")
+    +rows.map(([k,f])=>`<div class="gk">${k}</div>`+ps.map(p=>`<div>${f(p)}</div>`).join("")).join("");
+  wire(g);
+}
+const sbSheet={from:null, get open(){return !$("#sbsheet").hidden;},
+  show(btn){ if(state.subCmp.size<2) return; this.from=btn||$("#sbgo"); renderSheet(); $("#sbsheet").hidden=false;
+    document.documentElement.classList.add("sblock"); $("#sbclose").focus({preventScroll:true}); },
+  hide(){ if(!this.open) return; $("#sbsheet").hidden=true; document.documentElement.classList.remove("sblock"); hideTip();
+    if(this.from&&this.from.getClientRects().length) this.from.focus({preventScroll:true}); }};
+function openPicker(){ const b=$("#sbpickb"); $("#sbpickbox").hidden=false; b.setAttribute("aria-expanded","true");
+  $("#sb-mine").scrollIntoView({block:"start"}); scrollBy(0,-secOff()); }
+$("#sbpickb").onclick=()=>{ const box=$("#sbpickbox"); box.hidden=!box.hidden; $("#sbpickb").setAttribute("aria-expanded",!box.hidden); };
+$("#sbflat").onclick=()=>{ state.subFlat=!state.subFlat; state.subMore=false; renderShort(); syncURL(); };
+$("#sbgo").onclick=e=>sbSheet.show(e.currentTarget);
+$("#sbclr").onclick=()=>{ state.subCmp.clear(); renderShort(); };
+$("#sbclose").onclick=()=>sbSheet.hide();
+$("#sbsheet").onclick=e=>{ if(e.target.id==="sbsheet") sbSheet.hide(); };
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&sbSheet.open){ e.preventDefault(); sbSheet.hide(); } });
+$("#p-subs").addEventListener("click",e=>{ const t=e.target.closest("button"); if(!t||!$("#p-subs").contains(t)) return;
+  if(t.dataset.cap!=null){ state.subCap=+t.dataset.cap; state.subMore=false; renderShort(); syncURL(); }
+  else if(t.dataset.own){ planToggle(t.dataset.own); }
+  else if(t.dataset.sbcmp){ const id=t.dataset.sbcmp; state.subCmp.has(id)?state.subCmp.delete(id):state.subCmp.size<SUB_CMP_MAX&&state.subCmp.add(id); renderShort(); }
+  else if(t.id==="sbmore"){ state.subMore=true; renderShort(); }
+  else if(t.id==="sbshowmet"){ state.subFlat=false; renderShort(); syncURL(); } });
+// a closed section keeps its chart drawn at full width; opening it redraws the chart to fit
+[["sbd-ladder",()=>renderLadder()],["sbd-use",()=>renderUse()],["sbd-tier",()=>renderTier()]].forEach(([id,f])=>
+  $("#"+id).addEventListener("toggle",e=>{ if(e.target.open) f(); }));
+function renderSubs(){ renderShort(); renderMine(); renderLadder(); renderUse(); renderTier(); renderPlanTable(); }
 $("#sbplan").onchange=e=>{ state.subPlan=e.target.value; renderUse(); syncURL(); };
 $("#sbx").onchange=e=>{ state.subX=e.target.value; renderUse(); syncURL(); };
 
@@ -2836,7 +3065,7 @@ function setTab(p){
   $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p===p));
   $$(".panel").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
 }
-$$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); setTab(t.dataset.p); render(); secTrack(true); syncURL(); });
+$$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); sbSheet.hide(); setTab(t.dataset.p); render(); secTrack(true); syncURL(); });
 
 /* ---------------- shareable URL ---------------- */
 /* The query string carries the tab, the chart section in view and the comparison (picked models, effort levels left out,
@@ -2875,7 +3104,8 @@ function syncURL(){
   if(state.lens==="api") q.push("lens=api");
   if(state.mine.size) q.push("plans="+PLANS.filter(p=>state.mine.has(p.id)).map(p=>p.id).join(","));
   if(state.onlyMine) q.push("mine=1");
-  if(t==="subs"){ if(state.subPlan) q.push("plan="+state.subPlan); if(state.subX==="ttft") q.push("against=wait"); }
+  if(t==="subs"){ if(state.subCap!==20) q.push("budget="+(state.subCap===Infinity?"any":state.subCap)); if(!state.subFlat) q.push("metered=1");
+    if(state.subPlan) q.push("plan="+state.subPlan); if(state.subX==="ttft") q.push("against=wait"); }
   if(t==="quad"){
     if(state.sec) q.push("chart="+state.sec);
     if(state.effSel&&[...state.effSel].join("|")!==effPreset("default").join("|")) q.push("models="+[...state.effSel].map(slug).join(","));
@@ -2903,6 +3133,9 @@ function urlApply(){
   state.onlyMine=on(p.get("mine"))&&state.mine.size>0;
   if(p.get("plan")==="mine"||ids.has(p.get("plan"))) state.subPlan=p.get("plan");
   if(p.get("against")==="wait") state.subX="ttft";
+  if(state.subPlan||state.subX==="ttft") $("#sbd-use").open=true;
+  { const b=p.get("budget"), c=b==="any"?Infinity:+b; if(b!=null&&SUB_CAPS.includes(c)) state.subCap=c; }
+  if(on(p.get("metered"))) state.subFlat=false;
   state.sec=tab==="quad"&&sec&&"ch-"+sec!==$("#p-quad .card[id^='ch-']").id?sec:null;
   let names=null;
   if(p.has("models")){ const by=new Map(MODELS.map(m=>[slug(m.name),m.name])), ids=p.get("models").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
