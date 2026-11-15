@@ -3045,7 +3045,16 @@ $("#sbgo").onclick=e=>sbSheet.show(e.currentTarget);
 $("#sbclr").onclick=()=>{ state.subCmp.clear(); renderShort(); };
 $("#sbclose").onclick=()=>sbSheet.hide();
 $("#sbsheet").onclick=e=>{ if(e.target.id==="sbsheet") sbSheet.hide(); };
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&sbSheet.open){ e.preventDefault(); sbSheet.hide(); } });
+// the sheet is modal: Escape closes it, and Tab and Shift+Tab cycle through its own controls only
+document.addEventListener("keydown",e=>{ if(!sbSheet.open) return;
+  if(e.key==="Escape"){ e.preventDefault(); sbSheet.hide(); return; }
+  if(e.key!=="Tab") return;
+  const box=$(".sb-sheetin"), fs=$$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])',box).filter(x=>x.getClientRects().length);
+  if(!fs.length) return;
+  const a=fs[0], z=fs[fs.length-1], at=document.activeElement;
+  if(!box.contains(at)){ e.preventDefault(); (e.shiftKey?z:a).focus(); }
+  else if(e.shiftKey&&at===a){ e.preventDefault(); z.focus(); }
+  else if(!e.shiftKey&&at===z){ e.preventDefault(); a.focus(); } });
 $("#p-subs").addEventListener("click",e=>{ const t=e.target.closest("button"); if(!t||!$("#p-subs").contains(t)) return;
   if(t.dataset.cap!=null){ state.subCap=+t.dataset.cap; state.subMore=false; renderShort(); syncURL(); }
   else if(t.dataset.own){ planToggle(t.dataset.own); }
@@ -3079,7 +3088,9 @@ const secCards=()=>$$("#p-quad .card[id^='ch-']").filter(c=>c.getClientRects().l
 const secOff=()=>$(".top").offsetHeight+$(".rail").offsetHeight+12;       // just below the two sticky bars
 const secOK=id=>{const c=id&&document.getElementById("ch-"+id); return !!(c&&c.classList.contains("card")&&c.closest("#p-quad"));};
 state.sec=null;
-let secY=0, secPin=false, secInput=0, secSettled=false;
+// secInput is when the visitor last touched the page; it starts at -Infinity, not 0, which read as input at page start and
+// let any layout shift in the first 1.5 s rename the section a link landed on
+let secY=0, secPin=false, secInput=-Infinity, secSettled=false;
 function secGo(id){
   const c=document.getElementById("ch-"+id); if(!c||!c.getClientRects().length) return;
   scrollTo(0,Math.max(0,scrollY+c.getBoundingClientRect().top-secOff())); secY=scrollY; secPin=true;

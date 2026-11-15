@@ -105,6 +105,12 @@ try {
     if (!(await page.locator("#sbsheet").isVisible())) bad("the compare sheet did not open");
     if ((await page.locator("#sbgrid .gh").count()) !== 2) bad("the compare sheet does not show the two plans");
     if (!(await page.locator("#sbgrid .sb-eff i").count())) bad("the compare sheet draws no effort levels");
+    // the sheet is modal: Tab and Shift+Tab stay inside it
+    const inSheet = () => page.evaluate(() => document.querySelector(".sb-sheetin").contains(document.activeElement));
+    await page.keyboard.press("Shift+Tab");
+    if (!(await inSheet())) bad("Shift+Tab from the compare sheet's Close button left the sheet");
+    await page.keyboard.press("Tab");
+    if (!(await inSheet())) bad("Tab from the compare sheet's last control left the sheet");
     await page.keyboard.press("Escape");
     if (await page.locator("#sbsheet").isVisible()) bad("Escape did not close the compare sheet");
     await page.click("#sbgo");
