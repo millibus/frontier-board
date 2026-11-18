@@ -490,6 +490,14 @@ try {
       const fit = await ph.evaluate(() => ({ wrap: document.querySelector(".tablewrap").clientWidth, table: document.querySelector("#board").scrollWidth, cols: [...document.querySelectorAll("#board thead th")].filter(t => t.offsetParent).length }));
       if (fit.table > fit.wrap + 1) problems.push(`phone: the compact Board is ${fit.table}px wide in a ${fit.wrap}px frame`);
       if (fit.cols !== 4) problems.push(`phone: the compact Board shows ${fit.cols} columns, expected rank, model, Index and plan`);
+      // an opened row's own tables (the effort levels) keep their headings in the compact view
+      const multi = await ph.evaluate(() => Object.keys(EFFORT).find(n => EFFORT[n].length > 1 && document.querySelector(`#board tbody tr[data-m="${n}"]`)));
+      if (multi) {
+        await ph.locator(`#board tbody tr[data-m="${multi}"] .rowbtn`).click();
+        const hidden = await ph.evaluate(() => [...document.querySelectorAll("#board tr.det th")].filter(t => !t.offsetParent).length);
+        if (hidden) problems.push(`phone: ${hidden} headings in ${multi}'s details are hidden by the compact Board`);
+        await ph.locator(`#board tbody tr[data-m="${multi}"] .rowbtn`).click();
+      }
       await ph.click("#boardcols");
       if ((await ph.evaluate(() => [...document.querySelectorAll("#board thead th")].filter(t => t.offsetParent).length)) <= 4) problems.push("phone: Show every column did not bring the other columns back");
       await ph.close();

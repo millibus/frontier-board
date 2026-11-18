@@ -540,7 +540,7 @@ html.sblock{overflow:hidden}
   .count{margin-left:0;white-space:nowrap}
   /* phones: the Board keeps model, Index and plan side by side; every other column waits behind a button */
   .boardcols{display:inline-flex;margin:0 0 10px;min-height:36px;align-items:center}
-  #board:not(.full) th:not(.keep),#board:not(.full) tr[data-m] td:not(.keep){display:none}
+  #board:not(.full) > thead th:not(.keep),#board:not(.full) > tbody > tr[data-m] > td:not(.keep){display:none}
   #board:not(.full) td .pl{display:block;margin-left:0;white-space:normal}
   #board:not(.full) td.keep{white-space:normal}
   #board:not(.full) .mname{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:4px}#board:not(.full) .mname .prov{flex-basis:100%;margin-left:15px}
