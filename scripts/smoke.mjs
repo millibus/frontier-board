@@ -108,6 +108,20 @@ try {
     await page.keyboard.press("Enter");
     await page.click('.tab[data-p="board"]');
   }
+  // the model filters show only where they apply, and a tab picked after scrolling opens at its top
+  {
+    await page.evaluate(() => scrollTo(0, 2500));
+    await page.click('.tab[data-p="subs"]');
+    if (await page.locator("#q").isVisible()) problems.push("the model search shows on the Subscriptions tab, where it filters nothing");
+    if (!(await page.locator("#minechip").isVisible())) problems.push("Pick my plans is hidden on the Subscriptions tab");
+    const top = await page.evaluate(() => document.querySelector("#p-subs").getBoundingClientRect().top);
+    if (top < 0) problems.push(`the Subscriptions tab opened ${Math.round(-top)}px below its top`);
+    await page.click('.tab[data-p="src"]');
+    if (await page.locator(".rail").isVisible()) problems.push("the filter bar shows on the Sources tab");
+    for (const id of ["caveats-h", "srclist-h", "planlist-h"]) if (!(await page.locator(`.jumps a[href="#${id}"]`).count()) || !(await page.locator(`#${id}`).count())) problems.push(`Sources has no working jump link to #${id}`);
+    await page.click('.tab[data-p="board"]');
+    if (!(await page.locator("#q").isVisible())) problems.push("the model search did not come back on the Board");
+  }
 
   await page.locator("#board tbody tr[data-m]").first().click();
   if (!(await page.locator("#board .detbox").count())) problems.push("clicking a row did not open its detail panel");
