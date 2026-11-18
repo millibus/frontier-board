@@ -106,6 +106,14 @@ try {
     if (!(await page.locator("#benchhost .covdet li").count())) problems.push("Enter on a coverage-grid model listed no scores");
     if (!(await page.evaluate(() => document.activeElement?.classList.contains("covbtn")))) problems.push("focus left the coverage-grid model after opening it");
     await page.keyboard.press("Enter");
+    // a model low in the grid stays in view when opened, rather than the grid jumping back to its first rows
+    const low = await page.evaluate(() => { const w = document.querySelector("#benchhost .covwrap"), rs = [...w.querySelectorAll("tr[data-cm]")]; const r = rs[rs.length - 1]; w.scrollTop = w.scrollHeight; return { name: r.dataset.cm, scrolled: w.scrollTop }; });
+    if (low.scrolled > 0) {
+      await page.locator(`#benchhost tr[data-cm="${low.name}"] .covbtn`).click();
+      const vis = await page.evaluate(n => { const w = document.querySelector("#benchhost .covwrap"), r = [...w.querySelectorAll("tr[data-cm]")].find(x => x.dataset.cm === n), a = w.getBoundingClientRect(), b = r.getBoundingClientRect(); return { top: w.scrollTop, inView: b.bottom > a.top && b.top < a.bottom }; }, low.name);
+      if (!vis.top || !vis.inView) problems.push(`opening ${low.name} at the bottom of the coverage grid scrolled it out of view: ${JSON.stringify(vis)}`);
+      await page.locator(`#benchhost tr[data-cm="${low.name}"] .covbtn`).click();
+    }
     await page.click('.tab[data-p="board"]');
   }
   // the model filters show only where they apply, and a tab picked after scrolling opens at its top

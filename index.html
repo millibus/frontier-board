@@ -2773,8 +2773,14 @@ function renderBench(rows){
   out+=`<details class="archive"><summary><span>Archive</span> ${ak.length} benchmarks that are saturated, superseded or no longer updated — kept for reference, left out of the main table and coverage grid</summary>
     <div class="bgrid" style="margin-top:14px">${ak.map(k=>benchCard(k,rows)).join("")}</div></details>`;
   host.innerHTML=out; wire(host);
-  $$("#benchhost .covbtn").forEach(b=>b.onclick=()=>{ const n=b.closest("tr").dataset.cm; state.covOpen=state.covOpen===n?null:n; renderBench(filtered());
-    [...$$("#benchhost tr[data-cm]")].find(r=>r.dataset.cm===n)?.querySelector(".covbtn")?.focus({preventScroll:true}); });
+  $$("#benchhost .covbtn").forEach(b=>b.onclick=()=>{ const n=b.closest("tr").dataset.cm, w=$("#benchhost .covwrap"), st=w?[w.scrollTop,w.scrollLeft]:[0,0];
+    state.covOpen=state.covOpen===n?null:n; renderBench(filtered());
+    // the grid scrolls inside its own frame: keep the reader where they were, then bring the opened row into view
+    const w2=$("#benchhost .covwrap"); if(w2){ w2.scrollTop=st[0]; w2.scrollLeft=st[1]; }
+    const tr=[...$$("#benchhost tr[data-cm]")].find(r=>r.dataset.cm===n);
+    if(tr){ tr.querySelector(".covbtn")?.focus({preventScroll:true});
+      if(w2){ const head=w2.querySelector("thead")?.offsetHeight||0, top=tr.offsetTop-head, bot=tr.offsetTop+tr.offsetHeight+(tr.nextElementSibling?.classList.contains("covdet")?tr.nextElementSibling.offsetHeight:0);
+        if(top<w2.scrollTop) w2.scrollTop=top; else if(bot>w2.scrollTop+w2.clientHeight) w2.scrollTop=Math.min(top,bot-w2.clientHeight); } } });
 }
 function benchCard(k,rows){
   const B=BENCH[k];
