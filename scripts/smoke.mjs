@@ -71,7 +71,33 @@ try {
       if (shownAll !== nArch) problems.push(`Show the Archive brought back ${shownAll} of ${nArch} archived models`);
       await page.click("#archbtn");
       if ((await page.locator("#board tbody tr[data-m]").count()) !== rows) problems.push("Hide the Archive did not restore the default Board");
+      // a search that only archived models match says so
+      const arch1 = await page.evaluate(() => [...ARCHIVE][0]);
+      await page.fill("#q", arch1);
+      if (!/match(es)? in archived models/.test(await page.textContent("#archnote"))) problems.push(`searching "${arch1}" does not point to the archived match`);
+      await page.fill("#q", "");
     }
+  }
+  // under the subscription lens a plan cell says what that plan reaches when it is below the model's best
+  {
+    const lower = await page.evaluate(() => MODELS.filter(m => m.tier !== "archive" && val(m, "aaii") != null).map(m => { const p = cheapPlan(m.name), q = p && planReach(p, m); return q && q.r.aaii < val(m, "aaii") ? [m.name, q.r.aaii] : null; }).filter(Boolean)[0]);
+    if (lower) {
+      const cell = await page.locator(`#board tbody tr[data-m="${lower[0]}"] .pl.reach`).textContent().catch(() => "");
+      if (!cell.includes(`Index ${lower[1]}`)) problems.push(`${lower[0]}'s plan cell does not say its plan reaches Index ${lower[1]}`);
+    }
+  }
+  // keyboard: a model name and a column heading are buttons, Enter works, and focus stays put after the re-render
+  {
+    const first = page.locator("#board tbody tr[data-m] .rowbtn").first(), name = await page.locator("#board tbody tr[data-m]").first().getAttribute("data-m");
+    await first.focus(); await page.keyboard.press("Enter");
+    if (!(await page.locator("#board tbody tr.det").count())) problems.push("Enter on a model name did not open its details");
+    if ((await page.evaluate(() => document.activeElement?.closest("tr")?.dataset.m)) !== name) problems.push("focus left the model name after opening its details");
+    if ((await page.locator(`#board tbody tr[data-m="${name}"] .rowbtn`).getAttribute("aria-expanded")) !== "true") problems.push("the opened row's button is not aria-expanded");
+    await page.keyboard.press("Enter");
+    await page.locator('#board thead th[data-k="name"] .thbtn').focus(); await page.keyboard.press("Enter");
+    if ((await page.locator('#board thead th[data-k="name"]').getAttribute("aria-sort")) !== "ascending") problems.push("Enter on the Model heading did not sort by name");
+    if ((await page.evaluate(() => document.activeElement?.closest("th")?.dataset.k)) !== "name") problems.push("focus left the heading after sorting");
+    await page.evaluate(() => { state.sort = "aaii"; state.dir = -1; render(); });
   }
 
   await page.locator("#board tbody tr[data-m]").first().click();

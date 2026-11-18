@@ -410,6 +410,7 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
 .sb-meter{flex:1;height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden}
 .sb-meter i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .sb-meter.met i{background:var(--ink-3)}
+.thbtn,.rowbtn{appearance:none;border:0;background:none;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;letter-spacing:inherit;text-transform:inherit}.thbtn:focus-visible,.rowbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}.rowbtn{font-weight:inherit;display:inline-flex;align-items:baseline;gap:4px}.rowbtn .chev{font-size:10px;color:var(--ink-3);width:9px;display:inline-block}.pl.reach{color:var(--ink-2);font-weight:500}.reachv{font-size:11.5px;color:var(--ink-2);margin-right:10px;font-weight:400}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .archnote{font-size:13px;color:var(--ink-2);margin-top:10px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2)}.archnote:empty{display:none}.linkbtn{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:500;color:var(--accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 .sb-more-b{appearance:none;display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface-2);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}
 #p-subs .sb-foot{max-width:none;margin:10px 0 0;font-size:12.5px}
@@ -1635,6 +1636,7 @@ const PLANS = [
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
 {d:"17 Nov 2026",items:[
+  ["feature","Board fixes after a design review. Under the Subscription lens, when the cheapest plan that includes a model cannot run the setting behind its Index score, the plan cell now says what that plan reaches: Gemini 4 Hydrogen scores 54 at xhigh, but Google AI Plus runs it at high, where it scores 51. The detail panel labels the Index as the model's best and lists the Index each plan reaches. Model names and column headings are now buttons, so the table can be sorted and rows opened from the keyboard, with focus kept on the control used. The archive is named Archived models, to keep it apart from archived benchmarks, and a search that only archived models match says how many there are and offers to show them."],
   ["feature","The model list is shorter. A model stays on the Board while its Index score reaches the 30th-best on the board, a listed plan includes it, it is among the 10 best open-weights models, or it was released in the 30 days before the snapshot; the rest move to a new Archive tier, hidden by default, with every score and note kept. The Archive chip, or Show the Archive under the Board table, brings them back, and the Charts model picker lists them under an Archive heading. The rule runs when the page loads, so models move to the Archive by themselves as newer ones arrive. 36 models are archived now, among them Claude Opus 4.5–4.8, GPT-5, GPT-5.4, GPT-5.5, o3, Gemini 3 Pro, Llama 4 Maverick, Gemma 4 31B and the Nemotron models; the default Board shows 40 models instead of 60."],
   ["data","Subscription plans: every vendor page was re-read on 17 Nov. GPT-6.2 Astra and Sol join ChatGPT Plus and the three Pro plans in Work and Codex only (Plus estimates 6–50 and 17–180 local messages per 5 hours), and Copilot Pro+ and Max. The Codex and Work credit rates gain GPT-6.2 Astra at 200 in and 1,000 out per million tokens; GPT-6.2 Sol shares 50 and 250 with GPT-6.1 Sol. Pro 200 gains Ultrafast with GPT-6.2 Sol in Codex, per OpenAI’s launch post and Pro help article; an older help page still says Pro 500 only. Gemini 4 Hydrogen joins Google AI Plus, Pro and both Ultra plans; Qwen4 Max joins the Alibaba Model Studio Token Plan; Inkling 2 Small joins Ollama Cloud Pro and Max. Kimi’s burn text now gives each Highspeed model’s multiple. No plan price changed. Alibaba’s $3 and $5 first-purchase prices are a promotion and are not counted."],
   ["add","GPT-6.2 Astra and GPT-6.2 Sol (OpenAI, 17 Nov), in the API, ChatGPT Work and Codex. Astra is $8/$40 (GPT-6 Astra was $10/$50) and Sol keeps $2/$10; both have a 1,050,000-token context. Artificial Analysis: Astra 62 on Index v5 at max for $4.00 per index task (62 at xhigh for $2.52), Sol 57 at max for $1.01. ARC Prize, standard harness at max effort: ARC-AGI-3 70.31% and 54.93%, ARC-AGI-2 95.8% and 85.8%. Vals AI: Terminal-Bench 4.0 63.13% and 60.61%, Terminal-Bench Science 71.43% and 58.57%. Vendor-run, from OpenAI's launch charts and system card: AutomationBench 52.4% and 41.2%, FrontierCode 2.0 44.2% and 43.8%, HealthBench Professional 66.3% and 65.9%, GPQA Diamond 97.0% and 96.0%. Neither is on Arena, OpenRouter's τ²-bench, WeirdML or MathArena yet. Astra for Law, a configuration of GPT-6.2 Astra, is not added."],
@@ -1890,7 +1892,7 @@ const ARCHIVE=(()=>{
 MODELS.forEach(m=>{ m.baseTier=m.tier; if(ARCHIVE.has(m.name)) m.tier="archive"; });
 
 /* ---------------- filter state ---------------- */
-const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"],["archive","Archive"]];
+const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"],["archive","Archived models"]];
 const state={q:"",tiers:new Set(["frontier","challenger"]),weights:new Set(["open","closed"]),prov:"",
              sort:"aaii",dir:-1,openRow:null};
 
@@ -1913,15 +1915,16 @@ buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights
 }
 $("#q").oninput=e=>{state.q=e.target.value.toLowerCase();render();};
 
-function filtered(){
-  return MODELS.filter(m=>{
-    if(!state.tiers.has(m.tier)) return false;
+function filtered(){ return MODELS.filter(m=>passes(m)); }
+function passes(m,anyTier){
+  {
+    if(!anyTier&&!state.tiers.has(m.tier)) return false;
     if(!state.weights.has(m.open?"open":"closed")) return false;
     if(state.prov && m.prov!==state.prov) return false;
     if(state.q && !(m.name+" "+m.prov).toLowerCase().includes(state.q)) return false;
     if(state.onlyMine && !minePlans(m.name).length) return false;
     return true;
-  });
+  }
 }
 
 /* ---------------- board table ---------------- */
@@ -1953,19 +1956,22 @@ function planPts(p){
 }
 const planBest=p=>[...planPts(p)].sort((a,b)=>b.r.aaii-a.r.aaii||(a.r.cost??1e9)-(b.r.cost??1e9))[0]||null;
 const effTag=r=>r.e==="one"?"":" · "+r.e;
+/* the best Index setting of model m that plan p can run, or null when none of its levels was measured */
+const planReach=(p,m)=>planPts(p).filter(q=>q.m===m).sort((a,b)=>b.r.aaii-a.r.aaii)[0]||null;
 
 function renderBoard(rows){
   const th=$("#board thead"), tb=$("#board tbody"), COLS=boardCols(), sv=(m,k)=>k==="plan"?(cheapPlan(m.name)||{}).usd??null:val(m,k);
   if(!COLS.includes(state.sort)&&state.sort!=="name") state.sort=state.sort==="plan"?"price":state.sort==="price"?"plan":"aaii";
-  th.innerHTML="<tr><th class='l'></th><th class='l' data-k='name'>Model <span class='arw'>▾</span></th>"+
-    COLS.map(k=>{const [s,l]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" title="${esc(l)}">${s} <span class="arw">▾</span></th>`;}).join("")+"</tr>";
+  const ariaSort=k=>k===state.sort?` aria-sort="${state.dir<0?"descending":"ascending"}"`:"";
+  th.innerHTML="<tr><th class='l'><span class='vh'>Rank</span></th><th class='l' data-k='name'"+ariaSort("name")+"><button type='button' class='thbtn' aria-label='Sort by model name'>Model <span class='arw' aria-hidden='true'>▾</span></button></th>"+
+    COLS.map(k=>{const [s,l]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" title="${esc(l)}"${ariaSort(k)}><button type="button" class="thbtn" aria-label="Sort by ${esc(l)}">${s} <span class="arw" aria-hidden="true">▾</span></button></th>`;}).join("")+"</tr>";
   $$("#board thead th[data-k]").forEach(el=>{
     if(el.dataset.k===state.sort){el.setAttribute("data-active","");
       el.querySelector(".arw").textContent = state.dir<0?"▾":"▴";}
     el.onclick=()=>{
       if(state.sort===el.dataset.k) state.dir*=-1;
       else {state.sort=el.dataset.k; state.dir = el.dataset.k==="name"?1:(BENCH[el.dataset.k]&&BENCH[el.dataset.k].hi?-1:1);}
-      render();
+      boardFocus={sort:el.dataset.k}; render();
     };
   });
   const k=state.sort;
@@ -1980,7 +1986,8 @@ function renderBoard(rows){
     const mine=minePlans(m.name);
     const cells=COLS.map(c=>{
       if(c==="plan"){ const pl=cheapPlan(m.name), n=plansOf(m.name).length;
-        return pl?`<td class="mono" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span><span class="q ven" title="${QL.ven}"></span></td>`
+        const rq=pl&&val(m,"aaii")!=null?planReach(pl,m):null, lower=rq&&rq.r.aaii<val(m,"aaii");
+        return pl?`<td class="mono" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${lower?` — this plan offers ${esc(rq.r.e)} effort at most, where the model scores ${rq.r.aaii}; ${val(m,"aaii")} needs ${esc(topEff(m)||"a higher setting")}`:""}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span>${lower?`<span class="pl reach">Index ${rq.r.aaii}${effTag(rq.r)} on this plan</span>`:""}<span class="q ven" title="${QL.ven}"></span></td>`
           :`<td class="mono na" title="No subscription on the board includes this model; it is reached through an API">—</td>`; }
       const v=val(m,c), q=qual(m,c);
       const et = c==="aaii"&&v!=null&&topEff(m) ? `<span class="eff">${topEff(m)}</span>` : "";
@@ -1989,15 +1996,20 @@ function renderBoard(rows){
     const on = state.openRow===m.name;
     return `<tr data-m="${m.name}" class="${on?"open":""}">
       <td class="l mono rk">${i+1}</td>
-      <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span>${m.name}${mine.length?`<span class="mine" title="In your plans: ${esc(mine.map(planName).join(", "))}">✓</span>`:""}<span class="prov">${m.prov}</span></span></td>
+      <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span><button type="button" class="rowbtn" aria-expanded="${on}" aria-label="${esc(m.name)}: ${on?"hide":"show"} every score"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${m.name}</button>${mine.length?`<span class="mine" title="In your plans: ${esc(mine.map(planName).join(", "))}">✓</span>`:""}<span class="prov">${m.prov}</span></span></td>
       ${cells}</tr>`+(on?detailRow(m):"");
   }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">${state.onlyMine&&!state.mine.size?"No plan is picked yet. Open the Subscriptions tab and pick the plans you pay for.":"Nothing matches those filters."}</td></tr>`;
   $("#boardlens").textContent=state.lens==="api"?"Prices are per-token API prices; switch Pricing to Subscription to see which monthly plans include each model."
     :"Plan $/mo is the cheapest subscription that includes the model (◦ marks a token-metered plan); ✓ marks a model in your own plans. Plan prices are vendor-reported.";
   $$("#board tbody tr[data-m]").forEach(tr=>tr.onclick=()=>{
-    state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; render();
+    state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; boardFocus={row:tr.dataset.m}; render();
   });
+  // re-rendering replaces the buttons: put keyboard focus back on the one that was used
+  if(boardFocus){ const f=boardFocus; boardFocus=null;
+    const b=f.row?[...$$("#board tbody tr[data-m]")].find(r=>r.dataset.m===f.row)?.querySelector(".rowbtn"):$(`#board thead th[data-k="${f.sort}"] .thbtn`);
+    if(b&&document.activeElement===document.body) b.focus({preventScroll:true}); }
 }
+let boardFocus=null;
 
 function detailRow(m){
   const groups={headline:"Index, price & speed",speed:"Throughput",coding:"Coding",agentic:"Agentic & computer use",reasoning:"Reasoning, knowledge & preference"};
@@ -2007,7 +2019,7 @@ function detailRow(m){
     if(!keys.length) continue;
     out+=keys.map(k=>{
       const [v,q,src]=m.s[k];
-      return `<div class="dline"><span class="k">${BENCH[k].l}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;
+      return `<div class="dline"><span class="k">${BENCH[k].l}${k==="aaii"?" · model best":""}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;
     }).join("");
   }
   const archK=Object.keys(BENCH).filter(k=>isArch(k)&&m.s[k]);
@@ -2778,7 +2790,7 @@ const CAVEATS=[
  ["Release coverage is uneven","Fable 5.2 was released 9 Nov 2026. Only retrieved and verified results are included; missing scores remain blank rather than being inferred from Fable 5.1, Mythos 5.2, or marketing claims. Earlier models also retain gaps where their evaluators have no readable result. Absence from a fetched page does not establish that a model was never evaluated."],
  ["The Intelligence Index changed underneath the board","Artificial Analysis moved from v4.1.1 to v4.3.2 in September, and to v5 on 27 Oct 2026, and both times the scores moved for reasons that had nothing to do with the models: the test changed. Under v5 Kimi K3.1 Pro went from 55 to 46 while GPT-6 Astra went from 53 to 57. Scores from two versions cannot share a column, so the Index column holds only v5 scores, and the last v4.3.2 scores sit in an archived column. Models Artificial Analysis has not yet run on v5 show a dash. If you compare a number here against a screenshot from before 27 Oct, it will not line up."],
  ["The default view hides superseded models","Opus 5, Fable 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash and others moved to Previous gen when their replacements shipped. Turn on the Previous gen chip to bring them back — useful when a new model's vendor table only compares against the old generation."],
- ["Older and lower-ranked models sit in the Archive","The Board keeps a model in view while its Index score reaches the 30th-best on the board, a listed subscription includes it, its Index score reaches the 10th-best among open-weights models, or it was released in the last 30 days. The rest move to the Archive by themselves as newer models arrive: they keep every score and note, and the Archive chip, or Show the Archive under the Board table, brings them back. Models with no current Index score, such as the GPT-5 and Claude Opus 4 generations, end up there unless a plan still sells them."],
+ ["Older and lower-ranked models are archived","The Board keeps a model in view while its Index score reaches the 30th-best on the board, a listed subscription includes it, its Index score reaches the 10th-best among open-weights models, or it was released in the last 30 days. The rest become archived models by themselves as newer models arrive: they keep every score and note, and the Archived models chip, or Show archived models under the Board table, brings them back. Models with no current Index score, such as the GPT-5 and Claude Opus 4 generations, are archived unless a plan still sells them."],
  ["Safeguards and model variants matter","Anthropic’s 9 Nov launch table mixes Fable 5.2 with clearly marked Mythos 5.2-only cybersecurity and biology evaluations. Those Mythos results are excluded from the Fable row. FrontierCode 2.0 also uses xhigh effort for Fable and medium for Gemini 4 Carbon; Remote Labor Index uses high effort for Fable 5.2. Compare the row notes, not just the model names."],
  ["Vendors disagree when they run the same benchmark","xAI's August table scores Fable 5 at 1741 on GDPval-AA v2; Anthropic's September table scores it at 1723. Same benchmark, same model, two runs, 18 points apart. CursorBench is the counter-example — both vendors got 70.5% for Fable 5 and 67.2% for GPT-5.6 Sol — which is why Grok appears in that column and not in GDPval."],
  ["Some release candidates remain excluded","Apodex 1.1 lacks a verified vendor announcement in the retained audit. Agnes AI’s Theta-specific documentation and pricing are now traceable, but its claimed 7 Nov release date and numerical context were not verified with the vendor, so Theta is excluded pending those details. Motif 3’s prior conflicting Index readings remain unresolved. Muse Ember has a verified 9 Nov Meta release and is a separate row from Ember-1."],
@@ -2846,7 +2858,7 @@ function subsList(m){
   return `<p class="effh">Subscriptions that include it · vendor pages, ${PLAN_ASOF}</p>`+ps.map(p=>{const note=p.models[m.name];
     return `<div class="dline"><span class="k">${state.mine.has(p.id)?'<span class="mine" title="One of your plans">✓</span>':""}${esc(planName(p))}`
       +`${isFlat(p)?"":'<span class="eff">token-metered</span>'}${note?`<span class="eff">${esc(note)}</span>`:""}${p.pin?`<span class="eff">${p.pin.join(", ")} effort only</span>`:""}</span>`
-      +`<span class="v mono">${usd(p.usd)}/mo</span></div>`;}).join("");
+      +`<span class="v mono">${(q=>q?`<span class="reachv" title="Highest Index setting this plan runs">Index ${q.r.aaii}${effTag(q.r)}</span>`:"")(val(m,"aaii")!=null?planReach(p,m):null)}${usd(p.usd)}/mo</span></div>`;}).join("");
 }
 
 /* ---------------- board: subscription picks ---------------- */
@@ -3307,9 +3319,12 @@ function renderChanges(){
 function renderArchNote(){
   const el=$("#archnote"), n=ARCHIVE.size, on=state.tiers.has("archive");
   if(!n){ el.innerHTML=""; return; }
+  // a search that only archived models match says so, rather than leaving an empty table
+  const hits=!on&&state.q?MODELS.filter(m=>m.tier==="archive"&&passes(m,true)).length:0;
   el.innerHTML=on
-    ?`Showing the Archive: ${n} older or lower-ranked models. <button type="button" class="linkbtn" id="archbtn">Hide the Archive</button>`
-    :`${n} more models are in the Archive: below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days ago. <button type="button" class="linkbtn" id="archbtn">Show the Archive</button>`;
+    ?`Showing ${n} archived models: older or lower-ranked models no listed plan includes. <button type="button" class="linkbtn" id="archbtn">Hide archived models</button>`
+    :hits?`${hits} match${hits>1?"es":""} in archived models. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`
+    :`Archived models (${n}): below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days ago. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`;
   $("#archbtn").onclick=()=>{ on?state.tiers.delete("archive"):state.tiers.add("archive");
     buildChips($("#tierchips"),TIERS,state.tiers); render(); };
 }
