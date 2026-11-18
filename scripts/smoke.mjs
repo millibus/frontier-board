@@ -59,6 +59,20 @@ try {
   if (asof !== ASOF) problems.push(`header ASOF "${asof}" ≠ "${ASOF}"`);
   if (+nm !== nModels) problems.push(`header model count ${nm} ≠ ${nModels}`);
   if (!(await page.locator("footer.foot").count())) problems.push("footer is missing");
+  // the Archive: hidden by default, no plan's model in it, and one button shows and hides it again
+  {
+    const nArch = await page.evaluate(() => ARCHIVE.size);
+    const planned = await page.evaluate(() => PLANS.flatMap(p => Object.keys(p.models)).filter(n => ARCHIVE.has(n)));
+    if (planned.length) problems.push(`models a plan includes are archived: ${planned.join(", ")}`);
+    if (nArch) {
+      if (await page.locator("#board tbody tr[data-m]").evaluateAll(trs => trs.some(t => ARCHIVE.has(t.dataset.m)))) problems.push("archived models show on the default Board");
+      await page.click("#archbtn");
+      const shownAll = await page.locator("#board tbody tr[data-m]").evaluateAll(trs => trs.filter(t => ARCHIVE.has(t.dataset.m)).length);
+      if (shownAll !== nArch) problems.push(`Show the Archive brought back ${shownAll} of ${nArch} archived models`);
+      await page.click("#archbtn");
+      if ((await page.locator("#board tbody tr[data-m]").count()) !== rows) problems.push("Hide the Archive did not restore the default Board");
+    }
+  }
 
   await page.locator("#board tbody tr[data-m]").first().click();
   if (!(await page.locator("#board .detbox").count())) problems.push("clicking a row did not open its detail panel");

@@ -410,6 +410,7 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
 .sb-meter{flex:1;height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden}
 .sb-meter i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .sb-meter.met i{background:var(--ink-3)}
+.archnote{font-size:13px;color:var(--ink-2);margin-top:10px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2)}.archnote:empty{display:none}.linkbtn{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:500;color:var(--accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 .sb-more-b{appearance:none;display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface-2);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}
 #p-subs .sb-foot{max-width:none;margin:10px 0 0;font-size:12.5px}
 #p-subs .sb-foot:empty{display:none}
@@ -566,6 +567,7 @@ html.sblock{overflow:hidden}
     <div class="picks" id="picks"></div>
     <details class="changes" id="changes"></details>
     <div class="tablewrap"><table id="board"><thead></thead><tbody></tbody></table></div>
+    <p class="archnote" id="archnote"></p>
     <p class="sub" style="margin-top:10px">Click any row to open every score that model has, each with its source and provenance. A dot beside a number means the figure is <span class="q ven" style="position:relative;top:-1px"></span> vendor-run or <span class="q unv" style="position:relative;top:-1px"></span> unverified rather than independently measured. <span id="boardlens"></span></p>
   </section>
 
@@ -1633,6 +1635,7 @@ const PLANS = [
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
 {d:"17 Nov 2026",items:[
+  ["feature","The model list is shorter. A model stays on the Board while its Index score reaches the 30th-best on the board, a listed plan includes it, it is among the 10 best open-weights models, or it was released in the 30 days before the snapshot; the rest move to a new Archive tier, hidden by default, with every score and note kept. The Archive chip, or Show the Archive under the Board table, brings them back, and the Charts model picker lists them under an Archive heading. The rule runs when the page loads, so models move to the Archive by themselves as newer ones arrive. 36 models are archived now, among them Claude Opus 4.5–4.8, GPT-5, GPT-5.4, GPT-5.5, o3, Gemini 3 Pro, Llama 4 Maverick, Gemma 4 31B and the Nemotron models; the default Board shows 40 models instead of 60."],
   ["data","Subscription plans: every vendor page was re-read on 17 Nov. GPT-6.2 Astra and Sol join ChatGPT Plus and the three Pro plans in Work and Codex only (Plus estimates 6–50 and 17–180 local messages per 5 hours), and Copilot Pro+ and Max. The Codex and Work credit rates gain GPT-6.2 Astra at 200 in and 1,000 out per million tokens; GPT-6.2 Sol shares 50 and 250 with GPT-6.1 Sol. Pro 200 gains Ultrafast with GPT-6.2 Sol in Codex, per OpenAI’s launch post and Pro help article; an older help page still says Pro 500 only. Gemini 4 Hydrogen joins Google AI Plus, Pro and both Ultra plans; Qwen4 Max joins the Alibaba Model Studio Token Plan; Inkling 2 Small joins Ollama Cloud Pro and Max. Kimi’s burn text now gives each Highspeed model’s multiple. No plan price changed. Alibaba’s $3 and $5 first-purchase prices are a promotion and are not counted."],
   ["add","GPT-6.2 Astra and GPT-6.2 Sol (OpenAI, 17 Nov), in the API, ChatGPT Work and Codex. Astra is $8/$40 (GPT-6 Astra was $10/$50) and Sol keeps $2/$10; both have a 1,050,000-token context. Artificial Analysis: Astra 62 on Index v5 at max for $4.00 per index task (62 at xhigh for $2.52), Sol 57 at max for $1.01. ARC Prize, standard harness at max effort: ARC-AGI-3 70.31% and 54.93%, ARC-AGI-2 95.8% and 85.8%. Vals AI: Terminal-Bench 4.0 63.13% and 60.61%, Terminal-Bench Science 71.43% and 58.57%. Vendor-run, from OpenAI's launch charts and system card: AutomationBench 52.4% and 41.2%, FrontierCode 2.0 44.2% and 43.8%, HealthBench Professional 66.3% and 65.9%, GPQA Diamond 97.0% and 96.0%. Neither is on Arena, OpenRouter's τ²-bench, WeirdML or MathArena yet. Astra for Law, a configuration of GPT-6.2 Astra, is not added."],
   ["add","Gemini 4 Hydrogen (Google, generally available 12 Nov): Google's fast coding and agent model at $1.50/$7.50 with a 1M context, in the Gemini API, the Gemini app and Antigravity. Artificial Analysis: Index v5 54 at xhigh for $3.16 per index task (51 at high for $1.87), 173 tok/s. Vals AI Terminal-Bench 4.0 54.04%. Arena text 1490 and WebDev 1704, both preliminary. Google's own table uses benchmark versions the board has no column for (Terminal-Bench 4.1, Agents' Last Exam v1.1), so only its Terminal-Bench figure is kept, in the tuple note."],
@@ -1870,8 +1873,24 @@ function fmt(v,f){
 const val=(m,b)=>m.s[b]?m.s[b][0]:null;
 const qual=(m,b)=>m.s[b]?m.s[b][1]:null;
 
+/* ---------------- archive ----------------
+   A model stays in view while any one of these holds: its Index score reaches the 30th-best on the board, a listed plan
+   includes it, its Index score reaches the 10th-best among open-weights models, or it was released in the 30 days up to
+   ASOF. Everything else is shown under an Archive tier, hidden by default and one chip away; no data is removed. The rule
+   runs on load, so models move to the Archive by themselves as newer ones push them out. */
+const ARCHIVE=(()=>{
+  const idx=MODELS.filter(m=>val(m,"aaii")!=null).map(m=>({m,v:val(m,"aaii")})).sort((a,b)=>b.v-a.v);
+  const cutAt=(a,n)=>a.length>=n?a[n-1].v:-Infinity, cut=cutAt(idx,30), open=idx.filter(x=>x.m.open), cutO=cutAt(open,10);
+  const keep=new Set([...idx.filter(x=>x.v>=cut),...open.filter(x=>x.v>=cutO)].map(x=>x.m.name));
+  PLANS.forEach(p=>Object.keys(p.models).forEach(n=>keep.add(n)));
+  const [d,mo,y]=ASOF.split(" "), asof=Date.UTC(+y,"JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(mo)/3,+d);
+  MODELS.forEach(m=>{ if(/^\d{4}-\d{2}-\d{2}$/.test(m.rel)&&asof-Date.parse(m.rel+"T00:00:00Z")<=30*864e5) keep.add(m.name); });
+  return new Set(MODELS.filter(m=>!keep.has(m.name)).map(m=>m.name));
+})();
+MODELS.forEach(m=>{ m.baseTier=m.tier; if(ARCHIVE.has(m.name)) m.tier="archive"; });
+
 /* ---------------- filter state ---------------- */
-const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"]];
+const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"],["archive","Archive"]];
 const state={q:"",tiers:new Set(["frontier","challenger"]),weights:new Set(["open","closed"]),prov:"",
              sort:"aaii",dir:-1,openRow:null};
 
@@ -2317,7 +2336,7 @@ function renderEffort(rows){
    plus the two highest-scoring open-weights ones, so it follows the data. A visitor's own picks are kept in localStorage. */
 const SERIES=8, EFF_KEY="fb-effpick";
 const effCands=()=>MODELS.filter(m=>effRowsAll(m).some(r=>r.aaii!=null&&(r.cost>0||r.ttft>0))).sort((a,b)=>effRowsAll(b)[0].aaii-effRowsAll(a)[0].aaii||a.name.localeCompare(b.name));
-const effPreset=k=>{const c=effCands(), f=c.filter(m=>m.tier==="frontier"), o=c.filter(m=>m.open&&m.tier!=="legacy");
+const effPreset=k=>{const c=effCands(), f=c.filter(m=>m.tier==="frontier"), o=c.filter(m=>m.open&&m.tier!=="legacy"&&m.tier!=="archive");
   return (k==="frontier"?f.slice(0,SERIES):k==="open"?o.slice(0,SERIES):k==="none"?[]:[...f.slice(0,6),...o.filter(m=>m.tier!=="frontier").slice(0,2)]).map(m=>m.name);};
 state.effSel=null; state.effCol=new Map();
 state.cmp={linear:false,pareto:false,labels:true,hideEff:new Set()};   // read by effLines: x scale, Pareto line, series labels, effort levels left out
@@ -2759,6 +2778,7 @@ const CAVEATS=[
  ["Release coverage is uneven","Fable 5.2 was released 9 Nov 2026. Only retrieved and verified results are included; missing scores remain blank rather than being inferred from Fable 5.1, Mythos 5.2, or marketing claims. Earlier models also retain gaps where their evaluators have no readable result. Absence from a fetched page does not establish that a model was never evaluated."],
  ["The Intelligence Index changed underneath the board","Artificial Analysis moved from v4.1.1 to v4.3.2 in September, and to v5 on 27 Oct 2026, and both times the scores moved for reasons that had nothing to do with the models: the test changed. Under v5 Kimi K3.1 Pro went from 55 to 46 while GPT-6 Astra went from 53 to 57. Scores from two versions cannot share a column, so the Index column holds only v5 scores, and the last v4.3.2 scores sit in an archived column. Models Artificial Analysis has not yet run on v5 show a dash. If you compare a number here against a screenshot from before 27 Oct, it will not line up."],
  ["The default view hides superseded models","Opus 5, Fable 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash and others moved to Previous gen when their replacements shipped. Turn on the Previous gen chip to bring them back — useful when a new model's vendor table only compares against the old generation."],
+ ["Older and lower-ranked models sit in the Archive","The Board keeps a model in view while its Index score reaches the 30th-best on the board, a listed subscription includes it, its Index score reaches the 10th-best among open-weights models, or it was released in the last 30 days. The rest move to the Archive by themselves as newer models arrive: they keep every score and note, and the Archive chip, or Show the Archive under the Board table, brings them back. Models with no current Index score, such as the GPT-5 and Claude Opus 4 generations, end up there unless a plan still sells them."],
  ["Safeguards and model variants matter","Anthropic’s 9 Nov launch table mixes Fable 5.2 with clearly marked Mythos 5.2-only cybersecurity and biology evaluations. Those Mythos results are excluded from the Fable row. FrontierCode 2.0 also uses xhigh effort for Fable and medium for Gemini 4 Carbon; Remote Labor Index uses high effort for Fable 5.2. Compare the row notes, not just the model names."],
  ["Vendors disagree when they run the same benchmark","xAI's August table scores Fable 5 at 1741 on GDPval-AA v2; Anthropic's September table scores it at 1723. Same benchmark, same model, two runs, 18 points apart. CursorBench is the counter-example — both vendors got 70.5% for Fable 5 and 67.2% for GPT-5.6 Sol — which is why Grok appears in that column and not in GDPval."],
  ["Some release candidates remain excluded","Apodex 1.1 lacks a verified vendor announcement in the retained audit. Agnes AI’s Theta-specific documentation and pricing are now traceable, but its claimed 7 Nov release date and numerical context were not verified with the vendor, so Theta is excluded pending those details. Motif 3’s prior conflicting Index readings remain unresolved. Muse Ember has a verified 9 Nov Meta release and is a separate row from Ember-1."],
@@ -3240,7 +3260,7 @@ function openModel(name){
 }
 function renderPicks(){
   if(state.lens!=="api") return subPicks();
-  const cur=MODELS.filter(m=>m.tier!=="legacy"), has=k=>cur.filter(m=>val(m,k)!=null);
+  const cur=MODELS.filter(m=>m.tier!=="legacy"&&m.tier!=="archive"), has=k=>cur.filter(m=>val(m,k)!=null);
   const byDesc=(a,k)=>[...a].sort((x,y)=>val(y,k)-val(x,k)), byAsc=(a,k)=>[...a].sort((x,y)=>val(x,k)-val(y,k));
   const idx=has("aaii"), top=byDesc(idx,"aaii")[0], medI=(()=>{const v=idx.map(m=>val(m,"aaii")).sort((a,b)=>a-b);return v[Math.floor(v.length/2)];})();
   const P=[
@@ -3283,11 +3303,21 @@ function renderChanges(){
 })();
 
 /* ---------------- render ---------------- */
+/* the line under the Board table: how many models the Archive holds, and a button to show or hide them */
+function renderArchNote(){
+  const el=$("#archnote"), n=ARCHIVE.size, on=state.tiers.has("archive");
+  if(!n){ el.innerHTML=""; return; }
+  el.innerHTML=on
+    ?`Showing the Archive: ${n} older or lower-ranked models. <button type="button" class="linkbtn" id="archbtn">Hide the Archive</button>`
+    :`${n} more models are in the Archive: below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days ago. <button type="button" class="linkbtn" id="archbtn">Show the Archive</button>`;
+  $("#archbtn").onclick=()=>{ on?state.tiers.delete("archive"):state.tiers.add("archive");
+    buildChips($("#tierchips"),TIERS,state.tiers); render(); };
+}
 function render(){
   const rows=filtered();
   $("#shown").textContent=rows.length;
   const active=$('.tab[aria-selected="true"]').dataset.p;
-  if(active==="board") renderBoard(rows);
+  if(active==="board"){ renderBoard(rows); renderArchNote(); }
   if(active==="subs") renderSubs();
   if(active==="quad") renderCharts(rows);
   if(active==="bench") renderBench(rows);
