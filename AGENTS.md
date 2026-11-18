@@ -26,6 +26,7 @@ Flag these as P2:
 - A `ctx` value not marked `ven`.
 - A plan change without `PLAN_ASOF` bumped to the day the vendor pages were read, or a plan listed that is sold only in another currency, closed to new customers or out of stock, or names no model on the board.
 - A `none` (non-reasoning) row added back to GPT-6 Luna's `EFFORT` data; the owner asked for it off the board.
+- A model deleted to shorten the list, or `tier` set to `"archive"` in the data. The Archive is computed on load (top 30 on the Index, any model a listed plan includes, the 10 best open-weights models, and anything released in the 30 days up to `ASOF` stay in view); a change to that rule needs a `feature` changelog entry and the matching change in `CLAUDE.md`.
 - A new independent evaluator supplying scores without being added to the footer list and the README.
 
 Don't flag:
