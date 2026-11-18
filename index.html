@@ -81,7 +81,7 @@ a{color:var(--accent-ink)}
 input[type=search],select{max-width:100%;
   font:inherit;font-size:13px;padding:4px 9px;border:1px solid var(--line-2);border-radius:var(--r);
   background:var(--surface);color:var(--ink);min-width:150px}
-.railmore{display:contents}
+.boardcols{display:none}.railmore{display:contents}
 /* the model filters only govern the Board, Charts and Benchmarks; elsewhere they would look like they filter what they don't */
 html[data-tab="subs"] .rail .fg-model,html[data-tab="subs"] .rail .fg-lens,html[data-tab="subs"] .rail .count,html[data-tab="subs"] .rail .railtog{display:none!important}
 html[data-tab="subs"] .rail .railmore{display:contents!important}
@@ -541,6 +541,22 @@ html.sblock{overflow:hidden}
   .rail.open .railmore{display:flex;flex-direction:column;align-items:flex-start;gap:10px;flex-basis:100%;order:3;padding:4px 0 2px}
   .rail.open .railmore .fg{flex-wrap:wrap}
   .count{margin-left:0;white-space:nowrap}
+  /* phones: the Board keeps model, Index and plan side by side; every other column waits behind a button */
+  .boardcols{display:inline-flex;margin:0 0 10px;min-height:36px;align-items:center}
+  #board:not(.full) > thead th:not(.keep),#board:not(.full) > tbody > tr[data-m] > td:not(.keep){display:none}
+  #board:not(.full) td .pl{display:block;margin-left:0;white-space:normal}
+  #board:not(.full) td.keep{white-space:normal}
+  #board:not(.full) .mname{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:4px}#board:not(.full) .mname .prov{flex-basis:100%;margin-left:15px}
+  #board:not(.full) th,#board:not(.full) td{padding-left:6px;padding-right:6px}#board:not(.full) td.rk{width:18px}
+  /* the comparison sheet grouped by attribute */
+  #sbgrid.bya{display:block}
+  #sbgrid.bya .gk{margin:14px 0 4px;font-weight:600}
+  #sbgrid.bya .gp{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+  #sbgrid.bya .gpn{color:var(--ink-2);flex:0 0 40%}
+  #sbgrid.bya .gpv{text-align:right;min-width:0}
+  #sbgrid.bya .gmore{margin-top:16px}
+  #sbgrid.bya .gmore summary{cursor:pointer;font-weight:600;color:var(--accent-ink)}
+  #sbgrid.bya .gmore .gp{flex-direction:column}#sbgrid.bya .gp:has(.sb-eff){flex-direction:column}#sbgrid.bya .gp:has(.sb-eff) .gpv{text-align:left}#sbgrid.bya .gmore .gpv{text-align:left}
   .bgrid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -594,6 +610,7 @@ html.sblock{overflow:hidden}
   <section class="panel on" id="p-board">
     <div class="picks" id="picks"></div>
     <details class="changes" id="changes"></details>
+    <button type="button" class="chip boardcols" id="boardcols" aria-pressed="false">Show every column</button>
     <div class="tablewrap"><table id="board"><thead></thead><tbody></tbody></table></div>
     <p class="archnote" id="archnote"></p>
     <p class="sub" style="margin-top:10px">Click any row to open every score that model has, each with its source and provenance. A dot beside a number means the figure is <span class="q ven" style="position:relative;top:-1px"></span> vendor-run or <span class="q unv" style="position:relative;top:-1px"></span> unverified rather than independently measured. <span id="boardlens"></span></p>
@@ -1668,6 +1685,7 @@ const CHANGELOG = [
 {d:"17 Nov 2026",items:[
   ["feature","Chart and benchmark controls. On desktop the waiting-time chart gets its own Edit compared models button, which brings the shared model picker and settings next to it instead of leaving them on the cost chart above; the cost chart's button moves them back. In the coverage grid on the Benchmarks tab each model name is a button that lists that model's scores as text, with the value, whether it is independent or vendor-run, the source note and a link to the source, so a score can be checked without hovering a square."],
   ["feature","More fixes from the design review. The model search, tier, weights and provider filters, the pricing switch and the model count now show only on the tabs they govern (Board, Charts and Benchmarks); on Subscriptions only Pick my plans stays, and Sources has no filter bar. The pricing switch reads Monthly plans or API per 1M tokens, so the change of units is clear before clicking. A tab picked after scrolling opens at its top. Secondary text is darker and larger: its contrast against the page is now 5.2:1 in light and 5.6:1 in dark, up from 3.4:1 and 3.8:1, and effort and plan labels are 11.5–12 px. Sources and caveats opens with jump links to its three sections."],
+  ["feature","Phone layouts. The Board shows model, Index and plan price side by side, with the provider under the name, so a row reads without scrolling sideways; Show every column brings the full matrix back, and every score is still in each row's details. The plan comparison sheet groups by attribute on phones, each plan on its own line under Price, Top model, Board models and the rest, with limits, overage and sources folded below, so a second plan is no longer cut off."],
   ["feature","Board fixes after a design review. Under the Subscription lens, when the cheapest plan that includes a model cannot run the setting behind its Index score, the plan cell now says what that plan reaches: Gemini 4 Hydrogen scores 54 at xhigh, but Google AI Plus runs it at high, where it scores 51. The detail panel labels the Index as the model's best and lists the Index each plan reaches. Model names and column headings are now buttons, so the table can be sorted and rows opened from the keyboard, with focus kept on the control used. The archive is named Archived models, to keep it apart from archived benchmarks, and a search that only archived models match says how many there are and offers to show them."],
   ["feature","Phones get more of the screen. The header's brand rows and snapshot note scroll away and only the tab row stays pinned; the snapshot note is clamped to two lines, with a tap to read it all; and the filters fold behind a Filters button that counts the ones changed from the default, next to the search box and the count. Scrolled down, the Board now has 749 of 844 pixels on a 390 by 844 phone, up from 204. A one-line description under the title says what the page compares."],
   ["feature","The model list is shorter. A model stays on the Board while its Index score reaches the 30th-best on the board, a listed plan includes it, it is among the 10 best open-weights models, or it was released in the 30 days before the snapshot; the rest move to a new Archive tier, hidden by default, with every score and note kept. The Archive chip, or Show the Archive under the Board table, brings them back, and the Charts model picker lists them under an Archive heading. The rule runs when the page loads, so models move to the Archive by themselves as newer ones arrive. 36 models are archived now, among them Claude Opus 4.5–4.8, GPT-5, GPT-5.4, GPT-5.5, o3, Gemini 3 Pro, Llama 4 Maverick, Gemma 4 31B and the Nemotron models; the default Board shows 40 models instead of 60."],
@@ -1966,6 +1984,8 @@ const COLS_API=Object.keys(BENCH).filter(k=>BENCH[k].col&&!BENCH[k].arch);
 const boardCols=()=>state.lens==="api"?COLS_API:COLS_API.map(k=>k==="price"?"plan":k);
 const COLHEAD={plan:["Plan $/mo","Cheapest subscription that includes the model, monthly billing. Flat-rate plans come first; a token-metered plan is shown only when no flat-rate plan includes it."]};
 const isArch=k=>!!BENCH[k].arch;
+/* on phones the Board shows only these columns until "Show every column" is pressed; the rest are in each row's details */
+const PHONE_KEEP=new Set(["aaii","plan","price"]);
 
 /* ---------------- subscriptions: shared lookups ---------------- */
 state.lens="sub"; state.mine=new Set(); state.onlyMine=false;
@@ -1996,8 +2016,8 @@ function renderBoard(rows){
   const th=$("#board thead"), tb=$("#board tbody"), COLS=boardCols(), sv=(m,k)=>k==="plan"?(cheapPlan(m.name)||{}).usd??null:val(m,k);
   if(!COLS.includes(state.sort)&&state.sort!=="name") state.sort=state.sort==="plan"?"price":state.sort==="price"?"plan":"aaii";
   const ariaSort=k=>k===state.sort?` aria-sort="${state.dir<0?"descending":"ascending"}"`:"";
-  th.innerHTML="<tr><th class='l'><span class='vh'>Rank</span></th><th class='l' data-k='name'"+ariaSort("name")+"><button type='button' class='thbtn' aria-label='Sort by model name'>Model <span class='arw' aria-hidden='true'>▾</span></button></th>"+
-    COLS.map(k=>{const [s,l]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" title="${esc(l)}"${ariaSort(k)}><button type="button" class="thbtn" aria-label="Sort by ${esc(l)}">${s} <span class="arw" aria-hidden="true">▾</span></button></th>`;}).join("")+"</tr>";
+  th.innerHTML="<tr><th class='l keep'><span class='vh'>Rank</span></th><th class='l keep' data-k='name'"+ariaSort("name")+"><button type='button' class='thbtn' aria-label='Sort by model name'>Model <span class='arw' aria-hidden='true'>▾</span></button></th>"+
+    COLS.map(k=>{const [s,l]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" class="${PHONE_KEEP.has(k)?"keep":""}" title="${esc(l)}"${ariaSort(k)}><button type="button" class="thbtn" aria-label="Sort by ${esc(l)}">${s} <span class="arw" aria-hidden="true">▾</span></button></th>`;}).join("")+"</tr>";
   $$("#board thead th[data-k]").forEach(el=>{
     if(el.dataset.k===state.sort){el.setAttribute("data-active","");
       el.querySelector(".arw").textContent = state.dir<0?"▾":"▴";}
@@ -2020,16 +2040,16 @@ function renderBoard(rows){
     const cells=COLS.map(c=>{
       if(c==="plan"){ const pl=cheapPlan(m.name), n=plansOf(m.name).length;
         const rq=pl&&val(m,"aaii")!=null?planReach(pl,m):null, lower=rq&&rq.r.aaii<val(m,"aaii");
-        return pl?`<td class="mono" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${lower?` — this plan offers ${esc(rq.r.e)} effort at most, where the model scores ${rq.r.aaii}; ${val(m,"aaii")} needs ${esc(topEff(m)||"a higher setting")}`:""}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span>${lower?`<span class="pl reach">Index ${rq.r.aaii}${effTag(rq.r)} on this plan</span>`:""}<span class="q ven" title="${QL.ven}"></span></td>`
-          :`<td class="mono na" title="No subscription on the board includes this model; it is reached through an API">—</td>`; }
+        return pl?`<td class="mono keep" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${lower?` — this plan offers ${esc(rq.r.e)} effort at most, where the model scores ${rq.r.aaii}; ${val(m,"aaii")} needs ${esc(topEff(m)||"a higher setting")}`:""}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span>${lower?`<span class="pl reach">Index ${rq.r.aaii}${effTag(rq.r)} on this plan</span>`:""}<span class="q ven" title="${QL.ven}"></span></td>`
+          :`<td class="mono na keep" title="No subscription on the board includes this model; it is reached through an API">—</td>`; }
       const v=val(m,c), q=qual(m,c);
       const et = c==="aaii"&&v!=null&&topEff(m) ? `<span class="eff">${topEff(m)}</span>` : "";
-      return `<td class="mono${v==null?" na":""}">${fmt(v,BENCH[c].f)}${et}${v!=null&&q!=="ind"?`<span class="q ${q}" title="${QL[q]}"></span>`:""}</td>`;
+      return `<td class="mono${v==null?" na":""}${PHONE_KEEP.has(c)?" keep":""}">${fmt(v,BENCH[c].f)}${et}${v!=null&&q!=="ind"?`<span class="q ${q}" title="${QL[q]}"></span>`:""}</td>`;
     }).join("");
     const on = state.openRow===m.name;
     return `<tr data-m="${m.name}" class="${on?"open":""}">
-      <td class="l mono rk">${i+1}</td>
-      <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span><button type="button" class="rowbtn" aria-expanded="${on}" aria-label="${esc(m.name)}: ${on?"hide":"show"} every score"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${m.name}</button>${mine.length?`<span class="mine" title="In your plans: ${esc(mine.map(planName).join(", "))}">✓</span>`:""}<span class="prov">${m.prov}</span></span></td>
+      <td class="l mono rk keep">${i+1}</td>
+      <td class="l keep"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span><button type="button" class="rowbtn" aria-expanded="${on}" aria-label="${esc(m.name)}: ${on?"hide":"show"} every score"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${m.name}</button>${mine.length?`<span class="mine" title="In your plans: ${esc(mine.map(planName).join(", "))}">✓</span>`:""}<span class="prov">${m.prov}</span></span></td>
       ${cells}</tr>`+(on?detailRow(m):"");
   }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">${state.onlyMine&&!state.mine.size?"No plan is picked yet. Open the Subscriptions tab and pick the plans you pay for.":"Nothing matches those filters."}</td></tr>`;
   $("#boardlens").textContent=state.lens==="api"?"Prices are per-token API prices; switch Pricing to Monthly plans to see which subscriptions include each model."
@@ -3141,9 +3161,18 @@ function renderSheet(){
     ["Limits",p=>`<span class="gt">${esc(p.lim)}</span>`],
     ["Past the limit",p=>`<span class="gt">${esc(planFam(p).over)}</span>`],
     ["Source",p=>`<a href="${planFam(p).url}" target="_blank" rel="noopener">${esc(planFam(p).url.replace(/^https:\/\//,""))}</a>`]];
-  const g=$("#sbgrid"); g.style.gridTemplateColumns=`minmax(96px,130px) repeat(${ps.length},minmax(200px,1fr))`;
-  g.innerHTML=`<div></div>`+ps.map(p=>`<div class="gh">${esc(planName(p))}<small>${esc(planFam(p).vendor)} · ${isFlat(p)?"flat-rate":"token-metered"}</small></div>`).join("")
-    +rows.map(([k,f])=>`<div class="gk">${k}</div>`+ps.map(p=>`<div>${f(p)}</div>`).join("")).join("");
+  const g=$("#sbgrid");
+  if(matchMedia("(max-width:700px)").matches){
+    // phones: one attribute at a time, each plan on its own line under it, so no plan is cut off;
+    // the long limit texts and sources fold away below the short facts
+    const line=([k,f])=>`<div class="gk">${k}</div>`+ps.map(p=>`<div class="gp"><span class="gpn">${esc(planName(p))}</span><span class="gpv">${f(p)}</span></div>`).join("");
+    g.style.gridTemplateColumns="1fr"; g.classList.add("bya");
+    g.innerHTML=rows.slice(0,7).map(line).join("")+`<details class="gmore"><summary>Limits, overage and sources</summary>${rows.slice(7).map(line).join("")}</details>`;
+  } else {
+    g.classList.remove("bya"); g.style.gridTemplateColumns=`minmax(96px,130px) repeat(${ps.length},minmax(200px,1fr))`;
+    g.innerHTML=`<div></div>`+ps.map(p=>`<div class="gh">${esc(planName(p))}<small>${esc(planFam(p).vendor)} · ${isFlat(p)?"flat-rate":"token-metered"}</small></div>`).join("")
+      +rows.map(([k,f])=>`<div class="gk">${k}</div>`+ps.map(p=>`<div>${f(p)}</div>`).join("")).join("");
+  }
   wire(g);
 }
 const sbSheet={from:null, get open(){return !$("#sbsheet").hidden;},
@@ -3156,6 +3185,8 @@ function openPicker(){ const b=$("#sbpickb"); $("#sbpickbox").hidden=false; b.se
 $("#sbpickb").onclick=()=>{ const box=$("#sbpickbox"); box.hidden=!box.hidden; $("#sbpickb").setAttribute("aria-expanded",!box.hidden); };
 $("#sbflat").onclick=()=>{ state.subFlat=!state.subFlat; state.subMore=false; renderShort(); syncURL(); };
 $("#sbgo").onclick=e=>sbSheet.show(e.currentTarget);
+addEventListener("resize",()=>{ if(sbSheet.open) renderSheet(); });
+$("#boardcols").onclick=e=>{ const on=$("#board").classList.toggle("full"); e.currentTarget.setAttribute("aria-pressed",on); e.currentTarget.textContent=on?"Show fewer columns":"Show every column"; };
 $("#sbclr").onclick=()=>{ state.subCmp.clear(); renderShort(); };
 $("#sbclose").onclick=()=>sbSheet.hide();
 $("#sbsheet").onclick=e=>{ if(e.target.id==="sbsheet") sbSheet.hide(); };
@@ -3163,7 +3194,7 @@ $("#sbsheet").onclick=e=>{ if(e.target.id==="sbsheet") sbSheet.hide(); };
 document.addEventListener("keydown",e=>{ if(!sbSheet.open) return;
   if(e.key==="Escape"){ e.preventDefault(); sbSheet.hide(); return; }
   if(e.key!=="Tab") return;
-  const box=$(".sb-sheetin"), fs=$$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])',box).filter(x=>x.getClientRects().length);
+  const box=$(".sb-sheetin"), fs=$$('a[href],button:not([disabled]),summary,[tabindex]:not([tabindex="-1"])',box).filter(x=>x.getClientRects().length);
   if(!fs.length) return;
   const a=fs[0], z=fs[fs.length-1], at=document.activeElement;
   if(!box.contains(at)){ e.preventDefault(); (e.shiftKey?z:a).focus(); }
