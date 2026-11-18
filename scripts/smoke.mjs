@@ -498,6 +498,11 @@ try {
       await ps.evaluate(() => { state.subCmp.add("claude-pro"); state.subCmp.add("chatgpt-plus"); renderShort(); sbSheet.show(); });
       const sh = await ps.evaluate(() => { const g = document.querySelector("#sbgrid"); return { grouped: g.classList.contains("bya"), over: g.scrollWidth - g.clientWidth, names: g.querySelectorAll(".gpn").length }; });
       if (!sh.grouped || sh.over > 1 || sh.names < 4) problems.push(`phone: the comparison sheet is not grouped by attribute or overflows: ${JSON.stringify(sh)}`);
+      // the folded limits and sources are reachable from the keyboard inside the sheet's focus trap
+      let reached = false;
+      for (let i = 0; i < 12 && !reached; i++) { await ps.keyboard.press("Tab"); reached = await ps.evaluate(() => document.activeElement?.tagName === "SUMMARY"); }
+      if (!reached) problems.push("phone: Tab never reaches 'Limits, overage and sources' in the comparison sheet");
+      else { await ps.keyboard.press("Enter"); if (!(await ps.evaluate(() => document.querySelector("#sbgrid .gmore").open))) problems.push("phone: Enter did not open 'Limits, overage and sources'"); }
       await ps.close();
     }
 

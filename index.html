@@ -3173,7 +3173,7 @@ $("#sbsheet").onclick=e=>{ if(e.target.id==="sbsheet") sbSheet.hide(); };
 document.addEventListener("keydown",e=>{ if(!sbSheet.open) return;
   if(e.key==="Escape"){ e.preventDefault(); sbSheet.hide(); return; }
   if(e.key!=="Tab") return;
-  const box=$(".sb-sheetin"), fs=$$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])',box).filter(x=>x.getClientRects().length);
+  const box=$(".sb-sheetin"), fs=$$('a[href],button:not([disabled]),summary,[tabindex]:not([tabindex="-1"])',box).filter(x=>x.getClientRects().length);
   if(!fs.length) return;
   const a=fs[0], z=fs[fs.length-1], at=document.activeElement;
   if(!box.contains(at)){ e.preventDefault(); (e.shiftKey?z:a).focus(); }
