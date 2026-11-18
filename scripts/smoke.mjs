@@ -99,6 +99,15 @@ try {
     if ((await page.evaluate(() => document.activeElement?.closest("th")?.dataset.k)) !== "name") problems.push("focus left the heading after sorting");
     await page.evaluate(() => { state.sort = "aaii"; state.dir = -1; render(); });
   }
+  // the coverage grid: a model name opens its scores as text from the keyboard
+  {
+    await page.click('.tab[data-p="bench"]');
+    await page.locator("#benchhost .covbtn").first().focus(); await page.keyboard.press("Enter");
+    if (!(await page.locator("#benchhost .covdet li").count())) problems.push("Enter on a coverage-grid model listed no scores");
+    if (!(await page.evaluate(() => document.activeElement?.classList.contains("covbtn")))) problems.push("focus left the coverage-grid model after opening it");
+    await page.keyboard.press("Enter");
+    await page.click('.tab[data-p="board"]');
+  }
   // the model filters show only where they apply, and a tab picked after scrolling opens at its top
   {
     await page.evaluate(() => scrollTo(0, 2500));
@@ -243,6 +252,16 @@ try {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.click('.tab[data-p="quad"]');
     await page.waitForTimeout(300); // the debounced resize re-render
+    // desktop: the waiting-time chart has its own button, which moves the shared controls next to it and back
+    {
+      const shown = await page.evaluate(() => [...document.querySelectorAll(".cmpmove")].filter(b => b.offsetParent).map(b => b.closest(".card").id).join());
+      if (shown !== "ch-efflat") bad(`Edit compared models shows on "${shown}", expected only the waiting-time chart`);
+      await page.click("#ch-efflat .cmpmove");
+      if ((await page.evaluate(() => document.querySelector("#cmp").closest(".card").id)) !== "ch-efflat") bad("Edit compared models did not bring the controls to the waiting-time chart");
+      if ((await page.evaluate(() => document.activeElement?.id)) !== "effq") bad("Edit compared models did not focus the model search");
+      await page.click("#ch-effcost .cmpmove");
+      if ((await page.evaluate(() => document.querySelector("#cmp").closest(".card").id)) !== "ch-effcost") bad("the controls did not move back to the cost chart");
+    }
     await page.evaluate(() => { window.__cmp = state.cmp; state.cmp = { linear: false, pareto: false, labels: true, hideEff: new Set() }; effChange(effPreset("default")); });
     const toChart = () => page.evaluate(c => scrollBy(0, document.querySelector(c).getBoundingClientRect().top - 230), C);
     const at = async (i, f = null) => page.evaluate(([c, i, f]) => { // client position of point i, or part of the way towards point f[0]
