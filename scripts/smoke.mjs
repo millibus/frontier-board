@@ -486,7 +486,19 @@ try {
       if (await ph.locator("#tierchips").isVisible()) problems.push("phone: the tier chips show before Filters is opened");
       await ph.click("#railtog");
       if (!(await ph.locator("#tierchips").isVisible()) || (await ph.getAttribute("#railtog", "aria-expanded")) !== "true") problems.push("phone: Filters did not open the filter panel");
+      // the compact Board fits the screen with model, Index and plan together; the button brings every column back
+      const fit = await ph.evaluate(() => ({ wrap: document.querySelector(".tablewrap").clientWidth, table: document.querySelector("#board").scrollWidth, cols: [...document.querySelectorAll("#board thead th")].filter(t => t.offsetParent).length }));
+      if (fit.table > fit.wrap + 1) problems.push(`phone: the compact Board is ${fit.table}px wide in a ${fit.wrap}px frame`);
+      if (fit.cols !== 4) problems.push(`phone: the compact Board shows ${fit.cols} columns, expected rank, model, Index and plan`);
+      await ph.click("#boardcols");
+      if ((await ph.evaluate(() => [...document.querySelectorAll("#board thead th")].filter(t => t.offsetParent).length)) <= 4) problems.push("phone: Show every column did not bring the other columns back");
       await ph.close();
+      // the comparison sheet groups by attribute on a phone, so neither plan is cut off
+      const ps = await fresh(url + "?tab=subscriptions", { width: 390, height: 844 });
+      await ps.evaluate(() => { state.subCmp.add("claude-pro"); state.subCmp.add("chatgpt-plus"); renderShort(); sbSheet.show(); });
+      const sh = await ps.evaluate(() => { const g = document.querySelector("#sbgrid"); return { grouped: g.classList.contains("bya"), over: g.scrollWidth - g.clientWidth, names: g.querySelectorAll(".gpn").length }; });
+      if (!sh.grouped || sh.over > 1 || sh.names < 4) problems.push(`phone: the comparison sheet is not grouped by attribute or overflows: ${JSON.stringify(sh)}`);
+      await ps.close();
     }
 
     // phone: the controls live in a full-screen sheet behind a "Models N" button
