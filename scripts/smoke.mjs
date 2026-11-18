@@ -462,6 +462,19 @@ try {
     if (D.picks !== def.picks) problems.push(`?tab=charts opened the visitor's saved picks "${D.picks}" instead of the defaults "${def.picks}"`);
     await a.close();
 
+    // phone: once scrolled only the tab row and a one-line filter bar stay pinned, and the filters open behind one button
+    {
+      const ph = await fresh(url, { width: 390, height: 844 });
+      await ph.evaluate(() => scrollTo(0, 1600)); await ph.waitForTimeout(200);
+      const pin = await ph.evaluate(() => ({ rail: document.querySelector(".rail").getBoundingClientRect().bottom, tabs: document.querySelector(".tabs").getBoundingClientRect().top }));
+      if (!(pin.rail <= 140)) problems.push(`phone: the pinned header and filters end ${Math.round(pin.rail)}px down, over 140`);
+      if (!(pin.tabs >= -1)) problems.push("phone: the tab row scrolled out of view");
+      if (await ph.locator("#tierchips").isVisible()) problems.push("phone: the tier chips show before Filters is opened");
+      await ph.click("#railtog");
+      if (!(await ph.locator("#tierchips").isVisible()) || (await ph.getAttribute("#railtog", "aria-expanded")) !== "true") problems.push("phone: Filters did not open the filter panel");
+      await ph.close();
+    }
+
     // phone: the controls live in a full-screen sheet behind a "Models N" button
     const m = await fresh(url + "?tab=charts&chart=effcost", { width: 390, height: 844 });
     if (await m.locator("#cmp").isVisible()) problems.push("phone: comparison controls are inline instead of in the sheet");
