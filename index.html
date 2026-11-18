@@ -412,6 +412,7 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
 .sb-meter i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .sb-meter.met i{background:var(--ink-3)}
 .thbtn,.rowbtn{appearance:none;border:0;background:none;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;letter-spacing:inherit;text-transform:inherit}.thbtn:focus-visible,.rowbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}.rowbtn{font-weight:inherit;display:inline-flex;align-items:baseline;gap:4px}.rowbtn .chev{font-size:10px;color:var(--ink-3);width:9px;display:inline-block}.pl.reach{color:var(--ink-2);font-weight:500}.reachv{font-size:11.5px;color:var(--ink-2);margin-right:10px;font-weight:400}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.covdet td{padding:0!important}.covlist{list-style:none;margin:0;padding:8px 12px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px 24px;font-size:12.5px;text-align:left}.covlist li,.covlist li *{white-space:normal;overflow-wrap:anywhere}.covlist li{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:5px 0;border-bottom:1px solid var(--line)}.covlist .v{font-weight:600}.covlist .pv,.covlist a{grid-column:1/-1;font-size:11.5px;color:var(--ink-3)}.covlist a{color:var(--accent-ink)}
 .archnote{font-size:13px;color:var(--ink-2);margin-top:10px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2)}.archnote:empty{display:none}.linkbtn{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:500;color:var(--accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 .sb-more-b{appearance:none;display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface-2);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}
 #p-subs .sb-foot{max-width:none;margin:10px 0 0;font-size:12.5px}
@@ -477,6 +478,7 @@ html.sblock{overflow:hidden}
 /* ---------- comparison controls ---------- */
 .cmpbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 8px}
 .cmpopen,.cmphead{display:none}
+.cmpmove b{font-variant-numeric:tabular-nums}
 .cmpopen b,.cmphead .cmpn{font-variant-numeric:tabular-nums}
 .cmp .pickbar{row-gap:8px;column-gap:14px}
 .cmpgrp{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -497,6 +499,7 @@ html.sblock{overflow:hidden}
   .cmpopen{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:13.5px;color:var(--ink);font-weight:500}
   #ch-effcost .picked,#ch-effcost .cmpbar .picknote{display:none}
   .cmp{display:none}
+  .cmpmove{display:none!important}
   html.cmplock{overflow:hidden}
   .cmp.open{display:block;position:fixed;inset:0;z-index:120;background:var(--surface);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   .cmp.open .cmphead{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:2;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 14px}
@@ -690,6 +693,7 @@ html.sblock{overflow:hidden}
         <div class="effkey" id="effkey2"></div></div>
       <div class="picked" id="effpicked"></div>
       <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button>
+        <button type="button" class="chip cmpmove" aria-controls="cmp" hidden>Edit compared models (<b class="cmpn"></b>)</button>
         <span class="picknote" id="effnote"></span></div>
       <div class="cmp" id="cmp" aria-label="Comparison: models and chart controls">
         <div class="cmphead"><h3>Models <span class="cmpn"></span></h3>
@@ -716,9 +720,10 @@ html.sblock{overflow:hidden}
 
     <div class="card" id="ch-efflat">
       <div class="cardhead"><div><h2>Intelligence vs waiting time, by effort</h2>
-        <p class="sub">The same lines against seconds to the first answer token. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. Uses the models, effort levels, scale and colours set in the chart above.</p></div>
+        <p class="sub">The same lines against seconds to the first answer token. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. It shares one comparison with the cost chart above: Edit compared models changes both.</p></div>
         <div class="effkey" id="effkey3"></div></div>
-      <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button></div>
+      <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button>
+        <button type="button" class="chip cmpmove" aria-controls="cmp">Edit compared models (<b class="cmpn"></b>)</button></div>
       <p class="sub cmpctx" id="effctx-lat"></p>
       <div id="c-efflat"></div>
     </div>
@@ -1654,6 +1659,7 @@ const PLANS = [
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
 {d:"17 Nov 2026",items:[
+  ["feature","Chart and benchmark controls. On desktop the waiting-time chart gets its own Edit compared models button, which brings the shared model picker and settings next to it instead of leaving them on the cost chart above; the cost chart's button moves them back. In the coverage grid on the Benchmarks tab each model name is a button that lists that model's scores as text, with the value, whether it is independent or vendor-run, the source note and a link to the source, so a score can be checked without hovering a square."],
   ["feature","Board fixes after a design review. Under the Subscription lens, when the cheapest plan that includes a model cannot run the setting behind its Index score, the plan cell now says what that plan reaches: Gemini 4 Hydrogen scores 54 at xhigh, but Google AI Plus runs it at high, where it scores 51. The detail panel labels the Index as the model's best and lists the Index each plan reaches. Model names and column headings are now buttons, so the table can be sorted and rows opened from the keyboard, with focus kept on the control used. The archive is named Archived models, to keep it apart from archived benchmarks, and a search that only archived models match says how many there are and offers to show them."],
   ["feature","Phones get more of the screen. The header's brand rows and snapshot note scroll away and only the tab row stays pinned; the snapshot note is clamped to two lines, with a tap to read it all; and the filters fold behind a Filters button that counts the ones changed from the default, next to the search box and the count. Scrolled down, the Board now has 749 of 844 pixels on a 390 by 844 phone, up from 204. A one-line description under the title says what the page compares."],
   ["feature","The model list is shorter. A model stays on the Board while its Index score reaches the 30th-best on the board, a listed plan includes it, it is among the 10 best open-weights models, or it was released in the 30 days before the snapshot; the rest move to a new Archive tier, hidden by default, with every score and note kept. The Archive chip, or Show the Archive under the Board table, brings them back, and the Charts model picker lists them under an Archive heading. The rule runs when the page loads, so models move to the Archive by themselves as newer ones arrive. 36 models are archived now, among them Claude Opus 4.5–4.8, GPT-5, GPT-5.4, GPT-5.5, o3, Gemini 3 Pro, Llama 4 Maverick, Gemma 4 31B and the Nemotron models; the default Board shows 40 models instead of 60."],
@@ -2472,6 +2478,9 @@ const cmpSheet={open:false,from:null,y:0,mq:matchMedia("(max-width:700px)"),
       if(!sheet.contains(document.activeElement)||(e.shiftKey?document.activeElement===a:document.activeElement===z)){ e.preventDefault(); (e.shiftKey?z:a).focus(); } }
   });
   $$(".cmpopen").forEach(b=>b.onclick=()=>cmpSheet.show(b));
+  // desktop: one set of controls serves both effort charts; it moves into whichever chart the reader is using
+  $$(".cmpmove").forEach(b=>b.onclick=()=>{ const card=b.closest(".card"); card.querySelector(".cmpbar").after(sheet);
+    $$(".cmpmove").forEach(x=>x.hidden=x.closest(".card")===card); q.focus({preventScroll:true}); });
   $("#cmpdone").onclick=()=>cmpSheet.hide();
   cmpSheet.mq.addEventListener("change",()=>cmpSheet.hide());
   $$('[data-cmp="reset"]').forEach(b=>b.onclick=cmpReset);
@@ -2716,7 +2725,8 @@ function covMatrix(rows){
   let h='<div class="covwrap"><table class="cov"><thead><tr><th class="cm">Model</th><th class="covn">Scores</th>'
     + keys.map(k=>`<th class="ch"><span>${BENCH[k].s}</span></th>`).join("") + '</tr></thead><tbody>';
   withAny.forEach(o=>{
-    h+=`<tr><th class="cm">${esc(o.m.name)}</th><td class="covn">${o.n}/${keys.length}</td>`;
+    const on=state.covOpen===o.m.name;
+    h+=`<tr data-cm="${esc(o.m.name)}"><th class="cm"><button type="button" class="rowbtn covbtn" aria-expanded="${on}" aria-label="${esc(o.m.name)}: ${on?"hide":"list"} its scores and sources"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${esc(o.m.name)}</button></th><td class="covn">${o.n}/${keys.length}</td>`;
     h+=keys.map(k=>{
       const sc=o.m.s[k];
       const t = sc
@@ -2725,6 +2735,9 @@ function covMatrix(rows){
       return `<td><span class="cc ${o.m.open?"o ":""}${sc?sc[1]:""}" data-tip="${esc(t)}"></span></td>`;
     }).join("");
     h+="</tr>";
+    // the same scores as text: benchmark, value, provenance and source, readable without hovering
+    if(on) h+=`<tr class="covdet"><td colspan="${keys.length+2}"><ul class="covlist">`+keys.filter(k=>o.m.s[k]).map(k=>{const [v,q,src]=o.m.s[k];
+      return `<li><span class="k">${esc(BENCH[k].l)}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span><span class="pv">${q==="ind"?"independent":q==="ven"?"vendor-run":"unverified"}${src?" · "+esc(src):""}</span><a href="${BENCH[k].url}" target="_blank" rel="noopener">${esc(BENCH[k].src)}</a></li>`;}).join("")+`</ul></td></tr>`;
   });
   return h+"</tbody></table></div>";
 }
@@ -2752,6 +2765,8 @@ function renderBench(rows){
   out+=`<details class="archive"><summary><span>Archive</span> ${ak.length} benchmarks that are saturated, superseded or no longer updated — kept for reference, left out of the main table and coverage grid</summary>
     <div class="bgrid" style="margin-top:14px">${ak.map(k=>benchCard(k,rows)).join("")}</div></details>`;
   host.innerHTML=out; wire(host);
+  $$("#benchhost .covbtn").forEach(b=>b.onclick=()=>{ const n=b.closest("tr").dataset.cm; state.covOpen=state.covOpen===n?null:n; renderBench(filtered());
+    [...$$("#benchhost tr[data-cm]")].find(r=>r.dataset.cm===n)?.querySelector(".covbtn")?.focus({preventScroll:true}); });
 }
 function benchCard(k,rows){
   const B=BENCH[k];
