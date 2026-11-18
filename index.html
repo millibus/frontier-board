@@ -6,7 +6,7 @@
 :root{
   color-scheme: light;
   --ground:#f6f7f9; --surface:#ffffff; --surface-2:#f0f2f5; --surface-3:#e7eaef;
-  --ink:#0e1116; --ink-2:#565d67; --ink-3:#858d98;
+  --ink:#0e1116; --ink-2:#565d67; --ink-3:#666e79;
   --line:#dee2e8; --line-2:#c9cfd8;
   --accent:#2a78d6; --accent-ink:#1c5cab; --accent-wash:#eaf2fd;
   --open:#eb6834; --open-ink:#c14a1c; --open-wash:#fdeee7;
@@ -19,7 +19,7 @@
   :root:not([data-theme="light"]){
     color-scheme: dark;
     --ground:#0f1216; --surface:#161a1f; --surface-2:#1d2228; --surface-3:#252b33;
-    --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#6d7783;
+    --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#8a939f;
     --line:#262c34; --line-2:#333b45;
     --accent:#3987e5; --accent-ink:#7db1f0; --accent-wash:#152537;
     --open:#e0703f; --open-ink:#f0a077; --open-wash:#2e1d14;
@@ -31,7 +31,7 @@
 :root[data-theme="dark"]{
   color-scheme: dark;
   --ground:#0f1216; --surface:#161a1f; --surface-2:#1d2228; --surface-3:#252b33;
-  --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#6d7783;
+  --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#8a939f;
   --line:#262c34; --line-2:#333b45;
   --accent:#3987e5; --accent-ink:#7db1f0; --accent-wash:#152537;
   --open:#e0703f; --open-ink:#f0a077; --open-wash:#2e1d14;
@@ -73,7 +73,7 @@ a{color:var(--accent-ink)}
 .rail{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:var(--topH,96px);z-index:30}
 .rail-in{max-width:1500px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .fg{display:flex;gap:6px;align-items:center}
-.fg > label{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.fg > label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
 .chip{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);
   border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}
 .chip:hover{border-color:var(--ink-3);color:var(--ink)}
@@ -81,7 +81,11 @@ a{color:var(--accent-ink)}
 input[type=search],select{max-width:100%;
   font:inherit;font-size:13px;padding:4px 9px;border:1px solid var(--line-2);border-radius:var(--r);
   background:var(--surface);color:var(--ink);min-width:150px}
-.railmore{display:contents}.railtog{display:none}.tagline{font-size:13px;color:var(--ink-2);margin:-8px 0 0}
+.railmore{display:contents}
+/* the model filters only govern the Board, Charts and Benchmarks; elsewhere they would look like they filter what they don't */
+html[data-tab="subs"] .rail .fg-model,html[data-tab="subs"] .rail .fg-lens,html[data-tab="subs"] .rail .count,html[data-tab="subs"] .rail .railtog{display:none!important}
+html[data-tab="subs"] .rail .railmore{display:contents!important}
+html[data-tab="src"] .rail{display:none}.railtog{display:none}.tagline{font-size:13px;color:var(--ink-2);margin:-8px 0 0}
 .count{margin-left:auto;font-size:12px;color:var(--ink-3)}
 .count b{color:var(--ink);font-weight:600}
 
@@ -257,7 +261,7 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .zebra{fill:var(--ink);opacity:.035}
 .tlist{display:block;max-width:300px;white-space:normal;margin-top:6px;line-height:1.45;color:var(--ink-2)}
 .stem{stroke:var(--line);stroke-width:1.5}
-.eff{font-size:10px;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;margin-left:4px;letter-spacing:.02em}
+.eff{font-size:11.5px;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;margin-left:4px;letter-spacing:.02em}
 table.efftab{grid-column:1/-1;justify-self:start;border-collapse:collapse;font-size:12px;width:auto}
 table.efftab th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;text-align:right;padding:4px 14px 4px 0;border-bottom:1px solid var(--line-2)}
 table.efftab th:first-child,table.efftab td:first-child{text-align:left}
@@ -353,7 +357,7 @@ details.changes summary b{color:var(--ink);font-weight:600}
 .rail .seg button{font-size:12.5px}
 #minechip:empty{display:none}
 .mine{display:inline-block;margin-left:2px;color:var(--good);font-size:11px;font-weight:700}
-td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);margin-left:6px}
+td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink-3);margin-left:6px}
 .sbfam{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:6px 0;border-bottom:1px dotted var(--line-2)}
 .sbfam:last-child{border-bottom:0}
 .sbl{flex:0 0 220px;font-weight:600;font-size:13px;display:flex;gap:8px;align-items:baseline}
@@ -412,6 +416,8 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:11px;color:var(--ink-3);
 .sb-meter i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .sb-meter.met i{background:var(--ink-3)}
 .thbtn,.rowbtn{appearance:none;border:0;background:none;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;letter-spacing:inherit;text-transform:inherit}.thbtn:focus-visible,.rowbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}.rowbtn{font-weight:inherit;display:inline-flex;align-items:baseline;gap:4px}.rowbtn .chev{font-size:10px;color:var(--ink-3);width:9px;display:inline-block}.pl.reach{color:var(--ink-2);font-weight:500}.reachv{font-size:11.5px;color:var(--ink-2);margin-right:10px;font-weight:400}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.jumps{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;font-size:13px;color:var(--ink-2);margin:0 0 22px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}.jumps a{color:var(--accent-ink);font-weight:500}
+#caveats-h,#srclist-h,#planlist-h{scroll-margin-top:calc(var(--topH,96px) + 70px)}
 .archnote{font-size:13px;color:var(--ink-2);margin-top:10px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2)}.archnote:empty{display:none}.linkbtn{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:500;color:var(--accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 .sb-more-b{appearance:none;display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface-2);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}
 #p-subs .sb-foot{max-width:none;margin:10px 0 0;font-size:12.5px}
@@ -568,13 +574,13 @@ html.sblock{overflow:hidden}
 
 <div class="rail">
   <div class="rail-in">
-    <div class="fg fg-find"><label for="q">Find</label><input type="search" id="q" placeholder="model or provider"></div>
+    <div class="fg fg-find fg-model"><label for="q">Find</label><input type="search" id="q" placeholder="model or provider"></div>
     <button type="button" class="chip railtog" id="railtog" aria-expanded="false" aria-controls="railmore">Filters</button>
     <div class="railmore" id="railmore">
-    <div class="fg"><label>Tier</label><span id="tierchips"></span></div>
-    <div class="fg"><label>Weights</label><span id="wchips"></span></div>
-    <div class="fg"><label for="provsel">Provider</label><select id="provsel"><option value="">All</option></select></div>
-    <div class="fg"><label id="lenslab">Pricing</label><span class="seg" id="lens" role="group" aria-labelledby="lenslab"><button type="button" data-v="sub" aria-pressed="true" title="Show what each model costs through a monthly subscription">Subscription</button><button type="button" data-v="api" aria-pressed="false" title="Show per-token API prices, as OpenRouter and the vendors' APIs charge them">API</button></span></div>
+    <div class="fg fg-model"><label>Tier</label><span id="tierchips"></span></div>
+    <div class="fg fg-model"><label>Weights</label><span id="wchips"></span></div>
+    <div class="fg fg-model"><label for="provsel">Provider</label><select id="provsel"><option value="">All</option></select></div>
+    <div class="fg fg-lens"><label id="lenslab">Pricing</label><span class="seg" id="lens" role="group" aria-labelledby="lenslab"><button type="button" data-v="sub" aria-pressed="true" title="Show what each model costs through a monthly subscription">Monthly plans</button><button type="button" data-v="api" aria-pressed="false" title="Show per-token API prices, as OpenRouter and the vendors' APIs charge them">API per 1M tokens</button></span></div>
     <div class="fg"><button type="button" class="chip" id="minechip" aria-pressed="false"></button></div>
     </div>
     <span class="count"><b id="shown">0</b> shown</span>
@@ -797,13 +803,14 @@ html.sblock{overflow:hidden}
       <h2>How to read this board</h2>
       <p>Every figure here was pulled from a live leaderboard or a provider's own publication on or before the snapshot date in the header — each benchmark shows its own source date on the Benchmarks tab and below. Nothing is estimated, interpolated, or filled in from memory — a model with no score on a benchmark shows a dash, not a guess.</p>
       <p>Three provenance levels are marked on every number. <b>Independent</b> means a third party ran the eval (Artificial Analysis, Vals AI, Scale, Snorkel, ARC Prize, the SWE-bench team, OpenRouter, the WeirdML author). <b>Vendor-run</b> means the number comes from the model maker's own announcement or model card, or from a competitor's comparison table — useful, but not neutral. <b>Unverified</b> means it was found in one place with no upstream citation. Numbers that appear only on aggregator sites are never used.</p>
-      <p>The board is built around <b>subscriptions</b>: what a monthly plan costs and which models it includes, read from each vendor's own pricing and help pages. Those figures are vendor-reported. Vendors publish prices and model lists but rarely the size of a plan's allowance, so the board never states how many tasks a flat-rate plan covers. Switch <b>Pricing</b> to API at the top of the page for per-token prices.</p>
+      <p>The board is built around <b>subscriptions</b>: what a monthly plan costs and which models it includes, read from each vendor's own pricing and help pages. Those figures are vendor-reported. Vendors publish prices and model lists but rarely the size of a plan's allowance, so the board never states how many tasks a flat-rate plan covers. Switch <b>Pricing</b> to API per 1M tokens on the Board for per-token prices.</p>
     </div>
-    <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Caveats worth knowing before you trust a column</h2>
+    <nav class="jumps" aria-label="On this tab">Jump to <a href="#caveats-h">Caveats</a><a href="#srclist-h">Benchmark sources</a><a href="#planlist-h">Subscription plan sources</a></nav>
+    <h2 id="caveats-h" style="font-family:Archivo;font-size:15px;margin:0 0 12px">Caveats worth knowing before you trust a column</h2>
     <div class="srcgrid" id="caveats" style="margin-bottom:26px"></div>
-    <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Benchmark sources</h2>
+    <h2 id="srclist-h" style="font-family:Archivo;font-size:15px;margin:0 0 12px">Benchmark sources</h2>
     <div class="srcgrid" id="srclist" style="margin-bottom:26px"></div>
-    <h2 style="font-family:Archivo;font-size:15px;margin:0 0 12px">Subscription plan sources</h2>
+    <h2 id="planlist-h" style="font-family:Archivo;font-size:15px;margin:0 0 12px">Subscription plan sources</h2>
     <div class="srcgrid" id="planlist"></div>
   </section>
 </main>
@@ -1654,6 +1661,7 @@ const PLANS = [
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
 {d:"17 Nov 2026",items:[
+  ["feature","More fixes from the design review. The model search, tier, weights and provider filters, the pricing switch and the model count now show only on the tabs they govern (Board, Charts and Benchmarks); on Subscriptions only Pick my plans stays, and Sources has no filter bar. The pricing switch reads Monthly plans or API per 1M tokens, so the change of units is clear before clicking. A tab picked after scrolling opens at its top. Secondary text is darker and larger: its contrast against the page is now 5.2:1 in light and 5.6:1 in dark, up from 3.4:1 and 3.8:1, and effort and plan labels are 11.5–12 px. Sources and caveats opens with jump links to its three sections."],
   ["feature","Board fixes after a design review. Under the Subscription lens, when the cheapest plan that includes a model cannot run the setting behind its Index score, the plan cell now says what that plan reaches: Gemini 4 Hydrogen scores 54 at xhigh, but Google AI Plus runs it at high, where it scores 51. The detail panel labels the Index as the model's best and lists the Index each plan reaches. Model names and column headings are now buttons, so the table can be sorted and rows opened from the keyboard, with focus kept on the control used. The archive is named Archived models, to keep it apart from archived benchmarks, and a search that only archived models match says how many there are and offers to show them."],
   ["feature","Phones get more of the screen. The header's brand rows and snapshot note scroll away and only the tab row stays pinned; the snapshot note is clamped to two lines, with a tap to read it all; and the filters fold behind a Filters button that counts the ones changed from the default, next to the search box and the count. Scrolled down, the Board now has 749 of 844 pixels on a 390 by 844 phone, up from 204. A one-line description under the title says what the page compares."],
   ["feature","The model list is shorter. A model stays on the Board while its Index score reaches the 30th-best on the board, a listed plan includes it, it is among the 10 best open-weights models, or it was released in the 30 days before the snapshot; the rest move to a new Archive tier, hidden by default, with every score and note kept. The Archive chip, or Show the Archive under the Board table, brings them back, and the Charts model picker lists them under an Archive heading. The rule runs when the page loads, so models move to the Archive by themselves as newer ones arrive. 36 models are archived now, among them Claude Opus 4.5–4.8, GPT-5, GPT-5.4, GPT-5.5, o3, Gemini 3 Pro, Llama 4 Maverick, Gemma 4 31B and the Nemotron models; the default Board shows 40 models instead of 60."],
@@ -2018,7 +2026,7 @@ function renderBoard(rows){
       <td class="l"><span class="mname"><span class="dot ${m.open?"o":"p"}" title="${m.open?"Open weights":"Proprietary"}"></span><button type="button" class="rowbtn" aria-expanded="${on}" aria-label="${esc(m.name)}: ${on?"hide":"show"} every score"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${m.name}</button>${mine.length?`<span class="mine" title="In your plans: ${esc(mine.map(planName).join(", "))}">✓</span>`:""}<span class="prov">${m.prov}</span></span></td>
       ${cells}</tr>`+(on?detailRow(m):"");
   }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">${state.onlyMine&&!state.mine.size?"No plan is picked yet. Open the Subscriptions tab and pick the plans you pay for.":"Nothing matches those filters."}</td></tr>`;
-  $("#boardlens").textContent=state.lens==="api"?"Prices are per-token API prices; switch Pricing to Subscription to see which monthly plans include each model."
+  $("#boardlens").textContent=state.lens==="api"?"Prices are per-token API prices; switch Pricing to Monthly plans to see which subscriptions include each model."
     :"Plan $/mo is the cheapest subscription that includes the model (◦ marks a token-metered plan); ✓ marks a model in your own plans. Plan prices are vendor-reported.";
   $$("#board tbody tr[data-m]").forEach(tr=>tr.onclick=()=>{
     state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; boardFocus={row:tr.dataset.m}; render();
@@ -3156,10 +3164,14 @@ $("#sbx").onchange=e=>{ state.subX=e.target.value; renderUse(); syncURL(); };
 /* ---------------- tabs ---------------- */
 const curTab=()=>$('.tab[aria-selected="true"]').dataset.p;
 function setTab(p){
+  document.documentElement.dataset.tab=p;
   $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p===p));
   $$(".panel").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
 }
-$$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); sbSheet.hide(); setTab(t.dataset.p); render(); secTrack(true); syncURL(); });
+$$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); sbSheet.hide(); setTab(t.dataset.p); render();
+  // land on the new tab's first heading rather than wherever the old tab was scrolled to
+  const y=$("#p-"+t.dataset.p).getBoundingClientRect().top+scrollY-secOff()+12; if(scrollY>y) scrollTo({top:Math.max(0,y)});
+  secTrack(true); syncURL(); });
 
 /* ---------------- shareable URL ---------------- */
 /* The query string carries the tab, the chart section in view and the comparison (picked models, effort levels left out,
@@ -3283,6 +3295,7 @@ function openModel(name){
   state.weights.add(m.open?"open":"closed");
   if(state.onlyMine&&!minePlans(name).length){ state.onlyMine=false; renderRail(); }
   buildChips($("#tierchips"),TIERS,state.tiers); buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights);
+  document.documentElement.dataset.tab="board";
   $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p==="board"));
   $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-board"));
   state.openRow=name; render(); syncURL();
