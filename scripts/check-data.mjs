@@ -105,6 +105,11 @@ for (const m of MODELS) {
 }
 
 /* ---------- EFFORT & PRICES ---------- */
+const effortNames = new Set();
+for (const [, name] of slice("const EFFORT =", "const PRICES =").matchAll(/^\s*"([^"]+)":\s*\[/gm)) {
+  if (effortNames.has(name)) err(`EFFORT["${name}"]: duplicate model entry`);
+  effortNames.add(name);
+}
 for (const [n, rows] of Object.entries(EFFORT)) {
   const m = byName[n];
   if (!m) { err(`EFFORT["${n}"]: no model with that name`); continue; }
