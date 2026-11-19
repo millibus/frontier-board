@@ -149,8 +149,12 @@ for (const p of PLANS) {
   if (p.yr != null && (typeof p.yr !== "number" || !Number.isFinite(p.yr) || p.yr <= p.usd || p.yr > p.usd * 12)) err(`${id}: yr ${p.yr} is not a plausible price for a year (more than a month, at most twelve)`);
   if (p.x != null && (typeof p.x !== "number" || !Number.isFinite(p.x) || !(p.x > 0))) err(`${id}: x must be a positive number, or left out when the vendor publishes no usage figure`);
   if (p.x != null && !F.xu) err(`${id}: has x but its family has no xu unit`);
-  if (p.pin && (!Array.isArray(p.pin) || !p.pin.length)) err(`${id}: pin must be a non-empty list of effort levels`);
-  for (const e of p.pin || []) if (!EFF_ORDER.includes(e)) err(`${id}: pinned effort level "${e}" is not in EFF_ORDER`);
+  for (const field of ["eff", "pin"]) {
+    const levels = p[field];
+    if (levels == null) continue;
+    if (!Array.isArray(levels) || !levels.length) err(`${id}: ${field} must be a non-empty list of effort levels`);
+    else for (const e of levels) if (!EFF_ORDER.includes(e)) err(`${id}: ${field} effort level "${e}" is not in EFF_ORDER`);
+  }
   if (typeof p.lim !== "string" || !p.lim) err(`${id}: missing lim (the limits as the vendor publishes them)`);
   if (typeof p.note !== "string") err(`${id}: note must be a string ("" if there is nothing to add)`);
   const ms = Object.entries(p.models || {});
