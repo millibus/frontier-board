@@ -1,4 +1,9 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Frontier Board</title></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Frontier Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -7,10 +12,10 @@
   color-scheme: light;
   --ground:#f6f7f9; --surface:#ffffff; --surface-2:#f0f2f5; --surface-3:#e7eaef;
   --ink:#0e1116; --ink-2:#565d67; --ink-3:#666e79;
-  --line:#dee2e8; --line-2:#c9cfd8;
+  --line:#dee2e8; --line-2:#c9cfd8; --field:#8c95a1;
   --accent:#2a78d6; --accent-ink:#1c5cab; --accent-wash:#eaf2fd;
-  --open:#eb6834; --open-ink:#c14a1c; --open-wash:#fdeee7;
-  --good:#1a7a4c; --warn:#9a6400; --bad:#b03a2e;
+  --open:#eb6834; --open-ink:#b24014; --open-wash:#fdeee7;
+  --good:#1a7a4c; --warn:#8a5800; --bad:#b03a2e;
   --good-wash:#e6f3ec; --warn-wash:#f8f0dd; --bad-wash:#f9e9e6;
   --shadow:0 1px 2px rgba(14,17,22,.06), 0 8px 24px -12px rgba(14,17,22,.18);
   --r:6px;
@@ -20,7 +25,7 @@
     color-scheme: dark;
     --ground:#0f1216; --surface:#161a1f; --surface-2:#1d2228; --surface-3:#252b33;
     --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#8a939f;
-    --line:#262c34; --line-2:#333b45;
+    --line:#262c34; --line-2:#333b45; --field:#5f6976;
     --accent:#3987e5; --accent-ink:#7db1f0; --accent-wash:#152537;
     --open:#e0703f; --open-ink:#f0a077; --open-wash:#2e1d14;
     --good:#3fa473; --warn:#c99a2e; --bad:#e07264;
@@ -32,7 +37,7 @@
   color-scheme: dark;
   --ground:#0f1216; --surface:#161a1f; --surface-2:#1d2228; --surface-3:#252b33;
   --ink:#eef1f5; --ink-2:#9aa3ae; --ink-3:#8a939f;
-  --line:#262c34; --line-2:#333b45;
+  --line:#262c34; --line-2:#333b45; --field:#5f6976;
   --accent:#3987e5; --accent-ink:#7db1f0; --accent-wash:#152537;
   --open:#e0703f; --open-ink:#f0a077; --open-wash:#2e1d14;
   --good:#3fa473; --warn:#c99a2e; --bad:#e07264;
@@ -40,6 +45,10 @@
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
 }
 *{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
 body{
   margin:0; background:var(--ground); color:var(--ink);
   font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -49,44 +58,57 @@ h1,h2,h3{font-family:Archivo,"IBM Plex Sans",sans-serif;text-wrap:balance;margin
 .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
 a{color:var(--accent-ink)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
 
 /* ---------- masthead ---------- */
 .top{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--line)}
 .top-in{max-width:1500px;margin:0 auto;padding:14px 22px 0;display:flex;flex-direction:column;gap:12px}
 .brandrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.brand{font-family:Archivo;font-weight:800;font-size:21px;letter-spacing:-.025em}
+.brand{font-family:Archivo;font-weight:800;font-size:21px;line-height:1.5;letter-spacing:-.025em}
 .brand em{font-style:normal;color:var(--accent)}
+.asofrow{display:flex;align-items:flex-end;gap:8px;margin-top:-6px}
+#asofnote{margin:0;font-size:12px;max-width:none;min-width:0}
+#asoftog{flex:none;font-size:12px}
 .stamp{font-size:11px;color:var(--ink-2);letter-spacing:.04em;text-transform:uppercase}
 .stamp b{color:var(--ink);font-weight:600}
 .spacer{flex:1}
-.tabs{display:flex;gap:2px;overflow-x:auto}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+/* more tabs off the right edge: fade the last one so it reads as a scrollable row */
+.tabs.more{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)}
 .tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;padding:9px 14px;
   font:inherit;font-weight:500;color:var(--ink-2);cursor:pointer;white-space:nowrap}
-.tab:hover{color:var(--ink)}
+.tab:not(:disabled):hover{color:var(--ink)}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
 
 .themesw{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface-2)}
 .themesw button{appearance:none;border:0;background:none;font:inherit;font-size:12px;color:var(--ink-2);padding:3px 10px;cursor:pointer}
-.themesw button:hover{color:var(--ink)}
+.themesw button:not(:disabled):hover{color:var(--ink)}
 .themesw button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
 /* ---------- filter rail ---------- */
-.rail{background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:var(--topH,96px);z-index:30}
-.rail-in{max-width:1500px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-.fg{display:flex;gap:6px;align-items:center}
-.fg > label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.rail{display:block;background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:var(--topH,96px);z-index:30}
+.rail-in{max-width:1500px;margin:0 auto;padding:10px 22px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* desktop: the whole filter bar fits one row at 1440px */
+.rail .chip,.rail .seg button{padding-left:8px;padding-right:8px;font-size:12px}
+@media (min-width:861px){#q{width:144px;min-width:0}#provsel{min-width:0;max-width:124px}}
+.fg{display:flex;gap:5px;align-items:center}
+.fg > label,.fg > .flab{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600}
 .chip{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);
   border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}
-.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip:not(:disabled):hover{border-color:var(--ink-3);color:var(--ink)}
+#tierchips,#wchips{display:inline-flex;flex-wrap:wrap;gap:6px}
+/* a count inside a chip takes the chip's own colour, so it stays legible when the chip is pressed */
+.chip .eff{color:inherit;opacity:.9}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface);font-weight:500}
 input[type=search],select{max-width:100%;
-  font:inherit;font-size:13px;padding:4px 9px;border:1px solid var(--line-2);border-radius:var(--r);
-  background:var(--surface);color:var(--ink);min-width:150px}
+  font:inherit;font-size:13px;padding:4px 9px;border:1px solid var(--field);border-radius:var(--r);
+  background:var(--surface);color:var(--ink);min-width:140px}
 .boardcols{display:none}.railmore{display:contents}
 /* the model filters only govern the Board, Charts and Benchmarks; elsewhere they would look like they filter what they don't */
 html[data-tab="subs"] .rail .fg-model,html[data-tab="subs"] .rail .fg-lens,html[data-tab="subs"] .rail .count,html[data-tab="subs"] .rail .railtog{display:none!important}
 html[data-tab="subs"] .rail .railmore{display:contents!important}
-html[data-tab="src"] .rail{display:none}.railtog{display:none}.tagline{font-size:13px;color:var(--ink-2);margin:-8px 0 0}
-.count{margin-left:auto;font-size:12px;color:var(--ink-3)}
+html[data-tab="src"] .rail,html[data-tab="subs"][data-has-plans] .rail{display:none}.railtog{display:none}.tagline{font-size:13px;color:var(--ink-2);margin:-8px 0 0}
+.count{margin-left:auto;font-size:12px;color:var(--ink-3);white-space:nowrap}
 .count b{color:var(--ink);font-weight:600}
 
 main{max-width:1500px;margin:0 auto;padding:22px}
@@ -96,32 +118,46 @@ main{max-width:1500px;margin:0 auto;padding:22px}
 /* ---------- board table ---------- */
 .tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;box-shadow:var(--shadow)}
 table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
-thead th{position:sticky;top:0;background:var(--surface-2);z-index:2;
+thead th{background:var(--surface-2);
   font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);font-weight:600;
-  text-align:right;padding:9px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;cursor:pointer;user-select:none}
+  text-align:right;padding:9px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+#board > thead > tr > th[data-k],#plantab > thead > tr > th[data-k]{cursor:pointer;user-select:none}
 thead th:hover{color:var(--ink)}
 thead th.l{text-align:left}
-thead th .arw{opacity:.35;font-size:9px}
+thead th .arw{opacity:.55;font-size:9px}
 thead th[data-active] .arw{opacity:1;color:var(--accent)}
 tbody td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 tbody td.l{text-align:left}
-tbody tr{cursor:pointer}
-tbody tr:hover td{background:var(--surface-2)}
-tbody tr.open td{background:var(--accent-wash)}
+#board > tbody > tr[data-m],#plantab > tbody > tr[data-plan]{cursor:pointer}
+tbody tr:not(.det):hover > td{background:var(--surface-2)}
+table.efftab tbody tr:hover > td{background:transparent}
+tbody tr.open > td{background:var(--accent-wash)}
+/* the Board scrolls inside its frame, so its header row and the Model column stay put on long or wide tables */
+#p-board .tablewrap{max-height:max(320px,calc(100dvh - var(--topH,96px) - var(--railH,52px) - 24px));overflow:auto;overscroll-behavior-x:contain;
+  background:linear-gradient(to left,var(--surface) 40%,transparent) right/44px 100% no-repeat local,
+    radial-gradient(farthest-side at 100% 50%,color-mix(in srgb,var(--ink) 22%,transparent),transparent) right/14px 100% no-repeat scroll,var(--surface)}
+#board > thead > tr > th{position:sticky;top:0;z-index:2}
+#board > thead > tr > th:nth-child(2){left:0;z-index:3}
+#board > tbody > tr[data-m] > td:nth-child(2){position:sticky;left:0;z-index:1;background:var(--surface)}
+#board > tbody > tr[data-m]:hover > td:nth-child(2){background:var(--surface-2)}
+#board > tbody > tr.open > td:nth-child(2){background:var(--accent-wash)}
+#p-board .tablewrap.xl #board > * > tr > :nth-child(2){box-shadow:6px 0 6px -6px color-mix(in srgb,var(--ink) 35%,transparent)}
 .mname{display:flex;align-items:center;gap:8px;font-weight:600}
 .dot{width:7px;height:7px;border-radius:2px;flex:none}
 .dot.p{background:var(--accent)} .dot.o{background:var(--open)}
 .prov{color:var(--ink-3);font-size:12px;font-weight:400}
 .na{color:var(--ink-3)}
 .q{display:inline-block;width:5px;height:5px;border-radius:50%;margin-left:4px;vertical-align:2px}
+#p-board > .sub .q{margin-right:4px}
 .q.ven{background:var(--warn)} .q.unv{background:var(--bad)} .q.ind{background:transparent}
 .rk{color:var(--ink-3);font-size:11.5px;width:28px}
 .det td{background:var(--surface-2)!important;padding:0;border-bottom:2px solid var(--line-2)}
-.detbox{text-align:left;padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px 26px;position:sticky;left:0;width:min(1454px,calc(100vw - 64px));box-sizing:border-box;white-space:normal}
+.detbox{text-align:left;padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:14px 26px;position:sticky;left:0;width:var(--wrapW,min(1454px,calc(100vw - 46px)));box-sizing:border-box;white-space:normal}
 .detbox h3{grid-column:1/-1;font-size:13px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .dline{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
   border-bottom:1px dotted var(--line-2);padding-bottom:3px}
-.dline .k{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.dline{min-width:0}
+.dline .k{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0;overflow-wrap:anywhere}
 .dline .v{white-space:nowrap}
 .dline .v{font-weight:600;font-size:13px}
 .dnote{grid-column:1/-1;font-size:12px;color:var(--ink-2);border-left:2px solid var(--line-2);padding-left:10px}
@@ -211,12 +247,12 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .missing b{color:var(--ink)}
 
 /* ---------- charts tab ---------- */
-:root{--e0:#a3aab4;--e1:#9fcaf3;--e2:#4d9be6;--e3:#2463c4;--e4:#4b3aa8;--e5:#221466;
-  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948}
+:root{--e0:#848c97;--e1:#4a93e3;--e2:#2f78d0;--e3:#1d55ad;--e4:#4b3aa8;--e5:#221466;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#0e8794;--s4:#b07800;--s5:#d4567f;--s6:#008300;--s7:#6250d6;--s8:#e34948}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--e0:#77818d;--e1:#2d6dc2;--e2:#4f97e8;--e3:#8cc0f5;--e4:#b3a6f2;--e5:#ece8ff;
-  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767}}
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#2eb84a;--s7:#9085e9;--s8:#e66767}}
 :root[data-theme="dark"]{--e0:#77818d;--e1:#2d6dc2;--e2:#4f97e8;--e3:#8cc0f5;--e4:#b3a6f2;--e5:#ece8ff;
-  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767}
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#2eb84a;--s7:#9085e9;--s8:#e66767}
 .jump{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
 .jump a{font-size:12.5px;text-decoration:none;color:var(--ink-2);border:1px solid var(--line-2);background:var(--surface);
   border-radius:999px;padding:3px 11px}
@@ -233,7 +269,7 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
   border-radius:999px;padding:3px 8px 3px 9px;font:inherit;font-size:12.5px;cursor:pointer}
 .pchip i,.picklist i,.effnums i{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
 .pchip .x{color:var(--ink-3);font-size:14px;line-height:1}
-.pchip:hover{border-color:var(--ink-3)} .pchip:hover .x{color:var(--ink)}
+.pchip:not(:disabled):hover{border-color:var(--ink-3)} .pchip:hover .x{color:var(--ink)}
 .pickbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
 .pickadd{position:relative}
 .pickadd input{width:210px}
@@ -262,6 +298,7 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .tlist{display:block;max-width:300px;white-space:normal;margin-top:6px;line-height:1.45;color:var(--ink-2)}
 .stem{stroke:var(--line);stroke-width:1.5}
 .eff{font-size:11.5px;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;margin-left:4px;letter-spacing:.02em}
+.efftab-wrap{grid-column:1/-1;overflow-x:auto;max-width:100%}
 table.efftab{grid-column:1/-1;justify-self:start;border-collapse:collapse;font-size:12px;width:auto}
 table.efftab th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;text-align:right;padding:4px 14px 4px 0;border-bottom:1px solid var(--line-2)}
 table.efftab th:first-child,table.efftab td:first-child{text-align:left}
@@ -320,19 +357,22 @@ table.efftab td:first-child{font-family:"IBM Plex Sans",sans-serif}
 details.archive{margin-top:30px;border-top:1px solid var(--line-2);padding-top:16px}
 details.archive summary{cursor:pointer;font-size:13px;color:var(--ink-2)}
 details.archive summary span{font-family:Archivo;font-size:15px;color:var(--ink);font-weight:700;margin-right:8px}
-.picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:12px;margin-bottom:14px}
+.picks{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .pick{appearance:none;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);
-  border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow)}
-.pick:hover{border-color:var(--accent)}
+  border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow);min-width:0;
+  /* --per cards to a row, balanced by fitPicks() so a last row is never a single stray card when it can be avoided */
+  flex:1 1 calc((100% - (var(--per,5) - 1) * 12px) / var(--per,5) - .5px)}
+.pick:not(:disabled):hover{border-color:var(--accent)}
 .pick .pl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
-.pick .pm{font-family:Archivo;font-weight:700;font-size:16px;letter-spacing:-.015em;display:flex;align-items:center;gap:7px}
+.pick .pm{font-family:Archivo;font-weight:700;font-size:16px;letter-spacing:-.015em;display:flex;align-items:flex-start;gap:7px}
+.pick .pm .dot{margin-top:8px}
 .pick .pv{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink)}
 .pick .pr{font-size:11.5px;color:var(--ink-3)}
 details.changes{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;padding:0 14px}
 details.changes summary{cursor:pointer;padding:10px 0;font-size:13px;color:var(--ink-2)}
 details.changes summary b{color:var(--ink);font-weight:600}
 .chg{border-top:1px solid var(--line);padding:10px 0 12px}
-.chg h4{margin:0 0 6px;font-size:12px;font-family:"IBM Plex Mono",monospace;color:var(--ink-2);font-weight:500}
+.chg h3{margin:0 0 6px;font-size:12px;font-family:"IBM Plex Mono",monospace;color:var(--ink-2);font-weight:500}
 .chg ul{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:5px}
 .chg li{font-size:13px;color:var(--ink);display:flex;gap:8px;align-items:baseline}
 .ctag{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:3px;border:1px solid var(--line-2);color:var(--ink-2);flex:none;min-width:62px;text-align:center}
@@ -363,7 +403,7 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink-3);
 .sbl{flex:0 0 220px;font-weight:600;font-size:13px;display:flex;gap:8px;align-items:baseline}
 .sbl i{display:inline-block;width:8px;height:8px;border-radius:2px;flex:none;align-self:center}
 .sbchips{display:flex;gap:6px;flex-wrap:wrap}
-.sbchips .chip .eff{font-family:"IBM Plex Mono",monospace;font-size:11px;color:inherit;opacity:.75}
+.sbchips .chip .eff{font-family:"IBM Plex Mono",monospace;font-size:11px;color:inherit;opacity:.9}
 .legend .ringk{background:none;border:1.5px solid var(--ink);border-radius:50%;width:10px;height:10px}
 .sbh{font-size:16px;letter-spacing:-.015em;margin:26px 0 4px}
 .sbmodels{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:4px 0 6px}
@@ -398,7 +438,7 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink-3);
 .sb-card .sb-meta{font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px;flex:1}
 .sb-acts{display:flex;gap:6px;flex-wrap:wrap}
 .sb-btn{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:5px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
-.sb-btn:hover{border-color:var(--ink-3);color:var(--ink)}
+.sb-btn:not(:disabled):hover{border-color:var(--ink-3);color:var(--ink)}
 .sb-btn.own[aria-pressed="true"]{border-color:var(--good);background:var(--good-wash);color:var(--good);font-weight:600}
 .sb-btn.cmpb[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
 #p-subs .sb-list{margin-top:12px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
@@ -490,13 +530,13 @@ html.sblock{overflow:hidden}
 .cmpgrp{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
 .cmpgrp > span:not(.cmplab){display:inline-flex;gap:6px;flex-wrap:wrap}
 .cmplab{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
-.cmp .chip .eff{font-size:11px;opacity:.75;margin-left:2px;font-variant-numeric:tabular-nums}
+.cmp .chip .eff{font-size:11px;opacity:.9;margin-left:2px;font-variant-numeric:tabular-nums}
 .cmp .chip[aria-pressed="mixed"]{border-color:var(--ink);color:var(--ink);font-weight:500}
 /* an excluded effort level is off, not unavailable: full-contrast text, struck through, still a live button */
 #cmpeff .chip[aria-pressed="false"]{color:var(--ink);text-decoration:line-through;text-decoration-color:var(--ink-3);border-style:dashed}
 .seg{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface-2)}
 .seg button{appearance:none;border:0;background:none;font:inherit;font-size:12.5px;color:var(--ink-2);padding:3px 11px;cursor:pointer}
-.seg button:hover{color:var(--ink)}
+.seg button:not(:disabled):hover{color:var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
 .cmpreset{margin-left:auto}
 .cmpctx{font-size:12px;color:var(--ink-3);margin:6px 0 2px;max-width:none}
@@ -526,27 +566,48 @@ html.sblock{overflow:hidden}
   .cmp.open .picklist h4{margin:14px 6px 4px;font-size:11px}
   .cmp.open .picklist i{width:12px;height:12px}
 }
+@media (max-width:860px){
+  .rail-in{gap:8px;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
+  .fg-find{flex:1;min-width:0}.fg-find > label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.fg-find input{width:100%;min-width:0}
+  .railtog{display:inline-flex;min-height:36px;align-items:center}
+  .railmore{display:none}
+  .rail.open .railmore{display:flex;flex-direction:column;align-items:flex-start;gap:10px;flex-basis:100%;order:3;padding:4px 0 2px}
+  .rail.open .railmore .fg{flex-wrap:wrap}
+  .count{margin-left:0;white-space:nowrap}
+}
 @media (max-width:700px){
   main{padding:14px} .top-in,.rail-in,.foot{padding-left:14px;padding-right:14px}
   /* phones: the brand rows scroll away and only the tab row stays pinned (stickyOffsets sets a negative top);
      the snapshot note is clamped to two lines, and the filters fold behind one button */
   .top-in{gap:8px;padding-top:10px}
   .tagline{margin:2px 0 0}
-  #asofnote{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+  #asofnote{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   #asofnote.full{display:block}
-  .rail-in{gap:8px;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
-  .fg-find{flex:1;min-width:0}.fg-find > label{display:none}.fg-find input{width:100%;min-width:0}
-  .railtog{display:inline-flex;min-height:36px;align-items:center}
-  .railmore{display:none}
-  .rail.open .railmore{display:flex;flex-direction:column;align-items:flex-start;gap:10px;flex-basis:100%;order:3;padding:4px 0 2px}
-  .rail.open .railmore .fg{flex-wrap:wrap}
-  .count{margin-left:0;white-space:nowrap}
+  /* the brand and the theme switch share the first row; the snapshot stamp and key wrap under them */
+  .brandrow{column-gap:10px;row-gap:4px}
+  .spacer{display:none}
+  .themesw{order:1;margin-left:auto}
+  .brandrow > .stamp{order:2}
+  /* a tighter tab row, so the last tab peeks in from the edge on a phone */
+  .tab{padding:9px 10px;font-size:13.5px}
+  /* touch targets, and 16px fields so iOS Safari does not zoom in on focus */
+  .themesw button{padding:6px 12px}
+  .seg button{min-height:36px;padding:6px 12px}
+  .chip{min-height:36px;padding:6px 12px}
+  .linkbtn{padding:6px 0}
+  #board > thead > tr > th{padding-top:4px;padding-bottom:4px}
+  #board .thbtn{min-height:32px;display:inline-flex;align-items:center;gap:3px}
+  input[type=search],select{font-size:16px}
+  /* the compact Board fits the screen, so it scrolls with the page and its header row sticks under the filter bar */
+  #p-board .tablewrap:has(> #board:not(.full)){max-height:none;overflow:visible}
+  #board:not(.full) > thead > tr > th{top:calc(var(--topH,0px) + var(--railH,0px))}
+  table.efftab th{white-space:normal;vertical-align:bottom}
   /* phones: the Board keeps model, Index and plan side by side; every other column waits behind a button */
   .boardcols{display:inline-flex;margin:0 0 10px;min-height:36px;align-items:center}
   #board:not(.full) > thead th:not(.keep),#board:not(.full) > tbody > tr[data-m] > td:not(.keep){display:none}
   #board:not(.full) td .pl{display:block;margin-left:0;white-space:normal}
   #board:not(.full) td.keep{white-space:normal}
-  #board:not(.full) .mname{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:4px}#board:not(.full) .mname .prov{flex-basis:100%;margin-left:15px}
+  #board:not(.full) .mname{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:4px}#board:not(.full) .mname .prov{flex-basis:100%;margin-left:24px}
   #board:not(.full) th,#board:not(.full) td{padding-left:6px;padding-right:6px}#board:not(.full) td.rk{width:18px}
   /* the comparison sheet grouped by attribute */
   #sbgrid.bya{display:block}
@@ -561,11 +622,13 @@ html.sblock{overflow:hidden}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+</head>
+<body>
 
 <header class="top">
   <div class="top-in">
     <div class="brandrow">
-      <span class="brand">Frontier<em>·</em>Board</span>
+      <h1 class="brand">Frontier<em>·</em>Board</h1>
       <span class="stamp">Snapshot <b id="asof">—</b> · <b id="nmodels">—</b> models · <b id="nbench">—</b> benchmarks</span>
       <span class="spacer"></span>
       <div class="themesw" role="group" aria-label="Colour theme">
@@ -580,44 +643,45 @@ html.sblock{overflow:hidden}
       </span>
     </div>
     <p class="tagline">Compare monthly AI plans, the models they include, and how those models score.</p>
-    <p class="sub" id="asofnote" style="margin:-6px 0 0;font-size:12px;max-width:none"></p>
-    <nav class="tabs" role="tablist">
-      <button class="tab" role="tab" data-p="board" aria-selected="true">Board</button>
-      <button class="tab" role="tab" data-p="subs" aria-selected="false">Subscriptions</button>
-      <button class="tab" role="tab" data-p="quad" aria-selected="false">Charts</button>
-      <button class="tab" role="tab" data-p="bench" aria-selected="false">Benchmarks</button>
-      <button class="tab" role="tab" data-p="src" aria-selected="false">Sources &amp; caveats</button>
-    </nav>
+    <div class="asofrow"><p class="sub" id="asofnote"></p><button type="button" class="linkbtn" id="asoftog" aria-expanded="false" aria-controls="asofnote" hidden>More</button></div>
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button type="button" class="tab" role="tab" id="t-board" aria-controls="p-board" data-p="board" aria-selected="true" tabindex="0">Board</button>
+      <button type="button" class="tab" role="tab" id="t-subs" aria-controls="p-subs" data-p="subs" aria-selected="false" tabindex="-1">Subscriptions</button>
+      <button type="button" class="tab" role="tab" id="t-quad" aria-controls="p-quad" data-p="quad" aria-selected="false" tabindex="-1">Charts</button>
+      <button type="button" class="tab" role="tab" id="t-bench" aria-controls="p-bench" data-p="bench" aria-selected="false" tabindex="-1">Benchmarks</button>
+      <button type="button" class="tab" role="tab" id="t-src" aria-controls="p-src" data-p="src" aria-selected="false" tabindex="-1">Sources &amp; caveats</button>
+    </div>
   </div>
 </header>
 
-<div class="rail">
+<section class="rail" aria-label="Filters">
   <div class="rail-in">
     <div class="fg fg-find fg-model"><label for="q">Find</label><input type="search" id="q" placeholder="model or provider"></div>
     <button type="button" class="chip railtog" id="railtog" aria-expanded="false" aria-controls="railmore">Filters</button>
     <div class="railmore" id="railmore">
-    <div class="fg fg-model"><label>Tier</label><span id="tierchips"></span></div>
-    <div class="fg fg-model"><label>Weights</label><span id="wchips"></span></div>
+    <div class="fg fg-model" role="group" aria-labelledby="tierlab"><span class="flab" id="tierlab">Tier</span><span id="tierchips"></span></div>
+    <div class="fg fg-model" role="group" aria-labelledby="wlab"><span class="flab" id="wlab">Weights</span><span id="wchips"></span></div>
     <div class="fg fg-model"><label for="provsel">Provider</label><select id="provsel"><option value="">All</option></select></div>
-    <div class="fg fg-lens"><label id="lenslab">Pricing</label><span class="seg" id="lens" role="group" aria-labelledby="lenslab"><button type="button" data-v="sub" aria-pressed="true" title="Show what each model costs through a monthly subscription">Monthly plans</button><button type="button" data-v="api" aria-pressed="false" title="Show per-token API prices, as OpenRouter and the vendors' APIs charge them">API per 1M tokens</button></span></div>
-    <div class="fg"><button type="button" class="chip" id="minechip" aria-pressed="false"></button></div>
+    <div class="fg fg-lens"><span class="flab" id="lenslab">Pricing</span><span class="seg" id="lens" role="group" aria-labelledby="lenslab"><button type="button" data-v="sub" aria-pressed="true" title="Show what each model costs through a monthly subscription">Monthly plans</button><button type="button" data-v="api" aria-pressed="false" title="Show per-token API prices, as OpenRouter and the vendors' APIs charge them">API per 1M tokens</button></span></div>
+    <div class="fg fg-mine"><button type="button" class="chip" id="minechip" aria-pressed="false"></button></div>
     </div>
-    <span class="count"><b id="shown">0</b> shown</span>
+    <span class="count" aria-live="polite"><b id="shown">0</b> shown</span>
   </div>
-</div>
+</section>
 
 <main>
-  <section class="panel on" id="p-board">
+  <section class="panel on" id="p-board" role="tabpanel" aria-labelledby="t-board">
+    <h2 class="vh">Board</h2>
     <div class="picks" id="picks"></div>
     <details class="changes" id="changes"></details>
     <button type="button" class="chip boardcols" id="boardcols" aria-pressed="false">Show every column</button>
     <div class="tablewrap"><table id="board"><thead></thead><tbody></tbody></table></div>
-    <p class="archnote" id="archnote"></p>
+    <p class="archnote" id="archnote" aria-live="polite"></p>
     <p class="sub" style="margin-top:10px">Click any row to open every score that model has, each with its source and provenance. A dot beside a number means the figure is <span class="q ven" style="position:relative;top:-1px"></span> vendor-run or <span class="q unv" style="position:relative;top:-1px"></span> unverified rather than independently measured. <span id="boardlens"></span></p>
   </section>
 
 
-  <section class="panel" id="p-subs">
+  <section class="panel" id="p-subs" role="tabpanel" aria-labelledby="t-subs">
     <div class="card" id="sb-ask">
       <div class="cardhead"><div><h2 class="sb-h">What can you spend a month?</h2>
         <p class="sub">The smartest model each product gives you inside that budget, ranked by Artificial Analysis Index at the effort levels the plan offers. US list prices on monthly billing, before tax, read from vendor pages on <span id="sbasof"></span>.</p></div></div>
@@ -681,14 +745,14 @@ html.sblock{overflow:hidden}
     <p class="sub" style="margin-top:10px;max-width:none">◦ <b>Flat-rate</b> plans grant usage as rate-limit windows or a vendor credit quota; <b>token-metered</b> plans grant a dollar allowance spent at per-token prices. A dash means the vendor does not publish the figure. Plans sold only in yuan, plans closed to new customers and plans whose vendor names no model on this board are not listed; see Sources &amp; caveats.</p>
     </details>
 
-    <div class="sb-tray" id="sbtray" hidden><span id="sbtrayn"></span><span class="sb-traychips" id="sbtraychips"></span>
+    <div class="sb-tray" id="sbtray" hidden><span id="sbtrayn" aria-live="polite"></span><span class="sb-traychips" id="sbtraychips"></span>
       <button type="button" class="sb-traygo" id="sbgo">Compare</button><button type="button" class="sb-trayclr" id="sbclr">Clear</button></div>
     <div class="sb-sheet" id="sbsheet" hidden><div class="sb-sheetin" role="dialog" aria-modal="true" aria-labelledby="sbsheeth">
       <div class="sb-sheethead"><h2 id="sbsheeth">Side by side</h2><button type="button" class="chip" id="sbclose">Close</button></div>
       <div class="sb-grid" id="sbgrid"></div></div></div>
   </section>
 
-  <section class="panel" id="p-quad">
+  <section class="panel" id="p-quad" role="tabpanel" aria-labelledby="t-quad">
     <nav class="jump" id="jump" aria-label="Charts">
       <a href="#ch-index">Intelligence</a><a href="#ch-effort">Effort levels</a><a href="#ch-effcost">Cost by effort</a><a href="#ch-efflat">Latency by effort</a><a href="#ch-efflevel">Same-effort ranking</a>
       <a href="#ch-price" data-lens="api">Intelligence vs price</a><a href="#ch-speedq">Intelligence vs speed</a><a href="#ch-speed">Output speed</a>
@@ -717,7 +781,7 @@ html.sblock{overflow:hidden}
       <div class="picked" id="effpicked"></div>
       <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button>
         <button type="button" class="chip cmpmove" aria-controls="cmp" hidden>Edit compared models (<b class="cmpn"></b>)</button>
-        <span class="picknote" id="effnote"></span></div>
+        <span class="picknote" id="effnote" aria-live="polite"></span></div>
       <div class="cmp" id="cmp" aria-label="Comparison: models and chart controls">
         <div class="cmphead"><h3>Models <span class="cmpn"></span></h3>
           <button type="button" class="chip" data-cmp="reset" title="Restore the default models, effort levels, scale, Pareto line and labels, and clear the search">Reset comparison</button>
@@ -818,9 +882,9 @@ html.sblock{overflow:hidden}
     </div>
   </section>
 
-  <section class="panel" id="p-bench"><div id="benchhost"></div></section>
+  <section class="panel" id="p-bench" role="tabpanel" aria-labelledby="t-bench"><div id="benchhost"></div></section>
 
-  <section class="panel" id="p-src">
+  <section class="panel" id="p-src" role="tabpanel" aria-labelledby="t-src">
     <div class="prose" style="margin-bottom:22px">
       <h2>How to read this board</h2>
       <p>Every figure here was pulled from a live leaderboard or a provider's own publication on or before the snapshot date in the header — each benchmark shows its own source date on the Benchmarks tab and below. Nothing is estimated, interpolated, or filled in from memory — a model with no score on a benchmark shows a dash, not a guess.</p>
@@ -1966,7 +2030,7 @@ const ARCHIVE=(()=>{
 MODELS.forEach(m=>{ m.baseTier=m.tier; if(ARCHIVE.has(m.name)) m.tier="archive"; });
 
 /* ---------------- filter state ---------------- */
-const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"],["archive","Archived models"]];
+const TIERS=[["frontier","Frontier"],["challenger","Challenger"],["legacy","Previous gen"],["archive","Archive","Archived models"]];   // [tier, chip label, heading in longer lists]
 const state={q:"",tiers:new Set(["frontier","challenger"]),weights:new Set(["open","closed"]),prov:"",
              sort:"aaii",dir:-1,openRow:null};
 
@@ -1974,7 +2038,7 @@ function buildChips(host,items,set,key){
   host.innerHTML="";
   items.forEach(([v,l])=>{
     const b=document.createElement("button");
-    b.className="chip"; b.textContent=l; b.setAttribute("aria-pressed",set.has(v));
+    b.type="button"; b.className="chip"; b.textContent=l; b.setAttribute("aria-pressed",set.has(v));
     b.onclick=()=>{ set.has(v)?set.delete(v):set.add(v); b.setAttribute("aria-pressed",set.has(v)); render(); };
     host.appendChild(b);
   });
@@ -1987,7 +2051,7 @@ buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights
   provs.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);});
   sel.onchange=()=>{state.prov=sel.value;render();};
 }
-$("#q").oninput=e=>{state.q=e.target.value.toLowerCase();render();};
+$("#q").oninput=e=>{state.q=e.target.value.trim().toLowerCase();render();};
 
 function filtered(){ return MODELS.filter(m=>passes(m)); }
 function passes(m,anyTier){
@@ -2005,7 +2069,8 @@ function passes(m,anyTier){
 const COLS_API=Object.keys(BENCH).filter(k=>BENCH[k].col&&!BENCH[k].arch);
 // under the subscription lens the blended API price column gives way to the cheapest plan that includes the model
 const boardCols=()=>state.lens==="api"?COLS_API:COLS_API.map(k=>k==="price"?"plan":k);
-const COLHEAD={plan:["Plan $/mo","Cheapest subscription that includes the model, monthly billing. Flat-rate plans come first; a token-metered plan is shown only when no flat-rate plan includes it."]};
+// [heading, title text, short accessible name when the title is too long to read out]
+const COLHEAD={plan:["Plan $/mo","Cheapest subscription that includes the model, monthly billing. Flat-rate plans come first; a token-metered plan is shown only when no flat-rate plan includes it.","Cheapest monthly plan"]};
 const isArch=k=>!!BENCH[k].arch;
 /* on phones the Board shows only these columns until "Show every column" is pressed; the rest are in each row's details */
 const PHONE_KEEP=new Set(["aaii","plan","price"]);
@@ -2041,14 +2106,14 @@ function renderBoard(rows){
   if(!COLS.includes(state.sort)&&state.sort!=="name") state.sort=state.sort==="plan"?"price":state.sort==="price"?"plan":"aaii";
   const ariaSort=k=>k===state.sort?` aria-sort="${state.dir<0?"descending":"ascending"}"`:"";
   th.innerHTML="<tr><th class='l keep'><span class='vh'>Rank</span></th><th class='l keep' data-k='name'"+ariaSort("name")+"><button type='button' class='thbtn' aria-label='Sort by model name'>Model <span class='arw' aria-hidden='true'>▾</span></button></th>"+
-    COLS.map(k=>{const [s,l]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" class="${PHONE_KEEP.has(k)?"keep":""}" title="${esc(l)}"${ariaSort(k)}><button type="button" class="thbtn" aria-label="Sort by ${esc(l)}">${s} <span class="arw" aria-hidden="true">▾</span></button></th>`;}).join("")+"</tr>";
+    COLS.map(k=>{const [s,l,a]=COLHEAD[k]||[BENCH[k].s,BENCH[k].l]; return `<th data-k="${k}" class="${PHONE_KEEP.has(k)?"keep":""}" title="${esc(l)}"${ariaSort(k)}><button type="button" class="thbtn" aria-label="Sort by ${esc(a||l)}">${s} <span class="arw" aria-hidden="true">▾</span></button></th>`;}).join("")+"</tr>";
   $$("#board thead th[data-k]").forEach(el=>{
     if(el.dataset.k===state.sort){el.setAttribute("data-active","");
       el.querySelector(".arw").textContent = state.dir<0?"▾":"▴";}
-    el.onclick=()=>{
+    el.onclick=e=>{
       if(state.sort===el.dataset.k) state.dir*=-1;
       else {state.sort=el.dataset.k; state.dir = el.dataset.k==="name"?1:(BENCH[el.dataset.k]&&BENCH[el.dataset.k].hi?-1:1);}
-      boardFocus={sort:el.dataset.k}; render();
+      boardFocus=e.detail===0?{sort:el.dataset.k}:null; render();
     };
   });
   const k=state.sort;
@@ -2063,8 +2128,8 @@ function renderBoard(rows){
     const mine=minePlans(m.name);
     const cells=COLS.map(c=>{
       if(c==="plan"){ const pl=cheapPlan(m.name), n=plansOf(m.name).length;
-        const rq=pl&&val(m,"aaii")!=null?planReach(pl,m):null, lower=rq&&rq.r.aaii<val(m,"aaii");
-        return pl?`<td class="mono keep" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${lower?` — this plan offers ${esc(rq.r.e)} effort at most, where the model scores ${rq.r.aaii}; ${val(m,"aaii")} needs ${esc(topEff(m)||"a higher setting")}`:""}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span>${lower?`<span class="pl reach">Index ${rq.r.aaii}${effTag(rq.r)} on this plan</span>`:""}<span class="q ven" title="${QL.ven}"></span></td>`
+        const rq=pl&&val(m,"aaii")!=null?planReach(pl,m):null, lower=rq&&rq.r.aaii<val(m,"aaii"), unmeas=pl&&pl.pin&&val(m,"aaii")!=null&&!rq;
+        return pl?`<td class="mono keep" title="${esc(planName(pl))}${isFlat(pl)?"":" — token-metered: a dollar allowance spent at per-token prices"}${lower?` — this plan offers ${esc(rq.r.e)} effort at most, where the model scores ${rq.r.aaii}; ${val(m,"aaii")} needs ${esc(topEff(m)||"a higher setting")}`:""}${n>1?" · "+(n-1)+" more plan"+(n>2?"s":"")+" include it":""}">${usd(pl.usd)}<span class="q ven" title="${QL.ven}"></span><span class="pl">${esc(planName(pl))}${isFlat(pl)?"":" ◦"}</span>${lower?`<span class="pl reach">Index ${rq.r.aaii}${effTag(rq.r)} on this plan</span>`:""}${unmeas?`<span class="pl reach">${esc(pl.pin.join(", "))} effort only · unmeasured</span>`:""}</td>`
           :`<td class="mono na keep" title="No subscription on the board includes this model; it is reached through an API">—</td>`; }
       const v=val(m,c), q=qual(m,c);
       const et = c==="aaii"&&v!=null&&topEff(m) ? `<span class="eff">${topEff(m)}</span>` : "";
@@ -2078,8 +2143,9 @@ function renderBoard(rows){
   }).join("") || `<tr><td colspan="${COLS.length+2}" class="empty">${state.onlyMine&&!state.mine.size?"No plan is picked yet. Open the Subscriptions tab and pick the plans you pay for.":"Nothing matches those filters."}</td></tr>`;
   $("#boardlens").textContent=state.lens==="api"?"Prices are per-token API prices; switch Pricing to Monthly plans to see which subscriptions include each model."
     :"Plan $/mo is the cheapest subscription that includes the model (◦ marks a token-metered plan); ✓ marks a model in your own plans. Plan prices are vendor-reported.";
-  $$("#board tbody tr[data-m]").forEach(tr=>tr.onclick=()=>{
-    state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; boardFocus={row:tr.dataset.m}; render();
+  // focus goes back to the row's button only after a keyboard press (detail 0), so a mouse click leaves no focus ring
+  $$("#board tbody tr[data-m]").forEach(tr=>tr.onclick=e=>{
+    state.openRow = state.openRow===tr.dataset.m ? null : tr.dataset.m; boardFocus=e.detail===0?{row:tr.dataset.m}:null; render();
   });
   // re-rendering replaces the buttons: put keyboard focus back on the one that was used
   if(boardFocus){ const f=boardFocus; boardFocus=null;
@@ -2096,46 +2162,65 @@ function detailRow(m){
     if(!keys.length) continue;
     out+=keys.map(k=>{
       const [v,q,src]=m.s[k];
-      return `<div class="dline"><span class="k">${BENCH[k].l}${k==="aaii"?" · model best":""}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;
+      return `<div class="dline"><span class="k">${BENCH[k].l}${k==="aaii"?" · model best":""}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${linkify(esc(src))}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;
     }).join("");
   }
   const archK=Object.keys(BENCH).filter(k=>isArch(k)&&m.s[k]);
   if(archK.length) out+=`<p class="effh">Archived benchmarks</p>`+archK.map(k=>{const [v,q,src]=m.s[k];
-    return `<div class="dline" style="opacity:.7"><span class="k">${BENCH[k].l}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${esc(src)}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;}).join("");
+    return `<div class="dline"><span class="k">${BENCH[k].l}${q!=="ind"?` <span class="badge ${q}">${q==="ven"?"vendor":"unver"}</span>`:""}${src?`<span class="eff">${linkify(esc(src))}</span>`:""}</span><span class="v mono">${fmt(v,BENCH[k].f)}</span></div>`;}).join("");
   out+=state.lens==="api"?listPrice(m)+subsList(m):subsList(m)+listPrice(m);
   const miss=Object.keys(BENCH).filter(k=>!m.s[k]&&!isArch(k)).map(k=>BENCH[k].s);
   return `<tr class="det"><td colspan="${COLS_API.length+2}"><div class="detbox">
     <h3>${m.name}
       <span class="badge ${m.open?"open":"pro"}">${m.open?"Open weights":"Proprietary"}</span>
       <span class="prov" style="font-weight:400">${m.prov} · released ${m.rel||"—"}</span></h3>
-    ${m.note?`<p class="dnote">${m.note}</p>`:""}
+    ${m.note?`<p class="dnote">${linkify(m.note)}</p>`:""}
     ${out}
     ${EFFORT[m.name]&&EFFORT[m.name].length>1?`<p class="effh">Effort levels · Artificial Analysis, ${BENCH.aaii.asof}</p>
-    <table class="efftab"><thead><tr><th>Effort</th><th>Index</th><th>$ / index task</th><th>Output tok/s</th><th>First answer token</th></tr></thead><tbody>
-    ${effRows(m).map(r=>`<tr><td><span class="dot" style="display:inline-block;margin-right:6px;border-radius:50%;background:${EFF_SHADE[r.e]}"></span>${EFF_NAME[r.e]}</td><td>${r.aaii}</td><td>${r.cost!=null?money(r.cost):"—"}</td><td>${r.speed??"—"}</td><td>${r.ttft!=null?r.ttft+" s":"—"}</td></tr>`).join("")}
-    </tbody></table>`:""}
+    <div class="efftab-wrap"><table class="efftab"><thead><tr><th>Effort</th><th>Index</th><th>$ / index task</th><th>Output tok/s</th><th>First answer token</th></tr></thead><tbody>
+    ${effRows(m).map(r=>`<tr><td><span class="dot" style="display:inline-block;margin-right:6px;border-radius:50%;background:${EFF_SHADE[r.e]}"></span>${EFF_NAME[r.e]}</td><td>${r.aaii}</td><td>${r.cost!=null?fmt(r.cost,r.cost<0.1?"usd3":"usd2"):"—"}</td><td>${r.speed??"—"}</td><td>${r.ttft!=null?r.ttft+" s":"—"}</td></tr>`).join("")}
+    </tbody></table></div>`:""}
     <p class="dnote" style="color:var(--ink-3)">No published score for: ${miss.join(", ")||"nothing — full coverage"}.</p>
   </div></td></tr>`;
 }
 
 /* ---------------- tooltip ---------------- */
-const tip=$("#tip");
+const tip=$("#tip"); let tipEl=null;
 function showTip(html,e){tip.innerHTML=html;tip.classList.add("on");moveTip(e);}
+// a point to place the tip at when there is no pointer: just under the element's centre (keyboard focus, a tap)
+const tipPt=el=>{const b=el.getBoundingClientRect(); return {clientX:b.left+b.width/2,clientY:b.bottom-4};};
 function moveTip(e){
   const r=tip.getBoundingClientRect();
   let x=e.clientX+14,y=e.clientY+14;
   if(x+r.width>innerWidth-8)x=e.clientX-r.width-14;
   if(y+r.height>innerHeight-8)y=e.clientY-r.height-14;
+  // keep the whole tip on screen on both axes, even when it is wider or taller than the room on either side
+  x=Math.max(8,Math.min(innerWidth-r.width-8,x)); y=Math.max(8,Math.min(innerHeight-r.height-8,y));
   tip.style.left=x+"px";tip.style.top=y+"px";
 }
-function hideTip(){tip.classList.remove("on");}
-function wire(root){
+function hideTip(){tip.classList.remove("on"); tipEl=null;}
+/* [data-tip] elements: hover with a mouse, tap to toggle on a touch screen, and focus from the keyboard where the element
+   is focusable. wire(root,{focus:true}) also makes each one focusable, for charts whose marks have no other control. */
+function wire(root,o){
   $$("[data-tip]",root).forEach(el=>{
-    el.onmouseenter=e=>showTip(el.dataset.tip,e);
+    if(o&&o.focus&&!el.hasAttribute("tabindex")) el.setAttribute("tabindex","0");
+    el.onmouseenter=e=>{tipEl=el; showTip(el.dataset.tip,e);};
     el.onmousemove=moveTip; el.onmouseleave=hideTip;
+    el.onfocus=()=>{tipEl=el; showTip(el.dataset.tip,tipPt(el));};
+    el.onblur=hideTip;
+    el.onpointerup=e=>{ if(e.pointerType!=="touch") return;
+      if(tipEl===el&&tip.classList.contains("on")){ hideTip(); return; }
+      tipEl=el; showTip(el.dataset.tip,tipPt(el)); };
   });
 }
+// a tip never outlives a scroll, Escape, a section opening or closing, or a tap somewhere else
+document.addEventListener("scroll",()=>{ if(tip.classList.contains("on")) hideTip(); },{passive:true,capture:true});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") hideTip(); });
+document.addEventListener("toggle",hideTip,true);
+document.addEventListener("pointerdown",e=>{ if(e.pointerType==="touch"&&!(e.target.closest&&e.target.closest("[data-tip]"))) hideTip(); },{passive:true});
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+// bare https:// addresses in already-escaped prose become links; one already inside an attribute or a link is left alone
+const linkify=h=>String(h).replace(/(^|[\s(\[;,])(https?:\/\/[^\s<>"')\]]*[^\s<>"')\].,;:!?])/g,(_,a,u)=>`${a}<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
 
 /* ---------------- shared chart helpers ---------------- */
 const EFF_ORDER=["none","low","medium","high","reasoning","xhigh","max"];
@@ -2469,7 +2554,7 @@ function refill(host,html){ const a=document.activeElement, k=a&&host.contains(a
 function effHover(n){ effUI.chip=n; effApply(); } // picked-model chips: highlight while hovered, then fall back to a latched label
 function renderEffList(){
   const q=$("#effq").value.trim().toLowerCase(), c=effCands().filter(m=>!q||(m.name+" "+m.prov).toLowerCase().includes(q));
-  refill($("#efflist"),c.length?TIERS.map(([t,l])=>{const g=c.filter(m=>m.tier===t); return g.length?`<h4>${l}</h4>`+g.map(m=>
+  refill($("#efflist"),c.length?TIERS.map(([t,l,L])=>{const g=c.filter(m=>m.tier===t); return g.length?`<h4>${L||l}</h4>`+g.map(m=>
     `<button type="button" data-m="${esc(m.name)}" data-k="${esc(m.name)}" aria-pressed="${state.effSel.has(m.name)}"><i style="${state.effSel.has(m.name)?`background:${effColor(m.name)};border-color:transparent`:""}"></i>${esc(m.name)}<span class="pm">${esc(m.prov)} · ${effRowsAll(m)[0].aaii}</span></button>`).join(""):"";}).join("")
     :'<p>No model with an Index score matches.</p>');
   $$("#efflist button").forEach(b=>b.onclick=()=>effToggle(b.dataset.m));
@@ -2738,7 +2823,7 @@ function renderEffLevel(rows){
   const at=lv=>rows.map(m=>({m,r:effRows(m).find(r=>r.e===lv)})).filter(o=>o.r);
   const lvls=EFF_ORDER.filter(e=>at(e).length).reverse();
   if(!lvls.includes(state.effLv)) state.effLv=lvls[0]||"high";
-  $("#efflvsel").innerHTML=lvls.map(e=>`<button class="chip" data-lv="${e}" aria-pressed="${e===state.effLv}">${EFF_NAME[e]} <span class="eff">${at(e).length}</span></button>`).join("");
+  $("#efflvsel").innerHTML=lvls.map(e=>`<button type="button" class="chip" data-lv="${e}" aria-pressed="${e===state.effLv}">${EFF_NAME[e]} <span class="eff">${at(e).length}</span></button>`).join("");
   $$("#efflvsel .chip").forEach(b=>b.onclick=()=>{state.effLv=b.dataset.lv; renderEffLevel(filtered());});
   const d=at(state.effLv).sort((a,b)=>b.r.aaii-a.r.aaii||(a.r.cost??1e9)-(b.r.cost??1e9));
   $("#c-efflevel").innerHTML=d.length?hbarSvg(d.map(({m,r})=>({name:m.name,v:r.aaii,fill:idFill(m),
@@ -2923,14 +3008,16 @@ function renderRail(){
   $$("#lens button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===state.lens));
   const c=$("#minechip"), n=state.mine.size;
   c.textContent=n?"In my plans · "+n:"Pick my plans"; c.setAttribute("aria-pressed",state.onlyMine);
-  c.title=n?"Show only the models your picked plans include, on every tab":"Open the Subscriptions tab and pick the plans you pay for";
+  c.title=n?"Show only the models your picked plans include on Board, Charts and Benchmarks":"Open the Subscriptions tab and pick the plans you pay for";
+  // the filter does nothing on the Subscriptions tab, so once plans are picked the bar there is hidden (see the CSS)
+  document.documentElement.toggleAttribute("data-has-plans",n>0);
 }
-function setLens(l){ state.lens=l; try{localStorage.setItem(LENS_KEY,l);}catch(e){} renderRail(); renderPicks(); render();
+function setLens(l){ state.lens=l; state.lensPin=false; try{localStorage.setItem(LENS_KEY,l);}catch(e){} renderRail(); renderPicks(); render();
   // a chart section the new lens hides can't stay in the URL: a reload would bring the old lens back with it
   const sc=state.sec&&document.getElementById("ch-"+state.sec);
   if(sc&&sc.dataset.lens&&sc.dataset.lens!==l){ state.sec=null; secTrack(true); }
   syncURL(); }
-function mineChanged(){ try{localStorage.setItem(PLAN_KEY,JSON.stringify([...state.mine]));}catch(e){}
+function mineChanged(){ state.plansPin=false; try{localStorage.setItem(PLAN_KEY,JSON.stringify([...state.mine]));}catch(e){}
   if(!state.mine.size) state.onlyMine=false; renderRail(); renderPicks(); render(); syncURL(); }
 const planToggle=id=>{ state.mine.has(id)?state.mine.delete(id):state.mine.add(id); mineChanged(); };
 $$("#lens button").forEach(b=>b.onclick=()=>setLens(b.dataset.v));
@@ -2959,15 +3046,17 @@ function subPicks(){
   ];
   const mine=myPlans().flatMap(planPts).sort(rank);
   let out=P.filter(p=>p[1].length).map(([lab,list,rule])=>{const q=list[0], r=list.find(x=>x.p.fam!==q.p.fam&&x.m!==q.m);
-    return `<button class="pick" data-m="${esc(q.m.name)}" title="${esc(rule)}"><span class="pl">${lab}</span>
+    return `<button type="button" class="pick" data-m="${esc(q.m.name)}" title="${esc(rule)}"><span class="pl">${lab}</span>
       <span class="pm"><span class="dot ${q.m.open?"o":"p"}"></span>${esc(q.m.name)}</span><span class="pv">Index ${q.r.aaii}${effTag(q.r)} · ${usd(q.p.usd)} ${esc(planName(q.p))}</span>
       <span class="pr">${r?`Next: ${esc(r.m.name)}, ${usd(r.p.usd)} ${esc(planName(r.p))}`:""}</span></button>`;}).join("");
-  out+=mine.length?`<button class="pick" data-m="${esc(mine[0].m.name)}" title="The highest Index score across the plans you picked"><span class="pl">Best in your plans</span>
+  out+=mine.length?`<button type="button" class="pick" data-m="${esc(mine[0].m.name)}" title="The highest Index score across the plans you picked"><span class="pl">Best in your plans</span>
       <span class="pm"><span class="dot ${mine[0].m.open?"o":"p"}"></span>${esc(mine[0].m.name)}</span><span class="pv">Index ${mine[0].r.aaii}${effTag(mine[0].r)} · ${esc(planName(mine[0].p))}</span>
       <span class="pr">${state.mine.size} plan${state.mine.size>1?"s":""} picked</span></button>`
-    :`<button class="pick" data-go="subs" title="Pick the plans you pay for on the Subscriptions tab"><span class="pl">Best in your plans</span>
+    :state.mine.size?`<button type="button" class="pick" data-go="subs" title="None of the models in your plans has an Index score measured at the effort levels those plans offer"><span class="pl">Best in your plans</span>
+      <span class="pm">No measured Index score</span><span class="pv">at your plans' settings · ${state.mine.size} plan${state.mine.size>1?"s":""} picked</span><span class="pr">Opens the Subscriptions tab</span></button>`
+    :`<button type="button" class="pick" data-go="subs" title="Pick the plans you pay for on the Subscriptions tab"><span class="pl">Best in your plans</span>
       <span class="pm">Pick your plans</span><span class="pv">${PLANS.length} plans from ${FAM_ORDER.length} products</span><span class="pr">Opens the Subscriptions tab</span></button>`;
-  $("#picks").innerHTML=out;
+  $("#picks").innerHTML=out; fitPicks();
   $$("#picks .pick").forEach(b=>b.onclick=()=>b.dataset.go?($('.tab[data-p="subs"]').click(),openPicker()):openModel(b.dataset.m));
 }
 
@@ -3234,10 +3323,19 @@ $("#sbx").onchange=e=>{ state.subX=e.target.value; renderUse(); syncURL(); };
 /* ---------------- tabs ---------------- */
 const curTab=()=>$('.tab[aria-selected="true"]').dataset.p;
 function setTab(p){
+  hideTip();
   document.documentElement.dataset.tab=p;
-  $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p===p));
+  $$(".tab").forEach(x=>{ const on=x.dataset.p===p; x.setAttribute("aria-selected",on); x.tabIndex=on?0:-1; });
   $$(".panel").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
+  stickyOffsets();   // the rail and the Board frame change size with the tab; don't wait a frame for the observers
 }
+// arrow keys, Home and End move between tabs and open the one reached (automatic activation)
+$(".tabs").addEventListener("keydown",e=>{
+  const ts=$$(".tab"), i=ts.indexOf(document.activeElement); if(i<0) return;
+  const j={ArrowRight:(i+1)%ts.length,ArrowLeft:(i-1+ts.length)%ts.length,Home:0,End:ts.length-1}[e.key];
+  if(j==null) return;
+  e.preventDefault(); ts[j].focus(); ts[j].scrollIntoView({block:"nearest",inline:"nearest"}); ts[j].click();
+});
 $$(".tab").forEach(t=>t.onclick=()=>{ cmpSheet.hide(); sbSheet.hide(); setTab(t.dataset.p); render();
   // land on the new tab's first heading rather than wherever the old tab was scrolled to
   const y=$("#p-"+t.dataset.p).getBoundingClientRect().top+scrollY-secOff()+12; if(scrollY>y) scrollTo({top:Math.max(0,y)});
@@ -3279,8 +3377,8 @@ function secTrack(force){
 function syncURL(){
   const q=[], c=state.cmp, t=curTab();
   if(t!=="board") q.push("tab="+TABQ[t]);
-  if(state.lens==="api") q.push("lens=api");
-  if(state.mine.size) q.push("plans="+PLANS.filter(p=>state.mine.has(p.id)).map(p=>p.id).join(","));
+  if(state.lens==="api"||state.lensPin) q.push("lens="+state.lens);
+  if(state.mine.size||state.plansPin) q.push("plans="+PLANS.filter(p=>state.mine.has(p.id)).map(p=>p.id).join(","));
   if(state.onlyMine) q.push("mine=1");
   if(t==="subs"){ if(state.subCap!==20) q.push("budget="+(state.subCap===Infinity?"any":state.subCap)); if(!state.subFlat) q.push("metered=1");
     if(state.subPlan) q.push("plan="+state.subPlan); if(state.subX==="ttft") q.push("against=wait"); }
@@ -3290,8 +3388,11 @@ function syncURL(){
     const h=EFF_ORDER.filter(e=>c.hideEff.has(e)); if(h.length) q.push("hide="+h.join(","));
     if(c.linear) q.push("scale=linear"); if(c.pareto) q.push("pareto=1"); if(!c.labels) q.push("labels=0");
   }
-  const u=location.pathname+(q.length?"?"+q.join("&"):"");
-  if(u!==location.pathname+location.search||location.hash) try{history.replaceState(history.state,"",u);}catch(e){}
+  // an in-page anchor (#caveats-h and the like) stays while its target is on the open tab; old #ch-… links are folded into chart=
+  const h=location.hash, ht=/^#[\w-]+$/.test(h)&&!/^#ch-/.test(h)&&document.getElementById(h.slice(1));
+  const keep=ht&&ht.closest(".panel")&&ht.closest(".panel").id==="p-"+t?h:"";
+  const u=location.pathname+(q.length?"?"+q.join("&"):"")+keep;
+  if(u!==location.pathname+location.search+location.hash) try{history.replaceState(history.state,"",u);}catch(e){}
 }
 // unknown tabs, sections, models and values are ignored; the page then falls back to its saved picks or its defaults
 function urlApply(){
@@ -3300,14 +3401,20 @@ function urlApply(){
   let tab=Object.keys(TABQ).find(k=>TABQ[k]===p.get("tab")), sec=secOK(p.get("chart"))?p.get("chart"):null;
   const hs=location.hash.slice(1); if(/^ch-/.test(hs)&&secOK(hs.slice(3))){ sec=hs.slice(3); tab="quad"; }   // an old #ch-… link
   if(!tab&&sec) tab="quad";
-  if(tab) setTab(tab);
+  setTab(tab||"board");
   // pricing lens and the visitor's plans: the link first, then what this browser saved, then the defaults.
   // A link to a chart that only the API lens shows (an older ?chart=price or #ch-price link) opens under that lens.
   const saved=k=>{try{return localStorage.getItem(k);}catch(e){return null;}}, ids=new Set(PLANS.map(x=>x.id));
   const apiSec=!!sec&&document.getElementById("ch-"+sec).dataset.lens==="api";
-  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":apiSec||saved(LENS_KEY)==="api"?"api":"sub";
-  let mine=null; if(p.has("plans")) mine=p.get("plans").split(","); else try{mine=JSON.parse(saved(PLAN_KEY));}catch(e){}
-  state.mine=new Set((Array.isArray(mine)?mine:[]).filter(x=>ids.has(x)));
+  const savedLens=saved(LENS_KEY)==="api"?"api":"sub";
+  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":apiSec||savedLens==="api"?"api":"sub";
+  // a link that names a lens or plans other than this browser's keeps naming them, so a reload opens the same page;
+  // the visitor's own saved choices are not overwritten until they change one themselves
+  state.lensPin=p.has("lens")&&state.lens!==savedLens;
+  let savedMine=[]; try{const v=JSON.parse(saved(PLAN_KEY)); if(Array.isArray(v)) savedMine=v.filter(x=>ids.has(x));}catch(e){}
+  const mine=p.has("plans")?p.get("plans").split(",").filter(x=>ids.has(x)):savedMine;
+  state.mine=new Set(mine);
+  state.plansPin=p.has("plans")&&[...state.mine].sort().join()!==[...new Set(savedMine)].sort().join();
   state.onlyMine=on(p.get("mine"))&&state.mine.size>0;
   if(p.get("plan")==="mine"||ids.has(p.get("plan"))) state.subPlan=p.get("plan");
   if(p.get("against")==="wait") state.subX="ttft";
@@ -3355,7 +3462,7 @@ function listPrice(m){
    <div class="dline"><span class="k">Input</span><span class="v mono">${f(p.in)}</span></div>
    <div class="dline"><span class="k">Output</span><span class="v mono">${f(p.out)}</span></div>
    <div class="dline"><span class="k">Cache read</span><span class="v mono">${f(p.cr)}</span></div>
-   ${p.note?`<p class="dnote" style="grid-column:1/-1">${esc(p.note)}</p>`:""}`;
+   ${p.note?`<p class="dnote" style="grid-column:1/-1">${linkify(esc(p.note))}</p>`:""}`;
 }
 
 /* ---------------- model picks ---------------- */
@@ -3365,31 +3472,38 @@ function openModel(name){
   state.weights.add(m.open?"open":"closed");
   if(state.onlyMine&&!minePlans(name).length){ state.onlyMine=false; renderRail(); }
   buildChips($("#tierchips"),TIERS,state.tiers); buildChips($("#wchips"),[["open","Open"],["closed","Proprietary"]],state.weights);
-  document.documentElement.dataset.tab="board";
-  $$(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.p==="board"));
-  $$(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-board"));
+  setTab("board");
   state.openRow=name; render(); syncURL();
   const tr=[...$$("#board tbody tr[data-m]")].find(r=>r.dataset.m===name);
-  if(tr) tr.scrollIntoView({behavior:"smooth",block:"center"});
+  if(tr) tr.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
 }
 function renderPicks(){
   if(state.lens!=="api") return subPicks();
   const cur=MODELS.filter(m=>m.tier!=="legacy"&&m.tier!=="archive"), has=k=>cur.filter(m=>val(m,k)!=null);
-  const byDesc=(a,k)=>[...a].sort((x,y)=>val(y,k)-val(x,k)), byAsc=(a,k)=>[...a].sort((x,y)=>val(x,k)-val(y,k));
+  // ties: the higher Index first, then (for descending picks) the cheaper blended price, then the name
+  const ix=m=>val(m,"aaii")??-1, pr=m=>val(m,"price")??Infinity;
+  const byDesc=(a,k)=>[...a].sort((x,y)=>val(y,k)-val(x,k)||ix(y)-ix(x)||pr(x)-pr(y)||x.name.localeCompare(y.name)),
+        byAsc=(a,k)=>[...a].sort((x,y)=>val(x,k)-val(y,k)||ix(y)-ix(x)||x.name.localeCompare(y.name));
   const idx=has("aaii"), top=byDesc(idx,"aaii")[0], medI=(()=>{const v=idx.map(m=>val(m,"aaii")).sort((a,b)=>a-b);return v[Math.floor(v.length/2)];})();
   const P=[
     ["Best overall", byDesc(idx,"aaii"), m=>`Index ${val(m,"aaii")}${topEff(m)?" · "+topEff(m):""}`, "Highest Artificial Analysis Intelligence Index"],
-    ["Coding & agents", byDesc(has("tb40"),"tb40"), m=>`Terminal-Bench 4.0 ${fmt(val(m,"tb40"),"pct")}`, "Highest Terminal-Bench 4.0 — vendor-run, but five vendors agree on it"],
+    ["Coding & agents", byDesc(has("tb40"),"tb40"), m=>`Terminal-Bench 4.0 ${fmt(val(m,"tb40"),"pct")}`, "Highest Terminal-Bench 4.0 (Vals AI independent run)"],
     ["Near the top for less", byAsc(idx.filter(m=>val(m,"price")!=null&&val(m,"aaii")>=val(top,"aaii")-10),"price"), m=>`Index ${val(m,"aaii")} · $${val(m,"price").toFixed(2)} blended`, `Cheapest model within 10 Index points of the leader`],
     ["Best open weights", byDesc(idx.filter(m=>m.open),"aaii"), m=>`Index ${val(m,"aaii")} · $${val(m,"price")!=null?val(m,"price").toFixed(2):"—"} blended`, "Highest Index among models you can self-host"],
     ["Fastest capable", byDesc(has("speed").filter(m=>val(m,"aaii")>=medI),"speed"), m=>`${Math.round(val(m,"speed"))} tok/s · Index ${val(m,"aaii")}`, `Fastest output among models at or above the median Index (${medI})`],
     ["Cheapest capable", byAsc(idx.filter(m=>val(m,"price")!=null&&val(m,"aaii")>=medI),"price"), m=>`$${val(m,"price").toFixed(2)} blended · Index ${val(m,"aaii")}`, `Lowest blended price at or above the median Index (${medI})`]
   ];
   $("#picks").innerHTML=P.filter(p=>p[1].length).map(([lab,list,val1,rule])=>{const m=list[0],r=list[1];
-    return `<button class="pick" data-m="${esc(m.name)}" title="${esc(rule)}"><span class="pl">${lab}</span>
+    return `<button type="button" class="pick" data-m="${esc(m.name)}" title="${esc(rule)}"><span class="pl">${lab}</span>
       <span class="pm"><span class="dot ${m.open?"o":"p"}"></span>${esc(m.name)}</span><span class="pv">${val1(m)}</span>
       <span class="pr">${r?`Next: ${esc(r.name)}`:""}</span></button>`;}).join("");
+  fitPicks();
   $$("#picks .pick").forEach(b=>b.onclick=()=>openModel(b.dataset.m));
+}
+// as many cards to a row as fit at 180px or more, then evened out across rows: 5 cards go 3 + 2 rather than 4 + 1
+function fitPicks(){
+  const h=$("#picks"), n=h.children.length, W=h.clientWidth; if(!n||!W) return;
+  const max=Math.max(1,Math.floor((W+12)/192)); h.style.setProperty("--per",Math.ceil(n/Math.ceil(n/max)));
 }
 
 /* ---------------- what changed ---------------- */
@@ -3397,7 +3511,7 @@ function renderChanges(){
   const T={add:"Added",rescale:"Rescaled",data:"Data",move:"Moved",feature:"Feature"};
   const c=CHANGELOG[0];
   $("#changes").innerHTML=`<summary><b>What changed</b> · ${c.d} — ${c.items.length} updates. Open for the full history.</summary>`+
-    CHANGELOG.map(e=>`<div class="chg"><h4>${e.d}</h4><ul>${e.items.map(([t,x])=>`<li><span class="ctag ${t}">${T[t]}</span><span>${esc(x)}</span></li>`).join("")}</ul></div>`).join("");
+    CHANGELOG.map(e=>`<div class="chg"><h3>${e.d}</h3><ul>${e.items.map(([t,x])=>`<li><span class="ctag ${t}">${T[t]}</span><span>${esc(x)}</span></li>`).join("")}</ul></div>`).join("");
 }
 
 /* ---------------- light / dark toggle ---------------- */
@@ -3421,14 +3535,20 @@ function renderChanges(){
 function renderArchNote(){
   const el=$("#archnote"), n=ARCHIVE.size, on=state.tiers.has("archive");
   if(!n){ el.innerHTML=""; return; }
-  // a search that only archived models match says so, rather than leaving an empty table
-  const hits=!on&&state.q?MODELS.filter(m=>m.tier==="archive"&&passes(m,true)).length:0;
-  el.innerHTML=on
-    ?`Showing ${n} archived models: older or lower-ranked models no listed plan includes. <button type="button" class="linkbtn" id="archbtn">Hide archived models</button>`
-    :hits?`${hits} match${hits>1?"es":""} in archived models. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`
-    :`Archived models (${n}): below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days ago. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`;
-  $("#archbtn").onclick=()=>{ on?state.tiers.delete("archive"):state.tiers.add("archive");
-    buildChips($("#tierchips"),TIERS,state.tiers); render(); };
+  // while a search or filter narrows the Board, say how many matches wait in a hidden tier, with a button to show them
+  const narrowed=!!(state.q||state.prov||state.onlyMine||state.weights.size<2);
+  const hits=t=>narrowed&&!state.tiers.has(t)?MODELS.filter(m=>m.tier===t&&passes(m,true)).length:0;
+  const hArch=hits("archive"), hLeg=hits("legacy"), nm=k=>`${k} match${k>1?"es":""}`;
+  const legBtn=hLeg?` ${nm(hLeg)} in previous-generation models. <button type="button" class="linkbtn" id="legbtn">Show previous gen</button>`:"";
+  const shownArch=on&&narrowed?MODELS.filter(m=>m.tier==="archive"&&passes(m)).length:n;
+  el.innerHTML=(on
+    ?`${shownArch<n?`Showing ${shownArch} of ${n}`:`Showing ${n}`} archived models: older or lower-ranked models no listed plan includes. <button type="button" class="linkbtn" id="archbtn">Hide archived models</button>`
+    :hArch?`${nm(hArch)} in archived models. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`
+    :`Archived models (${n}): below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days ago. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`)+legBtn;
+  const show=(t,id)=>{ state.tiers.has(t)?state.tiers.delete(t):state.tiers.add(t);
+    buildChips($("#tierchips"),TIERS,state.tiers); render(); const b=$("#"+id)||$("#archbtn"); if(b) b.focus({preventScroll:true}); };
+  $("#archbtn").onclick=()=>show("archive","archbtn");
+  if(hLeg) $("#legbtn").onclick=()=>show("legacy","archbtn");
 }
 function railCount(){
   const n=(["frontier","challenger"].every(t=>state.tiers.has(t))&&state.tiers.size===2?0:1)+(state.weights.size<2?1:0)+(state.prov?1:0)+(state.onlyMine?1:0)+(state.lens==="api"?1:0);
@@ -3449,7 +3569,6 @@ $("#asofnote").textContent=ASOF_NOTE;
 $("#nmodels").textContent=MODELS.length;
 $("#nbench").textContent=Object.keys(BENCH).filter(k=>!isArch(k)).length+" active (+"+Object.keys(BENCH).filter(isArch).length+" archived)";
 renderSources();
-renderPicks();
 renderChanges();
 urlApply();
 renderRail();
@@ -3458,13 +3577,27 @@ render();
 /* the header is sticky; on phones only its tab row stays in view, so it sticks at a negative offset and the rail
    pins just under the tabs. --topH is the part of the header that stays visible. */
 function stickyOffsets(){
-  const top=$(".top"), phone=matchMedia("(max-width:700px)").matches, hide=phone?$(".tabs").offsetTop:0;
-  top.style.top=phone?-hide+"px":"";
-  document.documentElement.style.setProperty("--topH",(top.offsetHeight-hide)+"px");
+  const top=$(".top"), tabs=$(".tabs"), compact=matchMedia("(max-width:860px)").matches,
+        hide=compact?Math.round(tabs.getBoundingClientRect().top-top.getBoundingClientRect().top):0, root=document.documentElement.style;
+  top.style.top=compact?-hide+"px":"";
+  root.setProperty("--topH",(top.offsetHeight-hide)+"px");
+  root.setProperty("--railH",$(".rail").offsetHeight+"px");
+  $$(".tablewrap").forEach(w=>w.clientWidth?w.style.setProperty("--wrapW",w.clientWidth+"px"):w.style.removeProperty("--wrapW"));
+  // the tab row fades at the right edge while more tabs are off screen
+  tabs.classList.toggle("more",tabs.scrollWidth-tabs.clientWidth-tabs.scrollLeft>2);
+  fitPicks();
+  // the snapshot note is clamped to two lines on phones: its toggle shows only when there is more to read
+  const note=$("#asofnote"), tog=$("#asoftog"), open=note.classList.contains("full");
+  tog.hidden=!(matchMedia("(max-width:700px)").matches&&(open||note.scrollHeight>note.clientHeight+1));
 }
 addEventListener("resize",stickyOffsets);
+if(window.ResizeObserver) new ResizeObserver(()=>stickyOffsets()).observe($(".top")), new ResizeObserver(()=>stickyOffsets()).observe($(".rail")),
+  $$(".tablewrap").forEach(w=>new ResizeObserver(()=>stickyOffsets()).observe(w));
 stickyOffsets();
-$("#asofnote").onclick=e=>{ e.currentTarget.classList.toggle("full"); stickyOffsets(); };
+$(".tabs").addEventListener("scroll",()=>{ const t=$(".tabs"); t.classList.toggle("more",t.scrollWidth-t.clientWidth-t.scrollLeft>2); },{passive:true});
+$("#asoftog").onclick=e=>{ const on=$("#asofnote").classList.toggle("full"); e.currentTarget.setAttribute("aria-expanded",on); e.currentTarget.textContent=on?"Less":"More"; stickyOffsets(); };
+// the Board frame scrolls sideways on narrow screens: a shadow on the pinned Model column shows when columns are hidden to its left
+{ const w=$("#p-board .tablewrap"); w.addEventListener("scroll",()=>w.classList.toggle("xl",w.scrollLeft>2),{passive:true}); }
 $("#railtog").onclick=()=>{ const r=$(".rail"), on=!r.classList.contains("open"); r.classList.toggle("open",on); $("#railtog").setAttribute("aria-expanded",on); };
 urlLand();
 </script>
