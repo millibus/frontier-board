@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Headless-Chromium smoke test for index.html: serves the repo over local HTTP,
-   clicks every tab, exercises the Subscriptions tab and the pricing lens, and fails on page errors, an empty board, or a header that
-   doesn't match the data.  Uses an existing playwright / playwright-core install
+   exercises every tab, both pricing lenses, keyboard navigation and responsive
+   layouts, and checks the header against the data. Uses an existing playwright / playwright-core install
    (local or global); nothing is added to the site.
    Usage: node scripts/smoke.mjs   (CHROMIUM_PATH overrides the browser binary) */
 import { createServer } from "node:http";
@@ -53,12 +53,50 @@ try {
   page.on("console", m => { const u = m.location()?.url || ""; if (m.type() === "error" && !ignorable(u)) problems.push(`console: ${m.text()}${u ? ` (${u})` : ""}`); });
   await page.goto(url, { waitUntil: "load" });
 
+  if (!(await page.evaluate(() => document.doctype?.name === "html" && document.compatMode === "CSS1Compat"))) problems.push("the page does not use HTML standards mode");
+  if (!(await page.locator('html[lang="en"] head > style').count()) || !(await page.locator("h1").count())) problems.push("the HTML shell lacks English language, head styles, or a main heading");
+  const tabs = page.locator(".tabs[role=tablist] [role=tab]");
+  const wired = await tabs.evaluateAll(ts => ts.length === 5 && ts.every(t => {
+    const panel = document.getElementById(t.getAttribute("aria-controls"));
+    return panel?.getAttribute("role") === "tabpanel" && panel.getAttribute("aria-labelledby") === t.id;
+  }));
+  if (!wired) problems.push("the five tabs are not wired to their labelled panels");
+  await page.locator("#t-board").focus();
+  for (const [key, id] of [["ArrowRight", "subs"], ["Home", "board"]]) {
+    await page.keyboard.press(key);
+    const active = await page.evaluate(id => {
+      const t = document.getElementById("t-" + id);
+      return document.activeElement === t && t.matches('[aria-selected=true][tabindex="0"]')
+        && !!document.querySelector("#p-" + id + ".on")
+        && document.querySelectorAll('.tabs [aria-selected=true], .panel.on').length === 2
+        && document.querySelectorAll('.tabs [tabindex="0"]').length === 1;
+    }, id);
+    if (!active) problems.push(`${key} did not activate and focus the ${id} tab`);
+  }
+
   const rows = await page.locator("#board tbody tr[data-m]").count();
   if (!rows) problems.push("Board table has no rows");
   const asof = await page.textContent("#asof"), nm = await page.textContent("#nmodels");
   if (asof !== ASOF) problems.push(`header ASOF "${asof}" ≠ "${ASOF}"`);
   if (+nm !== nModels) problems.push(`header model count ${nm} ≠ ${nModels}`);
   if (!(await page.locator("footer.foot").count())) problems.push("footer is missing");
+  const boardNames = () => page.locator("#board tbody tr[data-m]").evaluateAll(rs => rs.map(r => r.dataset.m));
+  await page.fill("#q", "OpenAI");
+  const openai = await boardNames();
+  await page.fill("#q", "OpenAI ");
+  if (!openai.length || JSON.stringify(await boardNames()) !== JSON.stringify(openai)) problems.push("trailing space changed the OpenAI search results");
+  const previous = await page.evaluate(() => MODELS.find(m => m.tier === "legacy" && !ARCHIVE.has(m.name))?.name);
+  if (!previous) problems.push("no non-archived Previous gen model to test");
+  else {
+    await page.fill("#q", previous);
+    if ((await boardNames()).includes(previous) || !/match(es)? in previous-generation models/.test(await page.textContent("#archnote"))) problems.push("the Board search did not identify the hidden Previous gen match");
+    if (await page.locator("#legbtn").count()) {
+      await page.click("#legbtn");
+      if (!(await boardNames()).includes(previous)) problems.push("Show previous gen did not reveal the searched model");
+      await page.locator("#tierchips").getByRole("button", { name: "Previous gen", exact: true }).click();
+    }
+  }
+  await page.fill("#q", "");
   // the Archive: hidden by default, no plan's model in it, and one button shows and hides it again
   {
     const nArch = await page.evaluate(() => ARCHIVE.size);
@@ -135,6 +173,8 @@ try {
   if (!(await page.locator("#benchhost .card").count())) problems.push("Benchmarks tab rendered no cards");
   if (!(await page.locator("#caveats .srccard").count())) problems.push("Sources tab rendered no caveats");
   if (!(await page.locator("#planlist .srccard").count())) problems.push("Sources tab rendered no subscription plan sources");
+  const sourceCount = await page.evaluate(() => Object.keys(BENCH).length);
+  if ((await page.locator("#srclist .srccard").count()) !== sourceCount) problems.push(`Sources does not list all ${sourceCount} benchmarks`);
 
   /* ---------- subscriptions: the tab, the visitor's plans, the pricing lens (begin) ---------- */
   {
@@ -162,7 +202,12 @@ try {
     await page.click('#sbbudget [data-cap="20"]');
     // two plans to compare: the tray, then a sheet with both plans and their effort levels; Escape and a tab switch close it
     const cmpIds = await page.$$eval("#sbcards [data-sbcmp]", bs => bs.slice(0, 2).map(b => b.dataset.sbcmp));
-    for (const id of cmpIds) await page.click(`#sbcards [data-sbcmp="${id}"]`);
+    await page.click(`#sbcards [data-sbcmp="${cmpIds[0]}"]`);
+    if (!(await page.locator("#sbgo").evaluate(b => {
+      const s = getComputedStyle(b);
+      return b.disabled && (+s.opacity < 1 || s.cursor === "not-allowed");
+    }))) bad("the disabled Compare button has no disabled styling");
+    await page.click(`#sbcards [data-sbcmp="${cmpIds[1]}"]`);
     if (!(await page.locator("#sbtray").isVisible())) bad("picking two plans to compare shows no compare tray");
     await page.click("#sbgo");
     if (!(await page.locator("#sbsheet").isVisible())) bad("the compare sheet did not open");
@@ -184,10 +229,22 @@ try {
     if (await page.locator("#sbtray").isVisible()) bad("clearing the comparison left the tray up");
     // a row opens its detail with a link to the vendor's page
     await page.click("#sbd-all > summary");
+    const head = page.locator('#plantab th[data-k="idx"]');
+    await head.locator(".thbtn").press("Enter");
+    if (await head.getAttribute("aria-sort") !== "descending" || !(await head.locator(".thbtn").evaluate(b => document.activeElement === b))) bad("Enter did not sort plans by Index and retain focus");
     const first = page.locator("#plantab tbody tr[data-plan]").first(), pid = await first.getAttribute("data-plan");
-    await first.click();
+    const planRow = page.locator(`#plantab tr[data-plan="${pid}"]`);
+    await planRow.locator(".rowbtn").press("Enter");
+    if (await planRow.locator(".rowbtn").getAttribute("aria-expanded") !== "true" || !(await planRow.locator(".rowbtn").evaluate(b => document.activeElement === b))) bad("Enter did not expand the plan row and retain focus");
     const href = await page.locator("#plantab .detbox .dsrc a").getAttribute("href").catch(() => null);
     if (!href || !href.startsWith("https://")) bad("an opened plan row shows no source link");
+    await planRow.locator(".rowbtn").press("Enter");
+    if (await planRow.locator(".rowbtn").getAttribute("aria-expanded") !== "false") bad("Enter did not collapse the plan row");
+    const have = planRow.locator(".have");
+    for (const on of ["true", "false"]) {
+      await have.press("Enter");
+      if (await have.getAttribute("aria-pressed") !== on || !(await have.evaluate(b => document.activeElement === b))) bad("toggling a plan with the keyboard did not update its button and retain focus");
+    }
     // picking a plan: the chip, the summary, the URL, the Board marks and the filter
     await page.click("#sbpickb");
     await page.click(`#sbpick [data-plan="${pid}"]`);
@@ -213,9 +270,17 @@ try {
     await page.evaluate(() => { state.tiers = new Set(["frontier", "challenger"]); render(); });
     // the link restores the plans in a fresh page
     const again = await browser.newPage();
-    await again.goto(page.url().replace(/\?.*$/, "") + `?tab=subscriptions&plans=${pid},not-a-plan&plan=${pid}`, { waitUntil: "load" });
+    await again.goto(url + `?tab=subscriptions&budget=&plans=${pid},not-a-plan&plan=muse-power`, { waitUntil: "load" });
     if ((await again.evaluate(() => [...state.mine].join())) !== pid) bad("a link's plans= did not restore the picked plans, or kept an unknown id");
-    if ((await again.inputValue("#sbplan")) !== pid) bad("a link's plan= did not select that plan");
+    if ((await again.inputValue("#sbplan")) !== "muse-power") bad("a link's plan= did not select that plan");
+    if (await again.getAttribute('#sbbudget [data-cap="20"]', "aria-pressed") !== "true") bad("empty budget= did not retain the default budget");
+    const legend = await again.evaluate(() => {
+      const plan = PLANS.find(p => p.id === "muse-power");
+      const expected = [...new Set(planPts(plan).filter(q => q.r.cost > 0).map(q => q.m.name))].sort();
+      const shown = [...document.querySelectorAll("#sbmodels > span")].map(e => e.textContent).sort();
+      return expected.length && !expected.includes("Muse Wonder Full") && shown.join("|") === expected.join("|");
+    });
+    if (!legend) bad("the usage chart legend does not match the models with measured cost");
     await again.close();
     // a link from before the lens existed that names an API-price chart still lands on it
     for (const old of ["?tab=charts&chart=price", "#ch-ppp"]) {
@@ -228,6 +293,28 @@ try {
     await page.click('#lens [data-v="api"]');
     if (!(await page.locator("#board thead th[data-k='price']").count()) || (await page.locator("#board thead th[data-k='plan']").count())) bad("the API lens does not swap the plan column for the blended price");
     if (!page.url().includes("lens=api")) bad("the API lens is not in the URL");
+    // Give two candidates the same lowest price, with the lower Index first in both data and name order.
+    const tied = await page.evaluate(() => {
+      const candidates = MODELS.filter(m => !["legacy", "archive"].includes(m.tier) && m.s.aaii && m.s.price);
+      const low = candidates[0], high = candidates.find(m => m.name.localeCompare(low.name) > 0);
+      if (!high) return false;
+      const top = Math.max(...MODELS.map(m => val(m, "aaii") ?? 0));
+      const saved = [low, high].map(m => [m.s.aaii, m.s.price]);
+      try {
+        for (const [i, m] of [low, high].entries()) {
+          m.s.aaii = [top + i + 1, "ind"];
+          m.s.price = [0, "ven"];
+        }
+        renderPicks();
+        return [...document.querySelectorAll("#picks .pick")].find(b => b.querySelector(".pl").textContent === "Near the top for less")?.dataset.m === high.name;
+      } finally {
+        [low, high].forEach((m, i) => { [m.s.aaii, m.s.price] = saved[i]; });
+        renderPicks();
+      }
+    });
+    if (!tied) bad("the API Board's value pick did not prefer the higher Index at equal prices");
+    const coding = await page.locator("#picks .pick").filter({ hasText: "Coding & agents" }).getAttribute("title");
+    if (!coding || /vendor-run/i.test(coding)) bad("the API Board's Coding & agents tooltip misstates provenance");
     await page.click('.tab[data-p="quad"]');
     for (const c of ["#ch-price", "#ch-blend", "#ch-ppp"]) if (!(await page.locator(c).isVisible())) bad(`${c} is hidden under the API lens`);
     // an API-only chart named in the URL is dropped when the lens it needs is switched off
@@ -244,6 +331,38 @@ try {
     if (/plans=|lens=|mine=/.test(page.url())) bad(`clearing the plans left "${page.url().split("?")[1] || ""}" in the URL`);
   }
   /* ---------- subscriptions (end) ---------- */
+
+  // Wide charts should preserve the scale of their marks when a card has spare room.
+  const svgScale = svg => svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.click("#t-quad");
+  if (await page.locator("#ch-ctx svg").evaluate(svgScale) > 1.5) problems.push("monthly-plan Context chart is inflated over 1.5×");
+  const group = page.locator("#c-ctx [data-grp]").first();
+  if (await group.getAttribute("tabindex") !== "0") problems.push("Context groups are not in the keyboard tab order");
+  const expanded = await group.evaluate(g => {
+    g.focus({ preventScroll: true });
+    const showedTip = document.querySelector("#tip").classList.contains("on");
+    g.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
+    const next = document.querySelector(`#c-ctx [data-grp="${g.dataset.grp}"]`);
+    return showedTip && next?.getAttribute("aria-expanded") === "true" && document.activeElement === next
+      && !document.querySelector("#tip").classList.contains("on");
+  });
+  if (!expanded) problems.push("Enter on a Context group did not expand it, retain focus and dismiss its tooltip");
+  const hash = await page.evaluate(() => new Promise(resolve => {
+    addEventListener("hashchange", () => resolve({
+      chart: new URLSearchParams(location.search).get("chart"), visible: !!document.querySelector("#ch-price").getClientRects().length
+    }), { once: true });
+    location.hash = "ch-price";
+  }));
+  if (hash.chart === "price" && !hash.visible) problems.push("hash navigation left chart=price in the URL with its chart hidden");
+  await page.goto(url + "?tab=charts&chart=price&lens=sub", { waitUntil: "load" });
+  if (new URL(page.url()).searchParams.get("chart") === "price" || await page.locator("#ch-price").isVisible()) problems.push("an explicit monthly-plan link retained the API price chart");
+  await page.click("#t-bench");
+  // Give one real benchmark card a full row to reproduce the wide-card layout.
+  const benchmarkBar = p => p.locator('#benchhost [data-bench-bars="aaii"] svg');
+  const singleBar = benchmarkBar(page);
+  await singleBar.evaluate(svg => { svg.closest(".card").style.gridColumn = "1 / -1"; });
+  if (await singleBar.evaluate(svgScale) > 1.5) problems.push("single-card Benchmarks chart is inflated over 1.5×");
 
   /* ---------- effort-line charts: drawing, point details, hit testing (begin) ---------- */
   {
@@ -515,10 +634,55 @@ try {
         await ph.locator(`#board tbody tr[data-m="${multi}"] .rowbtn`).click();
         const hidden = await ph.evaluate(() => [...document.querySelectorAll("#board tr.det th")].filter(t => !t.offsetParent).length);
         if (hidden) problems.push(`phone: ${hidden} headings in ${multi}'s details are hidden by the compact Board`);
+        const detailsFit = await ph.locator("#board .efftab").evaluate(t => {
+          const wrap = t.closest(".tablewrap"), d = t.closest(".detbox").getBoundingClientRect(), r = t.getBoundingClientRect();
+          const cell = getComputedStyle(t.closest("tr.det > td"));
+          return { frame: wrap.clientWidth, board: wrap.scrollWidth, detail: [d.left, d.right], table: [r.left, r.right],
+            cellPadding: [cell.paddingLeft, cell.paddingRight] };
+        });
+        const { frame, board, detail, table } = detailsFit;
+        if (board > frame + 1 || table[0] < detail[0] - 1 || table[1] > detail[1] + 1 || table[1] <= table[0]) problems.push(`phone: expanded effort table extends beyond its details or Board frame: ${JSON.stringify(detailsFit)}`);
         await ph.locator(`#board tbody tr[data-m="${multi}"] .rowbtn`).click();
-      }
+      } else problems.push("phone: no multi-effort model to expand");
+      const inlinePrices = await ph.locator("#board td:has(> .pl) > .q.ven").evaluateAll(dots => dots.length && dots.every(dot => {
+        const price = document.createRange();
+        price.selectNode(dot.previousSibling);
+        const r = price.getBoundingClientRect(), mark = dot.getBoundingClientRect();
+        return mark.top < r.bottom && mark.bottom > r.top && mark.left >= r.right - 1;
+      }));
+      if (!inlinePrices) problems.push("phone: Board plan price and provenance dot are not inline");
       await ph.click("#boardcols");
       if ((await ph.evaluate(() => [...document.querySelectorAll("#board thead th")].filter(t => t.offsetParent).length)) <= 4) problems.push("phone: Show every column did not bring the other columns back");
+      await ph.click("#t-bench");
+      await ph.locator("#benchhost .archive > summary").click();
+      const coverage = await ph.evaluate(() => {
+        const wrap = document.querySelector(".covwrap");
+        wrap.scrollTop = 120;
+        const before = wrap.scrollTop;
+        wrap.querySelectorAll(".covbtn")[6].click();
+        const next = document.querySelector(".covwrap"), list = next.querySelector(".covlist");
+        return { before, after: next.scrollTop, archive: document.querySelector("#benchhost .archive").open,
+          fits: !!list && list.getBoundingClientRect().width <= next.clientWidth + 1 && list.scrollWidth <= list.clientWidth + 1 };
+      });
+      if (!coverage.before || coverage.before !== coverage.after || !coverage.archive || !coverage.fits) problems.push(`phone: coverage expansion lost scroll, archive state or fit: ${JSON.stringify(coverage)}`);
+      const bar = benchmarkBar(ph);
+      if (await bar.count()) {
+        const usable = await bar.evaluate(svg => {
+          const r = svg.getBoundingClientRect();
+          return r.width >= 240 && r.right <= innerWidth + 1;
+        });
+        if (!usable) problems.push("phone: single-card benchmark chart is too narrow or extends off screen");
+        const tipResult = await bar.evaluate(svg => {
+          const mark = svg.querySelector("[data-tip]"), tip = document.querySelector("#tip");
+          mark.dispatchEvent(new MouseEvent("mouseenter", { clientX: innerWidth - 2, clientY: 200 }));
+          const r = tip.getBoundingClientRect(), clamped = r.left >= 0 && r.right <= innerWidth;
+          const shown = tip.classList.contains("on");
+          // Change tabs without moving the pointer off the mark first.
+          document.querySelector("#t-src").click();
+          return shown && clamped && !tip.classList.contains("on");
+        });
+        if (!tipResult) problems.push("phone: global chart tooltip did not stay on screen or dismiss on tab switch");
+      } else problems.push("phone: no single-card benchmark chart to measure");
       await ph.close();
       // the comparison sheet groups by attribute on a phone, so neither plan is cut off
       const ps = await fresh(url + "?tab=subscriptions", { width: 390, height: 844 });
@@ -530,6 +694,30 @@ try {
       for (let i = 0; i < 12 && !reached; i++) { await ps.keyboard.press("Tab"); reached = await ps.evaluate(() => document.activeElement?.tagName === "SUMMARY"); }
       if (!reached) problems.push("phone: Tab never reaches 'Limits, overage and sources' in the comparison sheet");
       else { await ps.keyboard.press("Enter"); if (!(await ps.evaluate(() => document.querySelector("#sbgrid .gmore").open))) problems.push("phone: Enter did not open 'Limits, overage and sources'"); }
+      await ps.evaluate(() => {
+        window.heightCheck = new Promise(resolve => {
+          addEventListener("resize", () => resolve(document.querySelector("#sbgrid .gmore")?.open), { once: true });
+        });
+      });
+      await ps.setViewportSize({ width: 390, height: 740 });
+      if (reached && !(await ps.evaluate(() => window.heightCheck))) problems.push("phone: height-only resize collapsed the comparison limits");
+      await ps.setViewportSize({ width: 820, height: 1024 });
+      await ps.goto(url + "?tab=subscriptions", { waitUntil: "load" });
+      await ps.evaluate(() => {
+        state.subCmp = new Set(["claude-pro", "chatgpt-plus", "muse-power", PLANS.find(p => p.fam === "google").id]);
+        renderShort();
+        sbSheet.show();
+      });
+      const tablet = await ps.evaluate(() => {
+        const grid = document.querySelector("#sbgrid"), sheet = grid.closest(".sb-sheetin");
+        const names = new Set([...grid.querySelectorAll(":scope > .gh, :scope > .gp > .gpn")].map(e => e.firstChild.textContent));
+        const dots = [...grid.querySelectorAll(".sb-eff [data-tip]")].filter(e => /Muse Wonder Full/.test(e.dataset.tip));
+        return { gridOverflow: grid.scrollWidth - grid.clientWidth, sheetOverflow: sheet.scrollWidth - sheet.clientWidth,
+          four: names.size === 4,
+          unmeasured: dots.length > 0 && dots.every(e => /Cost not measured/.test(e.dataset.tip) && !/A lighter setting scores as high/.test(e.dataset.tip)) };
+      });
+      if (!tablet.four || tablet.gridOverflow > 1 || tablet.sheetOverflow > 1) problems.push(`tablet: the four-plan Compare sheet overflows or is incomplete: ${JSON.stringify(tablet)}`);
+      if (!tablet.unmeasured) problems.push("the Compare sheet mislabels the unmeasured Muse Wonder Full setting");
       await ps.close();
     }
 
@@ -545,10 +733,12 @@ try {
     if (sheet.dialog !== "dialog" || !sheet.full || sheet.expanded !== "true") problems.push(`phone: sheet did not open full-screen: ${JSON.stringify(sheet)}`);
     if (sheet.head !== "sticky" || !sheet.reset || sheet.count !== n0) problems.push(`phone: sheet header lacks sticky count/reset: ${JSON.stringify(sheet)}`);
     if (!(sheet.row >= 44)) problems.push(`phone: sheet rows are ${sheet.row}px tall, under 44`);
+    if (!(await m.locator(".cmp.open .cmpbody > #efflist:last-child").count())) problems.push("phone: comparison model list does not follow the controls in DOM order");
     await m.locator("#efflist button[aria-pressed='false']").first().click();
     await m.click("#cmpdone");
     const M = await snap(m);
     if (await m.locator("#cmp").isVisible()) problems.push("phone: Done did not close the sheet");
+    if (!(await m.locator("#cmp .pickadd > #efflist[hidden]").count())) problems.push("phone: closing comparison did not restore the model list to the search");
     if (+M.count !== +n0 + 1 || await m.textContent("#ch-effcost .cmpopen .cmpn") !== String(+n0 + 1)) problems.push("phone: the Models count did not follow a pick made in the sheet");
     if (M.named !== "effcost" || M.section !== "ch-effcost") problems.push(`phone: after the sheet the section is ${M.named} / ${M.section}, not effcost`);
     // phone: a pinned details card pushes the legend and frontier list down rather than covering them
@@ -562,8 +752,19 @@ try {
         return { shown: !c.card.hidden || card.height > 0, bottom: card.bottom, after };
       }, pareto);
       if (!lay.after.length) problems.push(`phone: no legend under the chart to check (pareto ${pareto})`);
-      for (const e of lay.after) if (e.top < lay.bottom - 0.5) problems.push(`phone: pinned card (bottom ${lay.bottom}) covers .${e.cls} (top ${e.top}), pareto ${pareto}`);
+      if (lay.after.length) for (const e of lay.after) if (e.top < lay.bottom - 0.5) problems.push(`phone: pinned card (bottom ${lay.bottom}) covers .${e.cls} (top ${e.top}), pareto ${pareto}`);
     }
+    // pressed buttons keep legible text on hover (not overwritten by :not(:disabled):hover specificity)
+    for (const sel of ['#tierchips .chip[aria-pressed="true"]', '#lens button[aria-pressed="true"]', '.themesw button[aria-pressed="true"]']) {
+      const el = page.locator(sel).first();
+      await el.hover();
+      const same = await el.evaluate(e => { const s = getComputedStyle(e); return s.color === s.backgroundColor; });
+      if (same) problems.push(`hovering pressed control ${sel} turns its text invisible against its background`);
+    }
+    // narrow phone (360px): brand and theme switcher share row 1
+    await m.setViewportSize({ width: 360, height: 800 });
+    const row1 = await m.evaluate(() => Math.abs(document.querySelector(".brand").getBoundingClientRect().top - document.querySelector(".themesw").getBoundingClientRect().top));
+    if (row1 > 12) problems.push(`360px phone: theme switcher wrapped onto a second row (${Math.round(row1)}px below brand)`);
     await m.close();
   }
   /* ===== comparison controls + shareable URL: end ===== */
