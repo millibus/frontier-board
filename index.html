@@ -83,7 +83,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 .themesw{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface-2)}
 .themesw button{appearance:none;border:0;background:none;font:inherit;font-size:12px;color:var(--ink-2);padding:3px 10px;cursor:pointer}
-.themesw button:not(:disabled):hover{color:var(--ink)}
+.themesw button:not(:disabled):not([aria-pressed="true"]):hover{color:var(--ink)}
 .themesw button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
 /* ---------- filter rail ---------- */
 .rail{display:block;background:var(--surface-2);border-bottom:1px solid var(--line);position:sticky;top:var(--topH,96px);z-index:30}
@@ -95,7 +95,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .fg > label,.fg > .flab{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600}
 .chip{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);
   border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}
-.chip:not(:disabled):hover{border-color:var(--ink-3);color:var(--ink)}
+.chip:not(:disabled):not([aria-pressed="true"]):hover{border-color:var(--ink-3);color:var(--ink)}
 #tierchips,#wchips{display:inline-flex;flex-wrap:wrap;gap:6px}
 /* a count inside a chip takes the chip's own colour, so it stays legible when the chip is pressed */
 .chip .eff{color:inherit;opacity:.9}
@@ -445,7 +445,7 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink-3);
 .sb-card .sb-meta{font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px;flex:1}
 .sb-acts{display:flex;gap:6px;flex-wrap:wrap}
 .sb-btn{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:5px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
-.sb-btn:not(:disabled):hover{border-color:var(--ink-3);color:var(--ink)}
+.sb-btn:not(:disabled):not([aria-pressed="true"]):hover{border-color:var(--ink-3);color:var(--ink)}
 .sb-btn.own[aria-pressed="true"]{border-color:var(--good);background:var(--good-wash);color:var(--good);font-weight:600}
 .sb-btn.cmpb[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
 #p-subs .sb-list{margin-top:12px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
@@ -557,7 +557,7 @@ body:has(#p-subs.on #sbtray:not([hidden])) .foot{padding-bottom:92px}
 #cmpeff .chip[aria-pressed="false"]{color:var(--ink);text-decoration:line-through;text-decoration-color:var(--ink-3);border-style:dashed}
 .seg{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:var(--surface-2)}
 .seg button{appearance:none;border:0;background:none;font:inherit;font-size:12.5px;color:var(--ink-2);padding:3px 11px;cursor:pointer}
-.seg button:not(:disabled):hover{color:var(--ink)}
+.seg button:not(:disabled):not([aria-pressed="true"]):hover{color:var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
 .cmpreset{margin-left:auto}
 .cmpctx{font-size:12px;color:var(--ink-3);margin:6px 0 2px;max-width:none}
@@ -611,7 +611,7 @@ body:has(#p-subs.on #sbtray:not([hidden])) .foot{padding-bottom:92px}
   /* a tighter tab row, so the last tab peeks in from the edge on a phone */
   .tab{padding:9px 10px;font-size:13.5px}
   /* touch targets, and 16px fields so iOS Safari does not zoom in on focus */
-  .themesw button{padding:6px 12px}
+  .themesw button{padding:6px 8px}
   .seg button{min-height:36px;padding:6px 12px}
   .chip{min-height:36px;padding:6px 12px}
   .linkbtn{padding:6px 0}
@@ -2194,7 +2194,7 @@ function detailRow(m){
     <h3>${m.name}
       <span class="badge ${m.open?"open":"pro"}">${m.open?"Open weights":"Proprietary"}</span>
       <span class="prov" style="font-weight:400">${m.prov} · released ${m.rel||"—"}</span></h3>
-    ${m.note?`<p class="dnote">${linkify(m.note)}</p>`:""}
+    ${m.note?`<p class="dnote">${linkify(esc(m.note))}</p>`:""}
     ${out}
     ${EFFORT[m.name]&&EFFORT[m.name].length>1?`<p class="effh">Effort levels · Artificial Analysis, ${BENCH.aaii.asof}</p>
     <div class="efftab-wrap"><table class="efftab"><thead><tr><th>Effort</th><th>Index</th><th>$ / index task</th><th>Output tok/s</th><th>First answer token</th></tr></thead><tbody>
@@ -3660,7 +3660,7 @@ function renderArchNote(){
   el.innerHTML=(on
     ?`${shownArch<n?`Showing ${shownArch} of ${n}`:`Showing ${n}`} archived models: older or lower-ranked models no listed plan includes. <button type="button" class="linkbtn" id="archbtn">Hide archived models</button>`
     :hArch?`${nm(hArch)} in archived models. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`
-    :`Archived models (${n}): below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days ago. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`)+legBtn;
+    :`Archived models (${n}): below the top 30 on the Index and the top 10 open-weights models, included in no listed plan, and released more than 30 days before the snapshot date. <button type="button" class="linkbtn" id="archbtn">Show archived models</button>`)+legBtn;
   const show=(t,id)=>{ state.tiers.has(t)?state.tiers.delete(t):state.tiers.add(t);
     buildChips($("#tierchips"),TIERS,state.tiers); render(); const b=$("#"+id)||$("#archbtn"); if(b) b.focus({preventScroll:true}); };
   $("#archbtn").onclick=()=>show("archive","archbtn");

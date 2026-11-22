@@ -752,8 +752,19 @@ try {
         return { shown: !c.card.hidden || card.height > 0, bottom: card.bottom, after };
       }, pareto);
       if (!lay.after.length) problems.push(`phone: no legend under the chart to check (pareto ${pareto})`);
-      for (const e of lay.after) if (e.top < lay.bottom - 0.5) problems.push(`phone: pinned card (bottom ${lay.bottom}) covers .${e.cls} (top ${e.top}), pareto ${pareto}`);
+      if (lay.after.length) for (const e of lay.after) if (e.top < lay.bottom - 0.5) problems.push(`phone: pinned card (bottom ${lay.bottom}) covers .${e.cls} (top ${e.top}), pareto ${pareto}`);
     }
+    // pressed buttons keep legible text on hover (not overwritten by :not(:disabled):hover specificity)
+    for (const sel of ['#tierchips .chip[aria-pressed="true"]', '#lens button[aria-pressed="true"]', '.themesw button[aria-pressed="true"]']) {
+      const el = page.locator(sel).first();
+      await el.hover();
+      const same = await el.evaluate(e => { const s = getComputedStyle(e); return s.color === s.backgroundColor; });
+      if (same) problems.push(`hovering pressed control ${sel} turns its text invisible against its background`);
+    }
+    // narrow phone (360px): brand and theme switcher share row 1
+    await m.setViewportSize({ width: 360, height: 800 });
+    const row1 = await m.evaluate(() => Math.abs(document.querySelector(".brand").getBoundingClientRect().top - document.querySelector(".themesw").getBoundingClientRect().top));
+    if (row1 > 12) problems.push(`360px phone: theme switcher wrapped onto a second row (${Math.round(row1)}px below brand)`);
     await m.close();
   }
   /* ===== comparison controls + shareable URL: end ===== */
