@@ -8,6 +8,6 @@ Frontier Board — single-page LLM board built around subscriptions: what each m
 
 ## Data sources
 
-Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, and Håvard Tveit Ihle (WeirdML), plus model vendors' own comparison tables, which are marked vendor-run. Each benchmark's primary source is linked on the site's Sources & caveats tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Subscription prices, plan contents and limits come from each vendor's own pricing and help pages (linked on the Sources & caveats tab) and count as vendor-reported. This project is not affiliated with any of them.
+Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, the SWE-bench team, and Håvard Tveit Ihle (WeirdML), plus model vendors' own comparison tables, which are marked vendor-run. Each benchmark's primary source is linked on the site's Sources & caveats tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Subscription prices, plan contents and limits come from each vendor's own pricing and help pages (linked on the Sources & caveats tab) and count as vendor-reported. This project is not affiliated with any of them.
 
 © 2026 millibus. All rights reserved.

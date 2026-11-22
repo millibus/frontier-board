@@ -122,7 +122,7 @@ thead th{background:var(--surface-2);
   font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);font-weight:600;
   text-align:right;padding:9px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap}
 #board > thead > tr > th[data-k],#plantab > thead > tr > th[data-k]{cursor:pointer;user-select:none}
-thead th:hover{color:var(--ink)}
+thead th[data-k]:hover{color:var(--ink)}
 thead th.l{text-align:left}
 thead th .arw{opacity:.55;font-size:9px}
 thead th[data-active] .arw{opacity:1;color:var(--accent)}
@@ -211,7 +211,7 @@ svg{display:block;max-width:100%;height:auto}
 .tip .tl span:last-child{color:var(--ink);font-weight:600}
 
 /* ---------- benchmark sections ---------- */
-.bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:18px;align-items:start}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(430px,100%),1fr));gap:18px;align-items:start}
 .bhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:2px}
 .bhead h3{font-size:14.5px;letter-spacing:-.01em}
 .bmeta{font-size:11.5px;color:var(--ink-3)}
@@ -222,18 +222,18 @@ svg{display:block;max-width:100%;height:auto}
 
 
 /* ---------- coverage matrix ---------- */
-.covwrap{overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
-table.cov{border-collapse:separate;border-spacing:0;font-size:12px}
+.covwrap{container-type:inline-size;overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.cov{border-collapse:separate;border-spacing:0;font-size:12px;cursor:default}
 table.cov th.ch{position:sticky;top:0;z-index:3;background:var(--surface-2);padding:6px 0 8px;height:104px;
-  vertical-align:bottom;border-bottom:1px solid var(--line-2)}
+  vertical-align:bottom;text-align:center;border-bottom:1px solid var(--line-2)}
 table.cov th.ch span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:10.5px;font-weight:600;
   letter-spacing:.03em;color:var(--ink-2);white-space:nowrap;display:inline-block}
 table.cov th.cm{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;font-weight:600;
   padding:0 12px 0 12px;white-space:nowrap;border-right:1px solid var(--line-2);font-size:12px}
-table.cov thead th.cm{z-index:4;background:var(--surface-2);border-bottom:1px solid var(--line-2)}
+table.cov thead th.cm{top:0;z-index:4;background:var(--surface-2);border-bottom:1px solid var(--line-2)}
 table.cov td{padding:0 1px;height:18px}
 table.cov tr:hover th.cm{background:var(--surface-2)}
-.cc{width:15px;height:13px;border-radius:2px;background:var(--surface-3);display:block}
+.cc{width:15px;height:13px;border-radius:2px;background:var(--surface-3);display:block;margin:0 auto}
 .cc.ind{background:var(--accent)} .cc.o.ind{background:var(--open)}
 .cc.ven{background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 2px,var(--surface) 2px,var(--surface) 4px)}
 .cc.o.ven{background:repeating-linear-gradient(45deg,var(--open),var(--open) 2px,var(--surface) 2px,var(--surface) 4px)}
@@ -241,7 +241,7 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .cc:hover{outline:1.5px solid var(--ink);outline-offset:1px}
 .covn{font-family:"IBM Plex Mono",monospace;color:var(--ink-3);font-size:11px;padding:0 10px;text-align:right}
 .covlegend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:10px;align-items:center}
-.covlegend i{display:inline-block;width:13px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.covlegend i{display:inline-block;width:13px;height:11px;border-radius:2px;margin:0 5px 0 0;vertical-align:-1px}
 .cardmeta{font-size:11.5px;color:var(--ink-3);margin:8px 0 0}
 .missing{font-size:12px;color:var(--ink-2);background:var(--surface-2);border-radius:var(--r);padding:7px 10px;margin-top:10px}
 .missing b{color:var(--ink)}
@@ -291,6 +291,7 @@ table.cov tr:hover th.cm{background:var(--surface-2)}
 .effbadge{fill:var(--surface);stroke-width:2.5}
 .effs{transition:opacity .12s}
 .effsvg.par .effline,.effsvg.par .effpt.dom{opacity:.3}
+.effsvg.par.hl .effg.on .effline,.effsvg.par.hl .effg.on .effpt.dom{opacity:1}
 .dumbline{stroke:var(--line-2);stroke-width:4;stroke-linecap:round}
 .effdot{stroke:var(--surface);stroke-width:1.5}
 .effsvg .effpt.act{stroke:var(--ink);stroke-width:2}
@@ -350,13 +351,13 @@ table.efftab td:first-child{font-family:"IBM Plex Sans",sans-serif}
   font:inherit;font-size:18px;line-height:1;cursor:pointer}
 .effx:hover{color:var(--ink);background:var(--surface-2)}
 /* phones: the card joins the flow under the plot, so the numbered legend and frontier list move down instead of being covered */
-.effwrap.nar .effcard,.effwrap.nar .effcard.alt{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto;margin-top:4px;padding-right:46px}
-.effwrap.nar .effcard dl{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.effwrap.nar .effcard,.effwrap.nar .effcard.alt{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto;margin-top:4px}
+.effwrap.nar .effcard b{padding-right:46px}
 .effwrap.nar .effx{width:44px;height:44px;top:0;right:0;font-size:22px}
 
 details.archive{margin-top:30px;border-top:1px solid var(--line-2);padding-top:16px}
 details.archive summary{cursor:pointer;font-size:13px;color:var(--ink-2)}
-details.archive summary span{font-family:Archivo;font-size:15px;color:var(--ink);font-weight:700;margin-right:8px}
+details.archive summary h2{display:inline;font-family:Archivo;font-size:15px;color:var(--ink);font-weight:700}
 .picks{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .pick{appearance:none;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);
   border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow);min-width:0;
@@ -408,13 +409,19 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink-3);
 .sbh{font-size:16px;letter-spacing:-.015em;margin:26px 0 4px}
 .sbmodels{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:4px 0 6px}
 .sbmodels i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.sbmodels .note{flex-basis:100%;margin:0}
+.axisgroups{display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 4px}
+.axisgroups .fg{min-width:0;max-width:100%}
+.axisgroups select{min-width:0}
+#effkey0,#effkey5{margin-top:8px;justify-content:flex-end}
+#c-ctx .grprow{cursor:pointer}
+#c-ctx .grprow:focus-visible .barlab{text-decoration:underline}
 .pathline{fill:none;stroke-width:1.25;opacity:.55}
 #plantab td.l{white-space:normal}
 #plantab .have{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-3);border-radius:4px;width:22px;height:22px;font:inherit;font-size:12px;line-height:1;cursor:pointer;padding:0}
 #plantab .have[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:var(--surface)}
 #plantab tr.fam0 td{border-top:1px solid var(--line-2)}
 .detbox .dsrc{grid-column:1/-1;font-size:12px;color:var(--ink-3)}
-@media (max-width:700px){ .sbl{flex-basis:100%} }
 /* subscriptions: budget shortlist, your plans, compare tray and sheet, go-deeper sections */
 #p-subs .sb-h{font-size:22px;letter-spacing:-.02em}
 #p-subs .sb-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 16px}
@@ -456,9 +463,9 @@ td .pl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink-3);
 .sb-meter i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .sb-meter.met i{background:var(--ink-3)}
 .thbtn,.rowbtn{appearance:none;border:0;background:none;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;letter-spacing:inherit;text-transform:inherit}.thbtn:focus-visible,.rowbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}.rowbtn{font-weight:inherit;display:inline-flex;align-items:baseline;gap:4px}.rowbtn .chev{font-size:10px;color:var(--ink-3);width:9px;display:inline-block}.pl.reach{color:var(--ink-2);font-weight:500}.reachv{font-size:11.5px;color:var(--ink-2);margin-right:10px;font-weight:400}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.covdet td{padding:0!important}.covlist{list-style:none;margin:0;padding:8px 12px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px 24px;font-size:12.5px;text-align:left}.covlist li,.covlist li *{white-space:normal;overflow-wrap:anywhere}.covlist li{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:5px 0;border-bottom:1px solid var(--line)}.covlist .v{font-weight:600}.covlist .pv,.covlist a{grid-column:1/-1;font-size:11.5px;color:var(--ink-3)}.covlist a{color:var(--accent-ink)}
+.covdet td{padding:0!important}.covlist{position:sticky;left:0;width:min(1352px,calc(100vw - 84px));max-width:100cqw;box-sizing:border-box;list-style:none;margin:0;padding:8px 12px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:2px 24px;font-size:12.5px;text-align:left}.covlist li,.covlist li *{white-space:normal;overflow-wrap:anywhere}.covlist li{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:5px 0;border-bottom:1px solid var(--line)}.covlist .v{font-weight:600}.covlist .pv,.covlist a{grid-column:1/-1;font-size:11.5px;color:var(--ink-3)}.covlist a{color:var(--accent-ink)}
 .jumps{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;font-size:13px;color:var(--ink-2);margin:0 0 22px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}.jumps a{color:var(--accent-ink);font-weight:500}
-#caveats-h,#srclist-h,#planlist-h{scroll-margin-top:calc(var(--topH,96px) + 70px)}
+#caveats-h,#srclist-h,#planlist-h{scroll-margin-top:calc(var(--topH,96px) + 16px)}
 .archnote{font-size:13px;color:var(--ink-2);margin-top:10px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2)}.archnote:empty{display:none}.linkbtn{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:500;color:var(--accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 .sb-more-b{appearance:none;display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface-2);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer}
 #p-subs .sb-foot{max-width:none;margin:10px 0 0;font-size:12.5px}
@@ -500,18 +507,32 @@ details.sb-more[open]{padding-bottom:18px}
 .sb-grid .gt{color:var(--ink-2);font-size:12.5px}
 .sb-eff{display:grid;grid-template-columns:minmax(0,112px) minmax(0,1fr);gap:0 8px;align-items:center}
 .sb-eff .m{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 0}
-.sb-eff .tr{position:relative;height:26px}
-.sb-eff .tr::before{content:"";position:absolute;left:0;right:0;top:13px;height:1px;background:var(--line)}
-.sb-eff .tr .sp{position:absolute;top:12px;height:3px;background:var(--accent-wash)}
-.sb-eff .tr i{position:absolute;top:13px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid var(--accent);background:var(--surface)}
+.sb-eff .tr{position:relative;height:30px;margin-inline:8px}
+.sb-eff .tr::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.sb-eff .tr .sp{position:absolute;top:calc(50% - 1px);height:3px;background:var(--accent-wash)}
+.sb-eff .tr i{position:absolute;top:calc(50% + var(--dy));transform:translate(-50%,-50%);border-radius:50%;border:2px solid var(--accent);background:var(--surface)}
 .sb-eff .tr i.on{background:var(--accent)}
-.sb-eff .ax{grid-column:2;display:flex;justify-content:space-between;font:10.5px "IBM Plex Mono",monospace;color:var(--ink-3);padding-top:2px}
+.sb-eff .tr i.unmeasured{border:2px dashed var(--ink-3)}
+.sb-eff .ax{grid-column:2;display:flex;justify-content:space-between;font:10.5px "IBM Plex Mono",monospace;color:var(--ink-3);padding:2px 8px 0}
+.gk small,.gpn small{display:block;margin-top:3px;font-weight:400;color:var(--ink-2)}
+/* grouped comparison sheet for viewports that cannot fit all selected plans */
+#sbgrid.bya{display:block}
+#sbgrid.bya .gk{margin:14px 0 4px;padding:0;border-bottom:0;font-weight:600}
+#sbgrid.bya .gp{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+#sbgrid.bya .gpn{color:var(--ink-2);flex:0 0 40%}
+#sbgrid.bya .gpv{text-align:right;min-width:0}
+#sbgrid.bya .gmore{margin-top:16px}
+#sbgrid.bya .gmore summary{cursor:pointer;font-weight:600;color:var(--accent-ink)}
+#sbgrid.bya .gmore .gp,#sbgrid.bya .gp:has(.sb-eff){flex-direction:column}
+#sbgrid.bya .gp:has(.sb-eff) .gpv,#sbgrid.bya .gmore .gpv{text-align:left}
 html.sblock{overflow:hidden}
-#p-subs:has(#sbtray:not([hidden])){padding-bottom:76px}
+body:has(#p-subs.on #sbtray:not([hidden])) .foot{padding-bottom:92px}
 @media (max-width:860px){
   #p-subs .sb-cards{grid-template-columns:1fr}
-  .sb-row{grid-template-columns:20px minmax(0,1fr) auto;grid-template-areas:"rk nm pr" "rk ix ix" "rk md ac";row-gap:6px}
-  .sb-row .rk{grid-area:rk;align-self:start}.sb-row .nm{grid-area:nm}.sb-row .pr{grid-area:pr}.sb-row .sb-ixm{grid-area:ix}.sb-row .mdl{grid-area:md}.sb-row .sb-acts{grid-area:ac}
+  .sb-row{grid-template-columns:20px minmax(0,1fr) auto;grid-template-areas:"rk nm pr" "rk ix ix" "rk md md" "rk ac ac";row-gap:6px}
+  .sb-row .rk{grid-area:rk;align-self:start}.sb-row .nm{grid-area:nm}.sb-row .pr{grid-area:pr;justify-self:end}.sb-row .sb-ixm{grid-area:ix}.sb-row .mdl{grid-area:md}.sb-row .sb-acts{grid-area:ac}
+  .sbl{flex-basis:100%}
+  #effkey0,#effkey5{justify-content:flex-start}
   .sb-sheetin{padding:16px 14px 24px}
   .sb-tray{gap:8px;padding:8px 8px 8px 12px}.sb-traychips{display:none}
 }
@@ -543,7 +564,7 @@ html.sblock{overflow:hidden}
 .cmpctx b{color:var(--ink-2);font-weight:600}
 @media (max-width:700px){
   .cmpopen{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:13.5px;color:var(--ink);font-weight:500}
-  #ch-effcost .picked,#ch-effcost .cmpbar .picknote{display:none}
+  #effpicked,#effnote{display:none}
   .cmp{display:none}
   .cmpmove{display:none!important}
   html.cmplock{overflow:hidden}
@@ -556,7 +577,6 @@ html.sblock{overflow:hidden}
   /* in the sheet the controls come before the long model list, so they are reachable without scrolling past it */
   .cmpbody{padding:12px 14px 28px;display:flex;flex-direction:column;gap:16px}
   .cmp.open .pickbar,.cmp.open .pickadd{display:contents}
-  .cmp.open .picklist{order:9}
   .cmp.open .cmpreset{display:none}
   .cmp.open .cmpgrp{align-items:center}
   .cmp.open .cmplab{flex-basis:100%}
@@ -609,16 +629,15 @@ html.sblock{overflow:hidden}
   #board:not(.full) td.keep{white-space:normal}
   #board:not(.full) .mname{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:4px}#board:not(.full) .mname .prov{flex-basis:100%;margin-left:24px}
   #board:not(.full) th,#board:not(.full) td{padding-left:6px;padding-right:6px}#board:not(.full) td.rk{width:18px}
-  /* the comparison sheet grouped by attribute */
-  #sbgrid.bya{display:block}
-  #sbgrid.bya .gk{margin:14px 0 4px;font-weight:600}
-  #sbgrid.bya .gp{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
-  #sbgrid.bya .gpn{color:var(--ink-2);flex:0 0 40%}
-  #sbgrid.bya .gpv{text-align:right;min-width:0}
-  #sbgrid.bya .gmore{margin-top:16px}
-  #sbgrid.bya .gmore summary{cursor:pointer;font-weight:600;color:var(--accent-ink)}
-  #sbgrid.bya .gmore .gp{flex-direction:column}#sbgrid.bya .gp:has(.sb-eff){flex-direction:column}#sbgrid.bya .gp:has(.sb-eff) .gpv{text-align:left}#sbgrid.bya .gmore .gpv{text-align:left}
-  .bgrid{grid-template-columns:1fr}
+  #p-subs .sb-seg{border-radius:12px}
+  #plantab .have{width:34px;height:34px}
+  #plantab:not(.full) > thead th:not(.keep),#plantab:not(.full) > tbody > tr[data-plan] > td:not(.keep){display:none}
+  #plantab > thead th,#plantab > tbody > tr[data-plan] > td{padding-left:6px;padding-right:6px}
+  #plantab:not(.full) .mname{display:flex;flex-wrap:wrap;column-gap:4px}
+  #plantab:not(.full) .mname .prov{flex-basis:100%;margin-left:24px}
+  #plantab .thbtn{min-height:32px}
+  .covlist{width:calc(100vw - 70px)}
+  .covbtn{min-height:32px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -720,10 +739,10 @@ html.sblock{overflow:hidden}
       <div class="cardhead"><div><h2>Which model and effort to run on a plan</h2>
         <p class="sub" id="sbuse-sub"></p></div>
         <div class="legend"><span><i class="lk"></i>Pareto frontier</span></div></div>
-      <div class="fg" style="margin:12px 0 4px;flex-wrap:wrap">
-        <label for="sbplan">Plan</label><select id="sbplan"></select>
-        <label for="sbx" style="margin-left:14px">Against</label>
-        <select id="sbx"><option value="cost">Usage each task draws</option><option value="ttft">Waiting time</option></select>
+      <div class="axisgroups">
+        <div class="fg"><label for="sbplan">Plan</label><select id="sbplan"></select></div>
+        <div class="fg"><label for="sbx">Against</label>
+          <select id="sbx"><option value="cost">Usage each task draws</option><option value="ttft">Waiting time</option></select></div>
       </div>
       <div class="sbmodels" id="sbmodels"></div>
       <div id="c-sbuse"></div>
@@ -741,6 +760,7 @@ html.sblock{overflow:hidden}
 
     <details class="sb-more" id="sbd-all"><summary><b>Every plan</b><span id="sball-hint">Limits, published usage, API break-even and source for every tier</span></summary>
     <p class="sub" style="margin-bottom:10px">One row per tier. <b>Top model</b> is the highest Index score the plan can reach at the effort levels it offers. <b>API break-even</b> is the monthly fee divided by what one Index task costs at API list prices with that model and effort: run more tasks than that in a month and the plan is cheaper than paying per token. Click a row for its models, limits and source. The filters at the top of the page don't apply to this tab.</p>
+    <button type="button" class="chip boardcols" id="plancols" aria-pressed="false" aria-controls="plantab">Show every column</button>
     <div class="tablewrap"><table id="plantab"><thead></thead><tbody></tbody></table></div>
     <p class="sub" style="margin-top:10px;max-width:none">◦ <b>Flat-rate</b> plans grant usage as rate-limit windows or a vendor credit quota; <b>token-metered</b> plans grant a dollar allowance spent at per-token prices. A dash means the vendor does not publish the figure. Plans sold only in yuan, plans closed to new customers and plans whose vendor names no model on this board are not listed; see Sources &amp; caveats.</p>
     </details>
@@ -763,7 +783,7 @@ html.sblock{overflow:hidden}
       <div class="cardhead"><div><h2>Intelligence Index</h2>
         <p class="sub">Artificial Analysis Intelligence Index v5, each model at its highest-scoring effort level. A dot beside the score shows that level, for models measured at more than one.</p></div>
         <div><div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span></div>
-        <div class="effkey" id="effkey0" style="margin-top:8px;justify-content:flex-end"></div></div></div>
+        <div class="effkey" id="effkey0"></div></div></div>
       <div id="c-index"></div>
     </div>
 
@@ -807,7 +827,7 @@ html.sblock{overflow:hidden}
 
     <div class="card" id="ch-efflat">
       <div class="cardhead"><div><h2>Intelligence vs waiting time, by effort</h2>
-        <p class="sub">The same lines against seconds to the first answer token. Thinking time is most of the wait at the higher settings, so this shows how much latency each extra step of effort adds. It shares one comparison with the cost chart above: Edit compared models changes both.</p></div>
+        <p class="sub">Each line shows how a model's Index score and time to the first answer token change with effort. Both effort charts use the same model and effort selections.</p></div>
         <div class="effkey" id="effkey3"></div></div>
       <div class="cmpbar"><button type="button" class="chip cmpopen" aria-haspopup="dialog" aria-expanded="false" aria-controls="cmp">Models <b class="cmpn"></b></button>
         <button type="button" class="chip cmpmove" aria-controls="cmp">Edit compared models (<b class="cmpn"></b>)</button></div>
@@ -834,20 +854,20 @@ html.sblock{overflow:hidden}
           <span><i class="lk"></i>Pareto frontier</span>
         </div>
       </div>
-      <div class="fg" style="margin:12px 0 4px;flex-wrap:wrap">
-        <label for="xaxis">X axis</label>
+      <div class="axisgroups">
+        <div class="fg"><label for="xaxis">X axis</label>
         <select id="xaxis">
           <option value="price">Blended price — $ per 1M tokens</option>
           <option value="costTask">Cost to run the index — $ per task</option>
-        </select>
-        <label for="yaxis" style="margin-left:14px">Y axis</label>
+        </select></div>
+        <div class="fg"><label for="yaxis">Y axis</label>
         <select id="yaxis">
           <option value="aaii">AA Intelligence Index</option>
           <option value="webdev">WebDev Arena Elo</option>
           <option value="lmarena">Arena text Elo</option>
           <option value="weirdml">WeirdML v3</option>
           <option value="arc2">ARC-AGI-2</option>
-        </select>
+        </select></div>
       </div>
       <div id="quad"></div>
       <p class="sub frontlist" id="quad-front"></p>
@@ -857,7 +877,7 @@ html.sblock{overflow:hidden}
       <div class="cardhead"><div><h2>Intelligence vs output speed</h2>
         <p class="sub">Index score against output tokens per second at the same effort level, log scale. The upper-right quadrant is fast and capable. The solid line is the Pareto frontier: models that no faster model in view matches or beats. For the models picked in the effort charts above, small dots on a thin line show their other effort levels: most run at about the same speed at every setting, so the line drops straight down.</p></div>
         <div class="legend"><span><i style="background:var(--accent)"></i>Proprietary</span><span><i style="background:var(--open)"></i>Open weights</span><span><i class="lk"></i>Pareto frontier</span></div>
-        <div class="effkey" id="effkey5" style="margin-top:8px;justify-content:flex-end"></div></div>
+        <div class="effkey" id="effkey5"></div></div>
       <div id="c-speedq"></div>
       <p class="sub frontlist" id="speedq-front"></p>
     </div>
@@ -872,7 +892,7 @@ html.sblock{overflow:hidden}
       <div class="card" id="ch-blend" data-lens="api"><div class="cardhead"><div><h2>Price</h2>
         <p class="sub">Blended dollars per million tokens, cheapest first, on a log scale — 7:2:1 across cache-hit, input and output.</p></div></div><div id="c-blend"></div></div>
       <div class="card" id="ch-ctx"><div class="cardhead"><div><h2>Context window</h2>
-        <p class="sub">Maximum input tokens, largest first. Three or more models with the same window share one row, split blue and orange by weights; click it to list them.</p></div></div><div id="c-ctx"></div></div>
+        <p class="sub">Maximum input tokens, largest first. Three or more models with the same window share one row, split blue and orange by weights. Select the row to list those models.</p></div></div><div id="c-ctx"></div></div>
     </div>
 
     <div class="card" id="ch-ppp" data-lens="api">
@@ -888,8 +908,8 @@ html.sblock{overflow:hidden}
     <div class="prose" style="margin-bottom:22px">
       <h2>How to read this board</h2>
       <p>Every figure here was pulled from a live leaderboard or a provider's own publication on or before the snapshot date in the header — each benchmark shows its own source date on the Benchmarks tab and below. Nothing is estimated, interpolated, or filled in from memory — a model with no score on a benchmark shows a dash, not a guess.</p>
-      <p>Three provenance levels are marked on every number. <b>Independent</b> means a third party ran the eval (Artificial Analysis, Vals AI, Scale, Snorkel, ARC Prize, the SWE-bench team, OpenRouter, the WeirdML author). <b>Vendor-run</b> means the number comes from the model maker's own announcement or model card, or from a competitor's comparison table — useful, but not neutral. <b>Unverified</b> means it was found in one place with no upstream citation. Numbers that appear only on aggregator sites are never used.</p>
-      <p>The board is built around <b>subscriptions</b>: what a monthly plan costs and which models it includes, read from each vendor's own pricing and help pages. Those figures are vendor-reported. Vendors publish prices and model lists but rarely the size of a plan's allowance, so the board never states how many tasks a flat-rate plan covers. Switch <b>Pricing</b> to API per 1M tokens on the Board for per-token prices.</p>
+      <p>Three provenance levels are marked on every number. <b>Independent</b> means a third party ran the eval (Artificial Analysis, Arena (formerly LMArena), ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, the SWE-bench team and Håvard Tveit Ihle (WeirdML)). <b>Vendor-run</b> means the number comes from the model maker's own announcement or model card, or from a competitor's comparison table — useful, but not neutral. <b>Unverified</b> means it was found in one place with no upstream citation. Numbers that appear only on aggregator sites are never used.</p>
+      <p>The board is built around <b>subscriptions</b>: what a monthly plan costs and which models it includes, read from each vendor's own pricing and help pages. Those figures are vendor-reported. Vendors publish prices and model lists but rarely the size of a plan's allowance, so the board never states how many tasks a flat-rate plan covers. Switch <b>Pricing</b> to API per 1M tokens for per-token prices.</p>
     </div>
     <nav class="jumps" aria-label="On this tab">Jump to <a href="#caveats-h">Caveats</a><a href="#srclist-h">Benchmark sources</a><a href="#planlist-h">Subscription plan sources</a></nav>
     <h2 id="caveats-h" style="font-family:Archivo;font-size:15px;margin:0 0 12px">Caveats worth knowing before you trust a column</h2>
@@ -902,7 +922,7 @@ html.sblock{overflow:hidden}
 </main>
 <footer class="foot">
   <div class="foot-in">
-    <p><b>Data sources.</b> Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, and Håvard Tveit Ihle (WeirdML), plus the model vendors whose own comparison tables are marked vendor-run. Each benchmark's primary source is linked on the <a href="#" id="foot-src">Sources &amp; caveats</a> tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Subscription prices, plan contents and limits come from each vendor's own pricing and help pages and count as vendor-reported. Check the original before relying on a number. This board is not affiliated with any of them.</p>
+    <p><b>Data sources.</b> Benchmark results belong to the organisations that publish them: Artificial Analysis, Arena, ARC Prize, Vals AI, Scale AI, Snorkel AI, OpenRouter, METR, MathArena, Sierra (τ-bench), the OSWorld authors, Steel, the SWE-bench team, and Håvard Tveit Ihle (WeirdML), plus the model vendors whose own comparison tables are marked vendor-run. Each benchmark's primary source is linked on the <a href="#" id="foot-src">Sources &amp; caveats</a> tab; vendor-run rows come from the model maker's own announcement or from a competitor's comparison table. Subscription prices, plan contents and limits come from each vendor's own pricing and help pages and count as vendor-reported. Check the original before relying on a number. This board is not affiliated with any of them.</p>
     <p>© 2026 millibus. All rights reserved. This covers the compilation, text and design of this page, not the third-party results it reports.</p>
   </div>
 </footer>
@@ -927,14 +947,14 @@ const ASOF_NOTE = "20 Nov 2026 · Added Tencent Hy4 after its official pages and
 const BENCH = {
   frontiercode2:{l:"FrontierCode 2.0",s:"FrontierCode 2.0",g:"coding",f:"pct",hi:1,src:"Vendor comparison tables",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"18 Nov 2026",d:"Maintainer-acceptance coding evaluation, version 2.0, with figures from launch tables published by Anthropic, OpenAI and Google DeepMind. Fable 5.2/5.1 use xhigh effort, Gemini 4 Carbon uses medium, and Gemini 4 Neon uses high. Not comparable to the original FrontierCode column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
   frontierswe2:{l:"FrontierSWE v2",s:"FrontierSWE v2",g:"coding",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Anthropic’s FrontierSWE v2 agentic coding evaluation, vendor-run launch table, 9 Nov 2026. Highest available effort. Kept separate from DeepSWE and SWE-bench.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  wandr:{l:"WANDR (relaxed)",s:"WANDR (relaxed)",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Agentic search, relaxed score, from Anthropic’s 9 Nov 2026 launch table at highest available effort. Vendor-run.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  osworld21:{l:"OSWorld 2.1 · partial",s:"OSWorld 2.1 · partial",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"OSWorld 2.1 offline set with partial credit, from Anthropic’s 9 Nov 2026 launch table at highest available effort. Not comparable to OSWorld 2.0 beta, strict, or GA columns.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  robodojo:{l:"RoboDojo Sim",s:"RoboDojo Sim",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Robotics simulation evaluated internally by Anthropic at highest available effort, 9 Nov 2026 launch table. Vendor-run; simulation is not real-world deployment performance.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  briefcaseRubric:{l:"AA-Briefcase 1.1 · rubric",s:"AA-Briefcase 1.1 · rubric",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"AA-Briefcase v1.1 knowledge-work rubric score in Anthropic’s 9 Nov 2026 launch table. Vendor-reported, not independently retrieved from Artificial Analysis. Separate from Elo and GDPval-AA.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  rli:{l:"Remote Labor Index",s:"Remote Labor Index",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Remote Labor Index from Anthropic’s 9 Nov 2026 launch table. Fable 5.2 uses high effort; other rows use highest available effort. Vendor-reported.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  hleTools:{l:"HLE · with tools",s:"HLE · with tools",g:"reasoning",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Humanity’s Last Exam with tools from Anthropic’s 9 Nov 2026 launch table at highest available effort. Vendor-run and not comparable to the board’s independent no-tools HLE column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  chartography:{l:"Chartography · no tools",s:"Chartography · no tools",g:"reasoning",f:"pct",hi:1,src:"Vendor comparison tables",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"18 Nov 2026",d:"Visual chart recognition without tools. Scores come from Anthropic’s 9 Nov launch table and Google DeepMind’s 18 Nov model card.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
-  briefcaseElo:{l:"AA-Briefcase 1.1 · Elo",s:"AA-Briefcase 1.1 · Elo",g:"agentic",f:"n0",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"AA-Briefcase v1.1 knowledge-work Elo from Anthropic’s 9 Nov 2026 launch table. Vendor-reported, not independently retrieved from Artificial Analysis. Not rubric percentage or GDPval-AA Elo.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  wandr:{l:"WANDR (relaxed)",s:"WANDR",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Agentic search, relaxed score, from Anthropic’s 9 Nov 2026 launch table at highest available effort. Vendor-run.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  osworld21:{l:"OSWorld 2.1 · partial",s:"OSW 2.1 partial",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"OSWorld 2.1 offline set with partial credit, from Anthropic’s 9 Nov 2026 launch table at highest available effort. Not comparable to OSWorld 2.0 beta, strict, or GA columns.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  robodojo:{l:"RoboDojo Sim",s:"RoboDojo",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Robotics simulation evaluated internally by Anthropic at highest available effort, 9 Nov 2026 launch table. Vendor-run; simulation is not real-world deployment performance.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  briefcaseRubric:{l:"AA-Briefcase 1.1 · rubric",s:"Briefcase rubric",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"AA-Briefcase v1.1 knowledge-work rubric score in Anthropic’s 9 Nov 2026 launch table. Vendor-reported, not independently retrieved from Artificial Analysis. Separate from Elo and GDPval-AA.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  rli:{l:"Remote Labor Index",s:"RLI",g:"agentic",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Remote Labor Index from Anthropic’s 9 Nov 2026 launch table. Fable 5.2 uses high effort; other rows use highest available effort. Vendor-reported.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  hleTools:{l:"HLE · with tools",s:"HLE tools",g:"reasoning",f:"pct",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"Humanity’s Last Exam with tools from Anthropic’s 9 Nov 2026 launch table at highest available effort. Vendor-run and not comparable to the board’s independent no-tools HLE column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  chartography:{l:"Chartography · no tools",s:"Chartography",g:"reasoning",f:"pct",hi:1,src:"Vendor comparison tables",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"18 Nov 2026",d:"Visual chart recognition without tools. Scores come from Anthropic’s 9 Nov launch table and Google DeepMind’s 18 Nov model card.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
+  briefcaseElo:{l:"AA-Briefcase 1.1 · Elo",s:"Briefcase Elo",g:"agentic",f:"n0",hi:1,src:"Anthropic comparison table",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"9 Nov 2026",d:"AA-Briefcase v1.1 knowledge-work Elo from Anthropic’s 9 Nov 2026 launch table. Vendor-reported, not independently retrieved from Artificial Analysis. Not rubric percentage or GDPval-AA Elo.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
   aaii:{l:"AA Intelligence Index",s:"AAII",g:"headline",f:"n0",hi:1,col:1,src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"20 Nov 2026 · Hy4 added; comparable Index scores unchanged",d:"Composite of nine evals in four equal blocks — knowledge work (AA-Briefcase v1.1, AutomationBench-AA, GDP.pdf), coding (FrontierCode 2.0, Terminal-Bench 4.0), science (Terminal-Bench-Science, CritPt v2 hard subset) and general (AA-Omniscience v1.1, HLE-Diamond). Version 5.0.1, observed 17–18 Nov 2026; v5 launched 27 Oct 2026; 60% of it rests on private test sets or held-out answers. Each model's highest-scoring effort level is shown.",warn:"Rescaled on 27 Oct. Version 5 added FrontierCode 2.0 and Terminal-Bench-Science, swapped HLE for HLE-Diamond, and dropped GDPval-AA, SciCode and AA-LCR. Most scores fell — Kimi K3.1 Pro went from 55 to 46 and Gemini 4 Argon from 53 to 50 — while GPT-6 Astra rose from 53 to 57. Only models Artificial Analysis has run on v5 carry a score here; the v4.3.2 scores are kept in the archived column below, never mixed into this one. Version 5.0.1 regrades CritPt v2 for grading robustness. The 18 Nov audit rechecked comparable model runs; older values retain their original provenance when no matching run was available."},
   aaii4:{arch:"Superseded by Intelligence Index v5 on 27 Oct 2026. These are the last v4.3.2 scores, read 23–27 Oct, each at the effort level the board showed then, with that level's cost per index task in the note. Not comparable with v5.",l:"AA Intelligence Index v4.3.2",s:"AAII v4",g:"headline",f:"n0",hi:1,
     src:"Artificial Analysis",url:"https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index",asof:"27 Oct 2026",
@@ -2231,6 +2251,10 @@ const effRows=m=>(EFFORT[m.name]||[]).map(r=>({e:r[0],aaii:r[1],cost:r[2],speed:
 const effRowsAll=m=>{const r=effRows(m); if(r.length) return r; const a=val(m,"aaii");
   return a==null?[]:[{e:"one",aaii:a,cost:val(m,"costTask"),speed:val(m,"speed"),ttft:val(m,"ttft")}];};
 const EFF_R={none:4.5,low:3.5,medium:4.5,high:5.5,reasoning:5.5,xhigh:6.5,max:7.5,one:5.5};
+function scoreOffset(scores,i){
+  const ties=scores.map((v,j)=>v===scores[i]?j:-1).filter(j=>j>=0);
+  return (ties.indexOf(i)-(ties.length-1)/2)*Math.min(11,22/Math.max(1,ties.length-1));
+}
 const topEff=m=>{const r=EFFORT[m.name];return r&&r.length>1?r[0][0]:null;};
 function niceTicks(a,b,n=5){
   const span=b-a, raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/mag;
@@ -2266,10 +2290,11 @@ const fitName=(t,px)=>{const n=Math.floor(px/6.6); if(t.length<=n) return t;
 const money=v=>"$"+(v>=1?(+v.toFixed(2)).toString():v>=0.01?v.toFixed(2).replace(/0$/,""):v.toFixed(3));
 const plain=v=>v>=1000?(v/1000)+"k":String(v);
 /* soft: obstacles a label avoids when it can (e.g. a frontier line) but may cross as a last resort */
-function placeLabels(marks, bounds, maxN, textOf, block=[], soft=[]){
-  const boxes=marks.map(o=>({x0:o.x-o.r-2,x1:o.x+o.r+2,y0:o.y-o.r-2,y1:o.y+o.r+2})).concat(block);
+function placeLabels(marks,bounds,maxN,textOf,soft=[],captions=[],nar=false){
+  const boxes=marks.map(o=>({x0:o.x-o.r-2,x1:o.x+o.r+2,y0:o.y-o.r-2,y1:o.y+o.r+2}));
+  const covered=b=>over(b,boxes);
   const over=(b,list)=>list.some(q=>!(b.x1<q.x0||b.x0>q.x1||b.y1<q.y0||b.y0>q.y1));
-  const hit=(b,hard)=>over(b,boxes)||(!hard&&over(b,soft))
+  const hit=(b,hard,front)=>over(b,boxes)||(!hard&&over(b,soft))||(!(nar&&front)&&over(b,captions))
               || b.x0<bounds.x0-4 || b.x1>bounds.x1+2 || b.y0<bounds.y0 || b.y1>bounds.y1;
   let out="", n=0;
   marks.forEach(o=>{
@@ -2277,16 +2302,17 @@ function placeLabels(marks, bounds, maxN, textOf, block=[], soft=[]){
     const txt=textOf(o), w=txt.length*6.35+4;
     for(const hard of [false,true]) for(const c of [{x:o.x+o.r+6,y:o.y+4,a:"start"},{x:o.x-o.r-6,y:o.y+4,a:"end"},{x:o.x,y:o.y-o.r-7,a:"middle"},{x:o.x,y:o.y+o.r+15,a:"middle"},
                     {x:o.x-o.r-2,y:o.y-o.r-6,a:"end"},{x:o.x+o.r+2,y:o.y-o.r-6,a:"start"},{x:o.x-o.r-2,y:o.y+o.r+14,a:"end"},{x:o.x+o.r+2,y:o.y+o.r+14,a:"start"},
-                    {x:o.x+o.r+8,y:o.y-o.r-14,a:"start"},{x:o.x+o.r+8,y:o.y+o.r+22,a:"start"},{x:o.x-o.r-8,y:o.y-o.r-14,a:"end"},{x:o.x-o.r-8,y:o.y+o.r+22,a:"end"}]){
+                    {x:o.x+o.r+8,y:o.y-o.r-14,a:"start"},{x:o.x+o.r+8,y:o.y+o.r+22,a:"start"},{x:o.x-o.r-8,y:o.y-o.r-14,a:"end"},{x:o.x-o.r-8,y:o.y+o.r+22,a:"end"},
+                    {x:o.x-o.r-20,y:o.y+4,a:"end"},{x:o.x-o.r-20,y:o.y+o.r+28,a:"end"},{x:o.x-o.r-20,y:o.y-o.r-20,a:"end"}]){
       const x0=c.a==="start"?c.x:c.a==="end"?c.x-w:c.x-w/2, b={x0:x0-2,x1:x0+w+2,y0:c.y-11,y1:c.y+3};
-      if(hit(b,hard)) continue;
+      if(hit(b,hard,o.front)) continue;
       const px=Math.max(b.x0,Math.min(o.x,b.x1)), py=Math.max(b.y0,Math.min(o.y,b.y1)), d=Math.hypot(px-o.x,py-o.y);
       if(d>o.r+9) out+=`<line class="leader" x1="${(o.x+(px-o.x)*(o.r+1)/d).toFixed(1)}" y1="${(o.y+(py-o.y)*(o.r+1)/d).toFixed(1)}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}"/>`;
       out+=`<text class="ptlab" x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}" text-anchor="${c.a}">${esc(txt)}</text>`;
       boxes.push(b); n++; return;
     }
   });
-  return out;
+  return {out,covers:covered};
 }
 
 /* Pareto frontier: the points no other point beats on both axes. xDir "min" = lower x is better (price),
@@ -2323,13 +2349,13 @@ function scatterSvg(pts,o){
     s+=`<line class="quadline" x1="${X(mx).toFixed(1)}" y1="${mt}" x2="${X(mx).toFixed(1)}" y2="${mt+ih}"/><line class="quadline" x1="${ml}" y1="${Y(my).toFixed(1)}" x2="${ml+iw}" y2="${Y(my).toFixed(1)}"/>`
       +"<!--Q0--><!--Q1--><!--Q2--><!--Q3-->";
   }
-  s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
+  s+=`<text class="axtitle" x="${ml+iw/2}" y="${H-12}" text-anchor="middle"${nar?' style="font-size:9.5px"':""}>${nar?o.shortX||o.xtitle:o.xtitle}${nar?" (log)":" — log scale"}</text><text class="axtitle" transform="translate(15,${mt+ih/2}) rotate(-90)" text-anchor="middle">${o.ytitle}</text>`;
   const front=o.front?new Set(paretoFront(o.frontOf?pts.filter(o.frontOf):pts,o.front)):new Set();
   (o.paths||[]).forEach(q=>{ if(q.pts.length>1) s+=`<polyline class="pathline" stroke="${q.stroke}" points="${q.pts.map(a=>X(a.x).toFixed(1)+","+Y(a.y).toFixed(1)).join(" ")}"/>`; });
   (o.ghost||[]).forEach(({m,rows})=>{
     const rs=[...rows].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e));
-    s+=`<polyline class="ghostline" points="${rs.map(r=>X(r.speed).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`
-      +rs.slice(0,-1).map(r=>`<circle class="effdot ghost" data-tip="${esc(modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Output speed",r.speed+" tok/s"]]))}" cx="${X(r.speed).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="3.5" fill="${EFF_SHADE[r.e]}"/>`).join("");
+    if(rs.length>1) s+=`<polyline class="ghostline" points="${rs.map(r=>X(r.speed).toFixed(1)+","+Y(r.aaii).toFixed(1)).join(" ")}"/>`;
+    s+=rs.filter(r=>r.e!==topEff(m)).map(r=>`<circle class="effdot ghost" data-tip="${esc(modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Output speed",r.speed+" tok/s"]]))}" cx="${X(r.speed).toFixed(1)}" cy="${Y(r.aaii).toFixed(1)}" r="3.5" fill="${EFF_SHADE[r.e]}"/>`).join("");
   });
   // frontier: segments reaching below the median score are drawn faint, so the plunge to a cheap or fast but
   // weak model doesn't dominate the chart
@@ -2341,23 +2367,24 @@ function scatterSvg(pts,o){
       if(Math.hypot(x-ax,y-ay)>14&&Math.hypot(x-bx,y-by)>14) lineBoxes.push({x0:x-2,x1:x+2,y0:y-2,y1:y+2});}});
   // points at the same spot (e.g. two models at the same price and score) become one ringed dot, named and hovered together
   const marks=[];
-  pts.forEach(p=>{const m={...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)};
+  const ordered=nar?[...pts].sort((a,b)=>front.has(b)-front.has(a)||b.y-a.y):pts;
+  ordered.forEach(p=>{const m={...p,x:X(p.x),y:Y(p.y),r:p.r||5.5,raw:p,front:front.has(p)};
     const twin=marks.find(o=>Math.abs(o.x-m.x)<2.5&&Math.abs(o.y-m.y)<2.5);
     if(twin){ twin.label+=" & "+m.label; twin.tip+=`<span class="tsep"></span>`+m.tip; twin.multi=true; twin.front=twin.front||m.front; twin.ring=twin.ring||m.ring; return; }
     // dots that touch keep their own dot and tooltip but share one label, so a name can't land beside the wrong dot
     const near=marks.find(o=>!o.nolabel&&Math.hypot(o.x-m.x,o.y-m.y)<o.r+m.r+1);
-    if(near){ near.label+=" & "+m.label; m.nolabel=true; }
+    if(near&&!(nar&&m.front)){ near.label+=" & "+m.label; m.nolabel=true; }
     marks.push(m);});
   marks.forEach(m=>{s+=`<circle class="pt${m.front?" front":""}" data-tip="${esc(m.tip)}" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${m.r.toFixed(1)}" fill="${m.fill}"/>`
     +((o.ownRing?m.ring:m.multi)?`<circle class="ring" cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="${(m.r+3.5).toFixed(1)}"/>`:"");});
   const qw=t=>t.length*(nar?7:8.2)+4, qb=o.quad?[{x0:ml+8,x1:ml+8+qw(o.quad[0]),y0:mt+4,y1:mt+20},{x0:ml+iw-8-qw(o.quad[1]),x1:ml+iw-8,y0:mt+4,y1:mt+20},
     {x0:ml+8,x1:ml+8+qw(o.quad[2]),y0:mt+ih-20,y1:mt+ih-4},{x0:ml+iw-8-qw(o.quad[3]),x1:ml+iw-8,y0:mt+ih-20,y1:mt+ih-4}]:[];
-  // a quadrant caption is left out when a dot sits on it
+  const labels=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:nar?mt-8:mt,y1:mt+ih},nar?10:o.maxLab||24,
+    m=>nar&&m.label.includes(" & ")?m.raw.label:m.label,lineBoxes,qb,nar);
+  // captions yield to dots and, on narrow charts, to frontier labels
   if(o.quad){ const q=nar?' style="font-size:9px;opacity:.6"':"", at=[[ml+8,mt+16,""],[ml+iw-8,mt+16,' text-anchor="end"'],[ml+8,mt+ih-8,""],[ml+iw-8,mt+ih-8,' text-anchor="end"']];
-    qb.forEach((b,i)=>{ const hit=marks.some(m=>m.x+m.r>b.x0&&m.x-m.r<b.x1&&m.y+m.r>b.y0&&m.y-m.r<b.y1);
-      s=s.replace(`<!--Q${i}-->`,hit?"":`<text class="qlab"${q} x="${at[i][0]}" y="${at[i][1]}"${at[i][2]}>${o.quad[i]}</text>`); if(hit) b.x1=b.x0; }); }
-  s+=placeLabels([...marks].sort((a,b)=>b.front-a.front||b.raw.y-a.raw.y),{x0:ml,x1:W-4,y0:mt,y1:mt+ih},nar?10:o.maxLab||24,m=>m.label,qb,lineBoxes);
-  return s+"</svg>";
+    qb.forEach((b,i)=>{s=s.replace(`<!--Q${i}-->`,labels.covers(b)?"":`<text class="qlab"${q} x="${at[i][0]}" y="${at[i][1]}"${at[i][2]}>${o.quad[i]}</text>`);}); }
+  return s+labels.out+"</svg>";
 }
 const modelTip=(m,lines)=>`<b>${esc(m.name)}</b><span class="tl"><span>${esc(m.prov)}</span><span>${m.open?"Open weights":"Proprietary"}</span></span>`
   +lines.map(([k,v])=>`<span class="tl"><span>${k}</span><span>${v}</span></span>`).join("");
@@ -2374,7 +2401,7 @@ function renderQuad(rows){
   $("#quad-sub").textContent=`${BENCH[yk].l} against ${xw[0]}, log scale. Dashed lines mark the median of each axis, so the upper-left quadrant is the value zone: above-median score at below-median ${xw[1]}. `
     +`The solid line is the Pareto frontier: models that no cheaper model in view matches or beats, so each is the best you can get at its ${xw[1]}. A ringed dot marks two models at the same spot; dots that touch share one label.`;
   host.innerHTML=scatterSvg(pts,
-    {aria:"Capability against price",host,xfmt:money,yfmt:v=>String(Math.round(v)),xtitle:BENCH[xk].l,ytitle:BENCH[yk].l,
+    {aria:"Capability against price",host,xfmt:money,yfmt:v=>Math.round(v)+(BENCH[yk].f==="pct"?"%":""),xtitle:BENCH[xk].l,ytitle:BENCH[yk].l,
      quad:["Value zone","Premium","Budget","Overpriced"],front:"min"});
   $("#quad-front").innerHTML=frontText(paretoFront(pts,"min"),money,v=>fmt(v,BENCH[yk].f),"min");
   wire(host);
@@ -2383,9 +2410,9 @@ function renderQuad(rows){
 /* ---------------- intelligence vs speed ---------------- */
 function renderSpeedQ(rows){
   const host=$("#c-speedq"), ms=rows.filter(m=>val(m,"speed")&&val(m,"aaii")!=null);
-  if(ms.length<3){host.innerHTML='<p class="empty">Not enough models with both measures under these filters.</p>';$("#speedq-front").innerHTML="";return;}
-  const ghost=ms.filter(m=>state.effSel&&state.effSel.has(m.name)).map(m=>({m,rows:effRows(m).filter(r=>r.speed>0&&r.aaii!=null)})).filter(g=>g.rows.length>1);
-  effKey("#effkey5",EFF_ORDER.filter(e=>ghost.some(g=>g.rows.some(r=>r.e===e))));
+  if(ms.length<3){host.innerHTML='<p class="empty">Not enough models with both measures under these filters.</p>';$("#speedq-front").innerHTML="";effKey("#effkey5",[]);return;}
+  const ghost=ms.filter(m=>state.effSel?.has(m.name)&&topEff(m)).map(m=>({m,rows:effRows(m).filter(r=>r.speed>0&&r.aaii!=null)}));
+  effKey("#effkey5",EFF_ORDER.filter(e=>ghost.some(g=>e!==topEff(g.m)&&g.rows.some(r=>r.e===e))));
   const pts=ms.map(m=>({x:val(m,"speed"),y:val(m,"aaii"),fill:idFill(m),label:m.name,
       tip:modelTip(m,[["Index",val(m,"aaii")+(topEff(m)?" · "+topEff(m):"")],["Output speed",Math.round(val(m,"speed"))+" tok/s"],["Time to first answer token",val(m,"ttft")!=null?fmt(val(m,"ttft"),"n1")+" s":"—"]])}));
   host.innerHTML=scatterSvg(pts,
@@ -2409,14 +2436,15 @@ function hbarSvg(items,o){
   let ticks;
   if(o.dot) ticks=pickTicks(logTicks(l0,l1),X,tf);
   else for(let n=4;n>=1;n--){ ticks=niceTicks(0,max,n).filter(v=>v<=max*1.0001); if(ticks.length<2||X(ticks[1])-X(ticks[0])>=tickGap(ticks,tf)) break; }
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+  let s=`<svg${o.interactive?` width="${W}"`:""} viewBox="0 0 ${W} ${H}" role="${o.interactive?"group":"img"}" aria-label="${esc(o.aria)}">`;
   if(items.length>8) items.forEach((it,i)=>{ if(i%2) s+=`<rect class="zebra" x="4" y="${mt+i*rowH-2.5}" width="${W-8}" height="${rowH}" rx="3"/>`; });
   ticks.forEach(v=>{s+=`<line class="gridline" x1="${X(v).toFixed(1)}" y1="${mt-6}" x2="${X(v).toFixed(1)}" y2="${H-4}"/><text class="axlab" x="${X(v).toFixed(1)}" y="${mt-11}" text-anchor="middle">${tf(v)}</text>`;});
   if(!o.dot) s+=`<line class="axline" x1="${ml}" y1="${mt-6}" x2="${ml}" y2="${H-4}"/>`;
   items.forEach((it,i)=>{
     const y=mt+i*rowH, cy=y+(rowH-5)/2;
-    const g=it.grp!=null?` data-grp="${it.grp}" class="grprow"`:"";
-    s+=`<text class="barlab${it.sub?" sub":""}"${g?` data-grp="${it.grp}" style="cursor:pointer;font-weight:600"`:""} x="${ml-10}" y="${y+12}" text-anchor="end">${esc(fitName(it.name.trim(),ml-14-(it.sub?10:0)))}<title>${esc(it.name.trim())}</title></text>`;
+    const group=it.grp!=null;
+    if(group) s+=`<g class="grprow" data-grp="${it.grp}" data-tip="${esc(it.tip)}" role="button" tabindex="0" aria-expanded="${it.expanded}" aria-label="${esc(it.groupLabel)}">`;
+    s+=`<text class="barlab${it.sub?" sub":""}"${group?' style="font-weight:600"':""} x="${ml-10}" y="${y+12}" text-anchor="end">${esc(fitName(it.name.trim(),ml-14-(it.sub?10:0)))}<title>${esc(it.name.trim())}</title></text>`;
     if(o.dot){
       const x=X(it.v);
       s+=`<line class="stem" x1="${ml}" y1="${cy}" x2="${x.toFixed(1)}" y2="${cy}"/>`
@@ -2424,12 +2452,13 @@ function hbarSvg(items,o){
         +`<text class="barval" x="${(x+11).toFixed(1)}" y="${y+12}">${it.label}</text>`;
     } else {
       const w=Math.max(2,X(it.v)-ml), sp=it.split, w1=sp?w*sp[0]/(sp[0]+sp[1]):w;
-      s+=(sp&&sp[0]&&sp[1]?`<rect${g} data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${(w1+3).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--accent)"/>`
-          +`<rect${g} data-tip="${esc(it.tip)}" x="${(ml+w1).toFixed(1)}" y="${y+2}" width="${(w-w1).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--open)"/>`
-        :`<rect${g}${it.sub?' opacity=".55"':""} data-tip="${esc(it.tip)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${sp?(sp[0]?"var(--accent)":"var(--open)"):it.fill}"/>`)
+      s+=(sp&&sp[0]&&sp[1]?`<rect x="${ml}" y="${y+2}" width="${(w1+3).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--accent)"/>`
+          +`<rect x="${(ml+w1).toFixed(1)}" y="${y+2}" width="${(w-w1).toFixed(1)}" height="${rowH-9}" rx="3" fill="var(--open)"/>`
+        :`<rect${it.sub?' opacity=".55"':""}${group?"":` data-tip="${esc(it.tip)}"`} x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="${rowH-9}" rx="3" fill="${sp?(sp[0]?"var(--accent)":"var(--open)"):it.fill}"/>`)
         +`<text class="barval" x="${ml+w+7}" y="${y+12}">${it.label}</text>`
         +(it.eff?`<circle class="effdot" cx="${(ml+w+7+String(it.label).length*7.4+8).toFixed(1)}" cy="${cy}" r="4.5" fill="${EFF_SHADE[it.eff]}"><title>${EFF_NAME[it.eff]} effort</title></circle>`:"");
     }
+    if(group) s+="</g>";
   });
   return s+"</svg>";
 }
@@ -2463,15 +2492,22 @@ function renderCtx(cur){
   $("#c-ctx").innerHTML=hbarSvg(grp.flatMap(g=>g.ms.length<3
       ?g.ms.map(m=>({name:m.name,v:g.v,fill:idFill(m),label:fmt(g.v,"ctx"),
           tip:modelTip(m,[["Context window",fmt(g.v,"ctx")],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])}))
-      :[{name:(state.ctxOpen.has(g.v)?"▾ ":"▸ ")+g.ms.length+" models",grp:g.v,v:g.v,label:fmt(g.v,"ctx"),split:[g.ms.filter(m=>!m.open).length,g.ms.filter(m=>m.open).length],
+      :[{name:(state.ctxOpen.has(g.v)?"▾ ":"▸ ")+g.ms.length+" models",grp:g.v,expanded:state.ctxOpen.has(g.v),groupLabel:`${g.ms.length} models at ${fmt(g.v,"ctx")}`,v:g.v,label:fmt(g.v,"ctx"),split:[g.ms.filter(m=>!m.open).length,g.ms.filter(m=>m.open).length],
           tip:`<b>${g.ms.length} models at ${fmt(g.v,"ctx")}</b><span class="tl"><span>Proprietary</span><span>${g.ms.filter(m=>!m.open).length}</span></span>`
             +`<span class="tl"><span>Open weights</span><span>${g.ms.filter(m=>m.open).length}</span></span>`
-            +`<span class="tlist">${g.ms.map(m=>esc(m.name)).join(", ")}</span><span class="tlist">Click to ${state.ctxOpen.has(g.v)?"hide":"list"} them.</span>`},
+            +`<span class="tlist">${g.ms.map(m=>esc(m.name)).join(", ")}</span><span class="tlist">Select to ${state.ctxOpen.has(g.v)?"hide":"list"} them.</span>`},
          ...(state.ctxOpen.has(g.v)?g.ms.map(m=>({name:"   "+m.name,sub:true,v:g.v,fill:idFill(m),label:fmt(val(m,"ctx"),"ctx"),
            tip:modelTip(m,[["Context window",fmt(g.v,"ctx")],["Index",val(m,"aaii")!=null?val(m,"aaii")+(topEff(m)?" · "+topEff(m):""):"—"]])})):[])]),
-    {aria:"Context window",host:$("#c-ctx"),rowH:20,tfmt:v=>fmt(v,"ctx")});
-  $$("#c-ctx [data-grp]").forEach(el=>el.onclick=()=>{const v=+el.dataset.grp; state.ctxOpen.has(v)?state.ctxOpen.delete(v):state.ctxOpen.add(v); renderCtx(filtered());});
+    {aria:"Context window",host:$("#c-ctx"),interactive:true,W:state.lens==="api"?560:980,rowH:20,tfmt:v=>fmt(v,"ctx")});
   wire($("#c-ctx"));
+  $$("#c-ctx [data-grp]").forEach(el=>{
+    const toggle=focus=>{const v=+el.dataset.grp;
+      hideTip(); state.ctxOpen.has(v)?state.ctxOpen.delete(v):state.ctxOpen.add(v); renderCtx(filtered());
+      if(focus) $(`#c-ctx [data-grp="${v}"]`).focus({preventScroll:true});
+      hideTip(); };
+    el.onclick=()=>toggle(document.activeElement===el);
+    el.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(true); } };
+  });
 }
 
 /* ---------------- effort range (dumbbell) ---------------- */
@@ -2494,11 +2530,11 @@ function renderEffort(rows){
     const rs=effRows(m), y=mt+i*rowH+rowH/2, vs=rs.map(r=>r.aaii);
     s+=`<text class="barlab" x="${ml-12}" y="${y+4}" text-anchor="end">${esc(fitName(m.name,ml-16))}<title>${esc(m.name)}</title></text>`
       +`<line class="dumbline" x1="${X(Math.min(...vs))}" y1="${y}" x2="${X(Math.max(...vs))}" y2="${y}"/>`;
-    const seenV={};
-    [...rs].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e)).forEach(r=>{
-      const k=seenV[r.aaii]=(seenV[r.aaii]||0)+1, dy=k===1?0:(k%2?1:-1)*5*Math.floor(k/2+0.5);
+    const sorted=[...rs].sort((a,b)=>EFF_ORDER.indexOf(a.e)-EFF_ORDER.indexOf(b.e)), scores=sorted.map(r=>r.aaii);
+    sorted.forEach((r,i)=>{
+      const dy=scoreOffset(scores,i), rad=(r.e===rs[0].e?7:5.5)-(nar?1:0);
       const t=modelTip(m,[["Effort",EFF_NAME[r.e]],["Index",r.aaii],["Cost per index task",r.cost!=null?money(r.cost):"—"],["Output speed",r.speed!=null?r.speed+" tok/s":"—"],["Time to first answer token",r.ttft!=null?r.ttft+" s":"—"]]);
-      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r.aaii).toFixed(1)}" cy="${y+dy}" r="${r.e===rs[0].e?7:5.5}" fill="${EFF_SHADE[r.e]}"/>`;
+      s+=`<circle class="effdot" data-tip="${esc(t)}" cx="${X(r.aaii).toFixed(1)}" cy="${y+dy}" r="${rad}" fill="${EFF_SHADE[r.e]}"/>`;
     });
     s+=`<text class="barval" x="${X(Math.max(...vs))+12}" y="${y+4}">${Math.max(...vs)}</text>`;
   });
@@ -2571,8 +2607,9 @@ function renderEffPicker(){
   $$("#cmpgroups .chip").forEach(b=>b.onclick=()=>effBulk(b.dataset.g));
   // one chip per effort level the picked models have; each includes or leaves out that level on both charts
   const cnt=e=>pm.filter(m=>effRowsAll(m).some(r=>r.e===e)).length;
-  refill($("#cmpeff"),EFF_ORDER.filter(cnt).map(e=>`<button type="button" class="chip" data-e="${e}" data-k="${e}" aria-pressed="${!c.hideEff.has(e)}" title="${EFF_NAME[e]}: ${c.hideEff.has(e)?"left out — select to show":"shown — select to leave out"}">${EFF_NAME[e]} <span class="eff">${cnt(e)}</span></button>`).join("")
-    ||'<span class="picknote">no model picked</span>');
+  const levels=EFF_ORDER.filter(cnt);
+  refill($("#cmpeff"),(levels.length?"":`<span class="picknote">${picks.length?"single setting only":"no model picked"}</span>`)
+    +EFF_ORDER.filter(e=>levels.includes(e)||c.hideEff.has(e)).map(e=>`<button type="button" class="chip" data-e="${e}" data-k="${e}" aria-pressed="${!c.hideEff.has(e)}" title="${EFF_NAME[e]}: ${c.hideEff.has(e)?"left out — select to show":"shown — select to leave out"}">${EFF_NAME[e]} <span class="eff">${cnt(e)}</span></button>`).join(""));
   $$("#cmpeff .chip").forEach(b=>b.onclick=()=>cmpSet("hide",b.dataset.e));
   $$(".seg [data-scale]").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.scale==="linear")===c.linear));
   $('[data-cmp="pareto"]').setAttribute("aria-pressed",c.pareto); $('[data-cmp="labels"]').setAttribute("aria-pressed",c.labels);
@@ -2589,35 +2626,48 @@ function effContext(sel,pick,xk,what){
 /* On phones the picker and controls open as a full-screen sheet from a "Models N" button. */
 const cmpSheet={open:false,from:null,y:0,mq:matchMedia("(max-width:700px)"),
   show(btn){ if(this.open||!this.mq.matches) return; const s=$("#cmp");
-    this.open=true; this.from=btn||$(".cmpopen"); this.y=this.from.getBoundingClientRect().top;
+    this.open=true; this.from=btn; this.y=btn.getBoundingClientRect().top;
+    $(".cmpbody",s).append($("#efflist")); $("#efflist").hidden=false;
     s.classList.add("open"); s.setAttribute("role","dialog"); s.setAttribute("aria-modal","true"); document.documentElement.classList.add("cmplock");
     $$(".cmpopen").forEach(b=>b.setAttribute("aria-expanded","true")); renderEffList(); s.scrollTop=0; $("#cmpdone").focus({preventScroll:true}); },
   hide(){ if(!this.open) return; const s=$("#cmp");
     this.open=false; s.classList.remove("open"); s.removeAttribute("role"); s.removeAttribute("aria-modal"); document.documentElement.classList.remove("cmplock");
-    $$(".cmpopen").forEach(b=>b.setAttribute("aria-expanded","false")); $("#efflist").hidden=true;
+    $$(".cmpopen").forEach(b=>b.setAttribute("aria-expanded","false")); $("#efflist").hidden=true; $(".pickadd",s).append($("#efflist"));
     // the charts behind the sheet may have changed height: put the button that opened it back where it was
     if(this.from.getClientRects().length){ scrollBy(0,this.from.getBoundingClientRect().top-this.y); this.from.focus({preventScroll:true}); }
     secY=scrollY; }
 };
-{ const q=$("#effq"), list=$("#efflist"), sheet=$("#cmp"), open=()=>{list.hidden=false; renderEffList();};
+{ const q=$("#effq"), list=$("#efflist"), sheet=$("#cmp"), add=$(".pickadd",sheet), open=()=>{list.hidden=false; renderEffList();};
+  let quiet=false;
+  const focusSearch=()=>{ quiet=true; q.focus({preventScroll:true}); quiet=false; };
   const typing=e=>{const t=e.target; return t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));};
-  q.onfocus=open; q.oninput=open;
+  q.onfocus=()=>{if(!quiet) open();}; q.oninput=open; q.onclick=()=>{if(list.hidden) open();};
   q.onkeydown=e=>{
-    if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); const had=q.value!==""; q.value="";
-      if(cmpSheet.open){ renderEffList(); if(!had) cmpSheet.hide(); } else { list.hidden=true; q.blur(); } }
+    if(e.key==="Escape"&&cmpSheet.open){ e.preventDefault(); e.stopPropagation(); const had=q.value!==""; q.value="";
+      if(had) renderEffList(); else cmpSheet.hide(); }
     if(e.key==="Enter"){const b=$("#efflist button"); if(b&&q.value.trim()){effToggle(b.dataset.m); q.value=""; renderEffList();}} };
-  document.addEventListener("mousedown",e=>{ if(!e.target.closest(".pickadd")) list.hidden=true; });
+  add.onkeydown=e=>{ if(e.key==="Escape"&&!cmpSheet.open){ e.preventDefault(); e.stopPropagation(); q.value=""; list.hidden=true; focusSearch(); } };
+  add.addEventListener("focusout",e=>{ if(!cmpSheet.open&&!add.contains(e.relatedTarget)) list.hidden=true; });
+  document.addEventListener("mousedown",e=>{ if(!cmpSheet.open&&!add.contains(e.target)) list.hidden=true; });
   document.addEventListener("keydown",e=>{
     if(e.key==="/"&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!typing(e)&&$("#p-quad").classList.contains("on")){
-      e.preventDefault(); if(cmpSheet.mq.matches) cmpSheet.show(); else q.scrollIntoView({block:"center"}); q.focus({preventScroll:true}); }
+      e.preventDefault();
+      if(cmpSheet.mq.matches){
+        const buttons=$$(".cmpopen"), visible=buttons.find(b=>{const r=b.getBoundingClientRect(); return r.bottom>secOff()&&r.top<innerHeight;});
+        const card=secCards().filter(c=>c.getBoundingClientRect().top<=secOff()+4).at(-1);
+        cmpSheet.show(visible||card?.querySelector(".cmpopen")||$(`#ch-${state.sec} .cmpopen`)||buttons[0]);
+      } else q.scrollIntoView({block:"center"});
+      q.focus({preventScroll:true}); }
     if(e.key==="Escape"&&cmpSheet.open) cmpSheet.hide();
     if(e.key==="Tab"&&cmpSheet.open){ const f=$$("button,input",sheet).filter(x=>x.getClientRects().length), a=f[0], z=f[f.length-1];
       if(!sheet.contains(document.activeElement)||(e.shiftKey?document.activeElement===a:document.activeElement===z)){ e.preventDefault(); (e.shiftKey?z:a).focus(); } }
   });
   $$(".cmpopen").forEach(b=>b.onclick=()=>cmpSheet.show(b));
   // desktop: one set of controls serves both effort charts; it moves into whichever chart the reader is using
-  $$(".cmpmove").forEach(b=>b.onclick=()=>{ const card=b.closest(".card"); card.querySelector(".cmpbar").after(sheet);
-    $$(".cmpmove").forEach(x=>x.hidden=x.closest(".card")===card); q.focus({preventScroll:true}); });
+  $$(".cmpmove").forEach(b=>b.onclick=()=>{ const card=b.closest(".card"), bar=$(".cmpbar",card);
+    bar.before($("#effpicked")); bar.append($("#effnote")); bar.after(sheet); list.hidden=true;
+    $$(".cmpmove").forEach(x=>x.hidden=x.closest(".card")===card);
+    state.sec=card.id.slice(3); secGo(state.sec); syncURL(); focusSearch(); });
   $("#cmpdone").onclick=()=>cmpSheet.hide();
   cmpSheet.mq.addEventListener("change",()=>cmpSheet.hide());
   $$('[data-cmp="reset"]').forEach(b=>b.onclick=cmpReset);
@@ -2694,11 +2744,21 @@ function effLines(hostSel,keySel,pick,xk,o){
     ends.push({x:top.px,y:top.py,r:top.rad,name:q.m.name,score:top.r.aaii,col:q.col});
   });
   let unl=[]; // series drawn without a label
-  if(lab&&nar){ const put=[]; // badges that would overlap step up or down out of the way and keep a short line to their end dot
-    ends.forEach((o,i)=>{ let bx=o.x, by=o.y;
-      for(const dy of [0,-19,19,-38,38]){ by=Math.min(mt+ih-9,Math.max(mt+9,o.y+dy)); if(put.every(q=>Math.hypot(q.x-bx,q.y-by)>=19)) break; }
-      put.push({x:bx,y:by});
-      s+=`<g class="effs" data-m="${esc(o.name)}">`+(by!==o.y?`<line class="leader" x1="${f1(o.x)}" y1="${f1(o.y)}" x2="${f1(bx)}" y2="${f1(by)}"/>`:"")
+  const badges=new Map();
+  if(lab&&nar){
+    const cap=SERIES, put=[], offsets=[[0,0],[19,0],[-19,0],[0,-19],[0,19],[19,-19],[-19,-19],[19,19],[-19,19],[0,-38],[0,38]];
+    const sorted=[...ends].sort((a,b)=>a.y-b.y||a.x-b.x);
+    const priority=sorted.filter(o=>state.effCol.has(o.name)).concat(sorted.filter(o=>!state.effCol.has(o.name)));
+    for(const o of priority){
+      if(put.length>=cap) break;
+      const box=offsets.map(([dx,dy])=>({x:Math.max(ml+10,Math.min(ml+iw-10,o.x+dx)),y:Math.max(mt+10,Math.min(mt+ih-10,o.y+dy))}))
+        .find(p=>put.every(q=>Math.hypot(q.x-p.x,q.y-p.y)>=20));
+      if(!box) continue;
+      put.push(box); badges.set(o.name,box);
+    }
+    sorted.filter(o=>badges.has(o.name)).forEach((o,i)=>{
+      const {x:bx,y:by}=badges.get(o.name); badges.set(o.name,i+1);
+      s+=`<g class="effs" data-m="${esc(o.name)}">`+(bx!==o.x||by!==o.y?`<line class="leader" x1="${f1(o.x)}" y1="${f1(o.y)}" x2="${f1(bx)}" y2="${f1(by)}"/>`:"")
         +`<circle class="effbadge" cx="${f1(bx)}" cy="${f1(by)}" r="9" stroke="${o.col}"/>`
         +`<text class="endnum" x="${f1(bx)}" y="${f1(by+3.5)}" text-anchor="middle">${i+1}</text></g>`;});}
   else if(lab){
@@ -2730,7 +2790,8 @@ function effLines(hostSel,keySel,pick,xk,o){
     +(front.length?`<p class="efffrontlist"><b>On the frontier, ${xk==="cost"?"cheapest":"shortest wait"} first:</b> ${front.map(p=>`${esc(p.m.name)} ${esc(EFF_NAME[p.r.e]).toLowerCase()} (${p.r.aaii} · ${o.fmt(p.r[xk])})`).join(" → ")}</p>`:"")
     +(unl.length?`<p class="effmore"><span>${unl.length} of ${ends.length} lines drawn without a label — hover or click a name to find its line:</span>${unl.map(chip).join("")}</p>`:"")
     // on phones the line ends carry numbers, keyed in a list below, since full names don't fit
-    +(nar?`<ol class="effnums${lab?"":" plain"}">${series.map(q=>`<li><i style="background:${q.col}"></i>${esc(q.m.name)}</li>`).join("")}</ol>`:"")+"</div>";
+    +(nar?`<ul class="effnums plain">${[...ends].sort((a,b)=>(badges.get(a.name)??Infinity)-(badges.get(b.name)??Infinity)).map(e=>
+      `<li><i style="background:${e.col}"></i>${badges.has(e.name)?`${badges.get(e.name)}. `:""}${esc(e.name)}${lab&&!badges.has(e.name)?' <span class="picknote">(no badge)</span>':""}</li>`).join("")}</ul>`:"")+"</div>";
   // the card sits in the lower right of the plot, or the upper left when fewer points would be under it there
   const box=[{x0:ml+iw-262,x1:ml+iw-2,y0:mt+ih-212,y1:mt+ih-2},{x0:ml+2,x1:ml+262,y0:mt,y1:mt+210}], inBox=(p,b)=>p.px>b.x0&&p.px<b.x1&&p.py>b.y0&&p.py<b.y1,
         under=b=>P.filter(p=>inBox(p,b)).length;
@@ -2798,7 +2859,7 @@ function effApply(){
     const pinI=U.pin&&U.pin.host===c.sel?c.P.findIndex(p=>p.m.name===U.pin.m&&p.r.e===U.pin.e):-1;
     const i=hc===c&&c.P[U.hov.i]?U.hov.i:pinI, pinned=i>=0&&i===pinI, key=i<0?"":i+(pinned?"p":"h");
     c.hits.forEach((h,k)=>h.setAttribute("aria-pressed",k===pinI));
-    c.card.classList.toggle("pinned",pinI>=0); // a kept card takes the pointer, so its close button and link can be reached
+    c.card.classList.toggle("pinned",pinned); // a kept card takes the pointer, so its close button and link can be reached
     if(c.key===key) return; c.key=key;
     c.dots.forEach(d=>{ const a=+d.dataset.i===i; d.classList.toggle("act",a); d.setAttribute("r",+d.dataset.r+(a?2.5:0)); });
     if(i<0){ c.cross.innerHTML=""; c.card.hidden=true; return; }
@@ -2823,7 +2884,7 @@ function renderEffLevel(rows){
   const at=lv=>rows.map(m=>({m,r:effRows(m).find(r=>r.e===lv)})).filter(o=>o.r);
   const lvls=EFF_ORDER.filter(e=>at(e).length).reverse();
   if(!lvls.includes(state.effLv)) state.effLv=lvls[0]||"high";
-  $("#efflvsel").innerHTML=lvls.map(e=>`<button type="button" class="chip" data-lv="${e}" aria-pressed="${e===state.effLv}">${EFF_NAME[e]} <span class="eff">${at(e).length}</span></button>`).join("");
+  refill($("#efflvsel"),lvls.map(e=>`<button type="button" class="chip" data-k="${e}" data-lv="${e}" aria-pressed="${e===state.effLv}">${EFF_NAME[e]} <span class="eff">${at(e).length}</span></button>`).join(""));
   $$("#efflvsel .chip").forEach(b=>b.onclick=()=>{state.effLv=b.dataset.lv; renderEffLevel(filtered());});
   const d=at(state.effLv).sort((a,b)=>b.r.aaii-a.r.aaii||(a.r.cost??1e9)-(b.r.cost??1e9));
   $("#c-efflevel").innerHTML=d.length?hbarSvg(d.map(({m,r})=>({name:m.name,v:r.aaii,fill:idFill(m),
@@ -2858,9 +2919,9 @@ function covMatrix(rows){
   const keys=BENCH_ORDER.filter(k=>(BENCH[k].g!=="speed"||k==="ctx")&&!isArch(k));
   const withAny=rows.map(m=>({m,n:keys.filter(k=>m.s[k]).length})).filter(o=>o.n>0)
                     .sort((a,b)=>b.n-a.n||a.m.name.localeCompare(b.m.name));
-  if(!withAny.length) return '<p class="empty">Nothing matches those filters.</p>';
+  if(!withAny.length) return `<p class="empty">${rows.length?"No models in view have scores in this coverage matrix. Check Archived benchmarks below for earlier results.":"Nothing matches those filters."}</p>`;
   let h='<div class="covwrap"><table class="cov"><thead><tr><th class="cm">Model</th><th class="covn">Scores</th>'
-    + keys.map(k=>`<th class="ch"><span>${BENCH[k].s}</span></th>`).join("") + '</tr></thead><tbody>';
+    + keys.map(k=>`<th class="ch" scope="col" title="${esc(BENCH[k].l)}"><span>${BENCH[k].s}</span></th>`).join("") + '</tr></thead><tbody>';
   withAny.forEach(o=>{
     const on=state.covOpen===o.m.name;
     h+=`<tr data-cm="${esc(o.m.name)}"><th class="cm"><button type="button" class="rowbtn covbtn" aria-expanded="${on}" aria-label="${esc(o.m.name)}: ${on?"hide":"list"} its scores and sources"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${esc(o.m.name)}</button></th><td class="covn">${o.n}/${keys.length}</td>`;
@@ -2878,51 +2939,76 @@ function covMatrix(rows){
   });
   return h+"</tbody></table></div>";
 }
+function renderCoverage(host,rows){
+  const prev=$(".covwrap",host), top=prev?.scrollTop??0, left=prev?.scrollLeft??0;
+  hideTip(); host.innerHTML=covMatrix(rows); wire(host);
+  const wrap=$(".covwrap",host);
+  if(wrap){ wrap.scrollTop=top; wrap.scrollLeft=left; }
+  $$(".covbtn",host).forEach(b=>b.onclick=()=>{
+    const n=b.closest("tr").dataset.cm; state.covOpen=state.covOpen===n?null:n;
+    renderCoverage(host,rows);
+    $$("tr[data-cm]",host).find(r=>r.dataset.cm===n)?.querySelector(".covbtn").focus({preventScroll:true});
+  });
+}
 
 function renderBench(rows){
-  const host=$("#benchhost");
+  const host=$("#benchhost"), archiveOpen=$(".archive",host)?.open, charts=new Map();
+  const previous=$(".covwrap",host), top=previous?.scrollTop??0, left=previous?.scrollLeft??0;
   const groups=[["coding","Coding & software engineering"],["agentic","Agents & computer use"],
                 ["reasoning","Reasoning, knowledge & human preference"],["headline","Index & throughput"]];
   let out=`<div class="card" style="margin-bottom:22px">
     <div class="cardhead"><div><h2>What has actually been measured</h2>
-      <p class="sub">One square per model per benchmark. Filled means a recorded score; empty means no verified score is recorded here. A blank can mean the evaluator has not published a result or that the source could not be verified during the refresh.</p></div></div>
-    ${covMatrix(rows)}
+      <p class="sub">One square per model per benchmark. A colored square means a recorded score. A blank can mean the evaluator has not published a result or that the source could not be verified during the refresh.</p></div></div>
+    <div id="coverage"></div>
     <div class="covlegend">
       <span><i style="background:var(--accent)"></i>Proprietary, independently run</span>
       <span><i style="background:var(--open)"></i>Open weights, independently run</span>
-      <span><i style="background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 2px,var(--surface) 2px,var(--surface) 4px)"></i>Vendor-run</span>
+      <span><i class="cc ven"></i><i class="cc o ven"></i>Vendor-run (blue or orange hatching)</span>
+      <span><i class="cc unv"></i>Unverified</span>
       <span><i style="background:var(--surface-3)"></i>No recorded score</span>
     </div></div>`;
   groups.forEach(([g,title])=>{
-    const keys=BENCH_ORDER.filter(k=>BENCH[k].g===g&&!isArch(k));
+    const keys=BENCH_ORDER.filter(k=>!isArch(k)&&(BENCH[k].g===g||g==="headline"&&BENCH[k].g==="speed"));
     if(!keys.length) return;
-    out+=`<h2 style="font-family:Archivo;font-size:15px;margin:${out?"28px":"0"} 0 12px;letter-spacing:-.01em">${title}</h2><div class="bgrid">`+keys.map(k=>benchCard(k,rows)).join("")+"</div>";
+    out+=`<h2 style="font-family:Archivo;font-size:15px;margin:28px 0 12px;letter-spacing:-.01em">${title}</h2><div class="bgrid">`+keys.map(k=>benchCard(k,rows,charts)).join("")+"</div>";
   });
   const ak=BENCH_ORDER.filter(isArch);
-  out+=`<details class="archive"><summary><span>Archive</span> ${ak.length} benchmarks that are saturated, superseded or no longer updated — kept for reference, left out of the main table and coverage grid</summary>
-    <div class="bgrid" style="margin-top:14px">${ak.map(k=>benchCard(k,rows)).join("")}</div></details>`;
-  host.innerHTML=out; wire(host);
-  $$("#benchhost .covbtn").forEach(b=>b.onclick=()=>{ const n=b.closest("tr").dataset.cm; state.covOpen=state.covOpen===n?null:n; renderBench(filtered());
-    [...$$("#benchhost tr[data-cm]")].find(r=>r.dataset.cm===n)?.querySelector(".covbtn")?.focus({preventScroll:true}); });
+  out+=`<details class="archive"${archiveOpen?" open":""}><summary><h2>Archived benchmarks</h2></summary>
+    <p class="sub">${ak.length} benchmarks kept for reference because they are saturated, superseded or no longer updated.</p>
+    <div class="bgrid" style="margin-top:14px">${ak.map(k=>benchCard(k,rows,charts)).join("")}</div></details>`;
+  host.innerHTML=out;
+  renderCoverage($("#coverage"),rows);
+  const wrap=$(".covwrap",host); if(wrap){ wrap.scrollTop=top; wrap.scrollLeft=left; }
+  const draw=root=>$$("[data-bench-bars]",root).forEach(el=>{
+    const k=el.dataset.benchBars; el.innerHTML=barSvg(charts.get(k),k,el); wire(el,{focus:true});
+    el.onkeydown=e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.hasAttribute("data-tip")){
+      e.preventDefault(); tipEl=e.target; showTip(tipEl.dataset.tip,tipPt(tipEl));
+    } };
+  });
+  $$("#benchhost > .bgrid").forEach(draw);
+  const archive=$(".archive",host); if(archiveOpen) draw(archive);
+  archive.ontoggle=()=>{ if(archive.open&&!$("svg",archive)) draw(archive); };
 }
-function benchCard(k,rows){
+function benchCard(k,rows,charts){
   const B=BENCH[k];
   const scored=rows.filter(m=>val(m,k)!=null).sort((a,b)=>B.hi?val(b,k)-val(a,k):val(a,k)-val(b,k));
   const d=scored.slice(0,12), notable=rows.filter(m=>val(m,k)==null&&m.tier==="frontier").map(m=>m.name);
+  const count=`${rows.length} model${rows.length===1?"":"s"} in view`;
+  if(d.length) charts.set(k,d);
   return `<div class="card"><div class="bhead"><h3>${B.l}</h3><span class="bmeta">${B.src} · ${B.asof}</span></div>
     ${B.arch?`<p class="missing" style="margin:6px 0 8px"><b>Archived.</b> ${esc(B.arch)}</p>`:""}
     <p class="bsub">${B.d}</p>
-    ${B.warn&&!B.arch?`<div class="warnbox"><b>Caveat.</b> ${B.warn}</div>`:""}
-    ${d.length?barSvg(d,k):`<p class="empty">No verified score is recorded for the ${rows.length} models in view.</p>`}
-    <p class="cardmeta">${scored.length} of ${rows.length} models in view have a score${scored.length>12?` · showing the top 12`:""}.</p>
+    ${B.warn?`<div class="warnbox"><b>Caveat.</b> ${B.warn}</div>`:""}
+    ${d.length?`<div data-bench-bars="${k}"></div>`:`<p class="empty">No verified score is recorded for the ${count}.</p>`}
+    <p class="cardmeta">${scored.length} of ${count} ${scored.length===1?"has":"have"} a score${scored.length>12?` · showing the top 12`:""}.</p>
     ${notable.length&&!B.arch?`<p class="missing">No recorded score for <b>${notable.slice(0,6).map(esc).join("</b>, <b>")}</b>${notable.length>6?` and ${notable.length-6} more`:""}.</p>`:""}
     <p class="bmeta" style="margin-top:10px"><a href="${B.url}" target="_blank" rel="noopener">${B.url.replace(/^https:\/\//,"")}</a></p></div>`;
 }
-function barSvg(d,k){
-  const B=BENCH[k], rowH=24, ml=176, mr=76, W=560, H=d.length*rowH+8, iw=W-ml-mr;
+function barSvg(d,k,host){
+  const B=BENCH[k], rowH=24, W=fitW(host,560), ml=Math.min(176,Math.round(W*.4)), mr=76, H=d.length*rowH+8, iw=W-ml-mr;
   const vals=d.map(m=>val(m,k)), max=Math.max(...vals);
   const pid="hx"+k;
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(B.l)} ranked"><defs>
+  let s=`<svg width="${W}" viewBox="0 0 ${W} ${H}" role="group" aria-label="${esc(B.l)} ranked"><defs>
     <pattern id="${pid}p" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
       <rect width="6" height="6" fill="var(--accent)"/><rect width="2.6" height="6" fill="var(--surface)" opacity=".55"/></pattern>
     <pattern id="${pid}o" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
@@ -2936,13 +3022,13 @@ function barSvg(d,k){
       +`<span class="tl"><span>Provider</span><span>${esc(m.prov)}</span></span>`;
     const base = m.open?"var(--open)":"var(--accent)";
     const fill = q==="ind" ? base : `url(#${pid}${m.open?"o":"p"})`;
-    s+=`<text class="barlab" x="${ml-10}" y="${y+13}" text-anchor="end">${esc(m.name)}</text>`
-      +`<rect data-tip="${esc(t)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="13" rx="4" fill="${fill}"/>`
+    s+=`<text class="barlab" x="${ml-10}" y="${y+13}" text-anchor="end">${esc(fitName(m.name,ml-14))}<title>${esc(m.name)}</title></text>`
+      +`<rect role="img" aria-label="${esc(`${m.name}, ${fmt(v,B.f)}, ${QL[q]}`)}" data-tip="${esc(t)}" x="${ml}" y="${y+2}" width="${w.toFixed(1)}" height="13" rx="4" fill="${fill}"/>`
       +`<text class="barval" x="${ml+w+7}" y="${y+13}">${fmt(v,B.f)}${q!=="ind"?"*":""}</text>`;
   });
   s+="</svg>";
   const anyVen=d.some(m=>qual(m,k)!=="ind");
-  return s+(anyVen?`<p class="bmeta" style="margin-top:6px">Hatched bars marked * are vendor-reported or unverified rather than independently run — hover for which.</p>`:"");
+  return s+(anyVen?`<p class="bmeta" style="margin-top:6px">Hatched bars marked * are vendor-reported or unverified. Hover or select a bar for source details.</p>`:"");
 }
 
 /* ---------------- sources & caveats ---------------- */
@@ -2952,31 +3038,29 @@ const CAVEATS=[
  ["Token-metered plans are prepaid API usage","GitHub Copilot and Ollama Cloud grant a monthly dollar allowance and bill tokens against it. An expensive model is included in name but can use the allowance up in a few tasks, which is why those plans are drawn in grey and kept off the plan frontier. Copilot bills each model maker's list price, so the board can state how many Index tasks its allowance covers; Ollama sets its own per-token prices, so it cannot."],
  ["Plan pages disagree, and promotions are not counted","OpenAI's pricing page names GPT-6 Luna for Free and Go while three of its help articles name GPT-5.6 Luna. xAI does not say which X Subscription tier unlocks each Grok chat mode. Each plan's note records the conflict and which page the board follows. Launch offers that widen a plan for a few days, such as Fable inside Claude Pro's limits in the week after 9 Nov 2026, are left out."],
  ["What the plan list leaves out","A plan is listed only when its vendor sells it to individuals in US dollars and names at least one model on this board. That excludes Claude Free and Gemini without a plan (Auto-only chat), Meta One and the Muse agent (no model named), the Tencent, Baidu and Volcano Ark plans (yuan only), SuperGrok, Cursor Pro and X Premium (closed to new customers), and StepFun's Flash Mini and Flash Max tiers (out of stock when read). DeepSeek, Thinking Machines, Reflection AI and Cohere sell no individual subscription. OpenRouter is not a subscription: it bills each provider's list price and adds a 5.5% fee when credits are bought, so the API pricing lens is the one that applies to it."],
- ["Source retrieval has limits","Some leaderboard pages require client-side rendering, block automated requests, or expose stale snapshots. The 9 Nov refresh preserves prior verified measurements when a current result cannot be confirmed. A retained value is not a new measurement; each column and row keeps its source/date. See docs/refresh-2026-11-09.md for the source-by-source audit."],
- ["Vendor tables are not independent evaluations","Anthropic’s 9 Nov Fable 5.2 announcement supplies the new coding, search, robotics, knowledge-work, vision and with-tools reasoning columns. They are all vendor-reported, including competitor rows and AA-Briefcase scores quoted by Anthropic. Existing independent Vals AI measurements are preserved instead of being overwritten by the launch comparison table. Quality dots and row notes identify each source."],
+ ["Source retrieval has limits","Some leaderboard pages require client-side rendering, block automated requests, or expose stale snapshots. The 9 Nov refresh preserves prior verified measurements when a current result cannot be confirmed. Retained values keep their original provenance. Each column lists its snapshot date, and row notes give additional source details where available."],
+ ["Vendor tables are not independent evaluations","Anthropic’s 9 Nov Fable 5.2 announcement supplies vendor-reported coding, search, robotics, knowledge-work, vision and with-tools reasoning results, including competitor rows and AA-Briefcase scores quoted by Anthropic. FrontierCode 2.0 also includes OpenAI and Google DeepMind launch results, and Chartography also includes Google DeepMind’s model-card result. Quality dots and row notes distinguish those results from independent measurements such as the Vals AI runs."],
  ["The scaffold moves the score","Claude Fable 5 scores 83.8% on Terminal-Bench 2.1 under Claude Code and 80.4% under Terminus 2 — same model, 3.4 points from the harness alone. Cross-model comparisons on agentic benchmarks carry that noise."],
  ["Benchmark versions and tool settings are not comparable","FrontierCode 2.0 is separate from FrontierCode; FrontierSWE v2 is separate from DeepSWE; OSWorld 2.1 offline partial is separate from OSWorld 2.0 strict and GA. HLE with tools is separate from no-tools HLE, and AA-Briefcase rubric percentages are separate from its Elo ratings and GDPval-AA. The new Fable launch columns do not overwrite earlier benchmark versions."],
  ["Two different price columns exist","Artificial Analysis publishes blended dollars per million tokens on each model's page and dollars per index task on the leaderboard. Claude Sonnet 5.5 is $1.47 by the first and $10.02 by the second; GPT-6.1 Sol is $1.47 and $1.27. Same $2/$10 list price and the same blended rate, but a nearly eightfold gap per task, because Sonnet thinks far longer at max effort. Both columns are on this board; they answer different questions."],
- ["Saturation is quietly breaking three benchmarks","SWE-bench Verified has seven models above 95%. τ²-bench Airline puts Amazon Nova Micro at 76.7%, about three points below the best score on OpenRouter's board, 80.0%. GPQA is at 95%. When a benchmark compresses, small gaps at the high end stop meaning anything."],
+ ["Saturation is quietly breaking three benchmarks","SWE-bench Verified has seven models at or above 95%. On τ²-bench Airline, Gemini 4 Argon scores 78.7% and Claude Sonnet 5.5 scores 78.8%. On GPQA Diamond, the board records 96.3% from an independent run and 97.0% from a vendor run. When scores cluster, small differences are harder to interpret."],
  ["Release coverage is uneven","Fable 5.2 was released 9 Nov 2026. Only retrieved and verified results are included; missing scores remain blank rather than being inferred from Fable 5.1, Mythos 5.2, or marketing claims. Earlier models also retain gaps where their evaluators have no readable result. Absence from a fetched page does not establish that a model was never evaluated."],
  ["The Intelligence Index changed underneath the board","Artificial Analysis moved from v4.1.1 to v4.3.2 in September, and to v5 on 27 Oct 2026, and both times the scores moved for reasons that had nothing to do with the models: the test changed. Under v5 Kimi K3.1 Pro went from 55 to 46 while GPT-6 Astra went from 53 to 57. Scores from two versions cannot share a column, so the Index column holds only v5 scores, and the last v4.3.2 scores sit in an archived column. Models Artificial Analysis has not yet run on v5 show a dash. If you compare a number here against a screenshot from before 27 Oct, it will not line up."],
  ["The default view hides superseded models","Opus 5, Fable 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash and others moved to Previous gen when their replacements shipped. Turn on the Previous gen chip to bring them back — useful when a new model's vendor table only compares against the old generation."],
- ["Older and lower-ranked models are archived","The Board keeps a model in view while its Index score reaches the 30th-best on the board, a listed subscription includes it, its Index score reaches the 10th-best among open-weights models, or it was released in the last 30 days. The rest become archived models by themselves as newer models arrive: they keep every score and note, and the Archived models chip, or Show archived models under the Board table, brings them back. Models with no current Index score, such as the GPT-5 and Claude Opus 4 generations, are archived unless a plan still sells them."],
- ["Safeguards and model variants matter","Anthropic’s 9 Nov launch table mixes Fable 5.2 with clearly marked Mythos 5.2-only cybersecurity and biology evaluations. Those Mythos results are excluded from the Fable row. FrontierCode 2.0 also uses xhigh effort for Fable and medium for Gemini 4 Carbon; Remote Labor Index uses high effort for Fable 5.2. Compare the row notes, not just the model names."],
+ ["Older and lower-ranked models are archived","The Board keeps a model in view while its Index score reaches the 30th-best on the board, a listed subscription includes it, its Index score reaches the 10th-best among open-weights models, or it was released in the 30 days up to the snapshot date. Archived models keep every score and note. Use the Archive chip or Show archived models under the Board table to bring them back."],
+ ["Safeguards and model variants matter","Anthropic’s 9 Nov launch table labels the Mythos 5.2-only evaluations separately from the evaluations used in the board’s Fable 5.2 row. FrontierCode 2.0 uses extra high effort for Fable 5.2, max for OpenAI’s GPT-6.2 Astra and Sol, medium for Gemini 4 Carbon, and high for Gemini 4 Neon. Chartography lists Google DeepMind’s no-tools run for Neon. Remote Labor Index uses high effort for Fable 5.2. Check the row notes for the model variant, effort and tools used."],
  ["Vendors disagree when they run the same benchmark","xAI's August table scores Fable 5 at 1741 on GDPval-AA v2; Anthropic's September table scores it at 1723. Same benchmark, same model, two runs, 18 points apart. CursorBench is the counter-example — both vendors got 70.5% for Fable 5 and 67.2% for GPT-5.6 Sol — which is why Grok appears in that column and not in GDPval."],
  ["Some release candidates remain excluded","Apodex 1.1 lacks a verified vendor announcement in the retained audit. Agnes AI’s Theta-specific documentation and pricing are now traceable, but its claimed 7 Nov release date and numerical context were not verified with the vendor, so Theta is excluded pending those details. Motif 3’s prior conflicting Index readings remain unresolved. Muse Ember has a verified 9 Nov Meta release and is a separate row from Ember-1."],
  ["Two model families have naming conflicts","Arena lists Grok under the org name SpaceXAI while ARC Prize says xAI. OpenAI's marketing page prices GPT-5.6 Sol at $5/$30 while its own developer docs say $2/$10. Both are noted where they appear."]
 ];
 function renderSources(){
   $("#caveats").innerHTML=CAVEATS.map(([h,p])=>`<div class="srccard"><h3>${h}</h3><p>${p}</p></div>`).join("");
-  const seen=new Set(); let out="";
-  BENCH_ORDER.forEach(k=>{
-    const B=BENCH[k]; const key=B.url; if(seen.has(key+B.l))return; seen.add(key+B.l);
-    out+=`<div class="srccard"><h3>${B.l}</h3><p>${B.d}</p>
+  $("#srclist").innerHTML=[...new Set([...BENCH_ORDER,...Object.keys(BENCH)])].map(k=>{
+    const B=BENCH[k];
+    return `<div class="srccard"><h3>${B.l}${isArch(k)?' <span class="badge">Archived</span>':""}</h3><p>${B.d}</p>
       <p style="font-size:11.5px;color:var(--ink-3)">${B.src} · snapshot ${B.asof}</p>
       <a href="${B.url}" target="_blank" rel="noopener">${B.url.replace(/^https:\/\//,"")}</a></div>`;
-  });
-  $("#srclist").innerHTML=out;
+  }).join("");
   $("#planlist").innerHTML=Object.keys(PLAN_FAMILIES).map(f=>{const F=PLAN_FAMILIES[f], ps=PLANS.filter(p=>p.fam===f), lo=Math.min(...ps.map(p=>p.usd)), hi=Math.max(...ps.map(p=>p.usd));
     return `<div class="srccard"><h3>${esc(F.l)}</h3><p>${esc(F.burn)}</p>
       <p style="font-size:11.5px;color:var(--ink-3)">${esc(F.vendor)} · ${ps.length} plan${ps.length>1?"s":""}, ${lo===hi?usd(lo):usd(lo)+" to "+usd(hi)} a month · ${F.kind==="flat"?"flat-rate":"token-metered"} · vendor pages read ${PLAN_ASOF}</p>
@@ -3066,7 +3150,7 @@ function mineSummary(){
   if(!mine.length) return "No plan picked yet. Pick what you pay for and the Board marks the models you already have.";
   const tot=+mine.reduce((a,p)=>a+p.usd,0).toFixed(2), names=new Set(mine.flatMap(p=>Object.keys(p.models)));
   const best=mine.flatMap(planPts).sort((a,b)=>b.r.aaii-a.r.aaii||a.p.usd-b.p.usd)[0];
-  let out=`<b>${usd(tot)} a month</b> for ${mine.length} plan${mine.length>1?"s":""} covering <b>${names.size}</b> board models.`;
+  let out=`<b>${usd(tot)} a month</b> for ${mine.length} plan${mine.length>1?"s":""} covering <b>${names.size}</b> board model${names.size===1?"":"s"}.`;
   if(!best) return out+" None of those models has an Index score at the settings the plans offer.";
   out+=` The smartest setting you have is <b>${esc(best.m.name)}${effTag(best.r)}</b>, Index ${best.r.aaii}, on ${esc(planName(best.p))}.`;
   const flat=PLANS.filter(p=>isFlat(p)&&p.usd>0&&!state.mine.has(p.id)&&planBest(p));
@@ -3087,6 +3171,7 @@ function renderMine(){
 }
 /* every paid plan: monthly price against the best Index score it can reach. The frontier runs over flat-rate plans only. */
 function renderLadder(){
+  hideTip();
   const host=$("#c-sbladder"), paid=PLANS.filter(p=>p.usd>0&&planBest(p)), free=PLANS.filter(p=>p.usd===0&&planBest(p));
   const pts=paid.map(p=>{const b=planBest(p), mine=state.mine.has(p.id);
     return {x:p.usd,y:b.r.aaii,r:mine?7:5.5,ring:mine,flat:isFlat(p),fill:isFlat(p)?"var(--accent)":"var(--ink-3)",label:planName(p),plan:p,best:b,tip:planTip(p)};});
@@ -3104,6 +3189,7 @@ function renderLadder(){
 }
 /* one plan (or all the visitor's plans): every measured model and effort level, against how much usage a task draws or how long it waits */
 function renderUse(){
+  hideTip();
   const sel=$("#sbplan"), mine=myPlans(), host=$("#c-sbuse"), xk=state.subX;
   if(state.subPlan&&state.subPlan!=="mine"&&!PLANS.some(p=>p.id===state.subPlan)) state.subPlan=null;
   if(state.subPlan==="mine"&&mine.length<2) state.subPlan=null;
@@ -3115,11 +3201,13 @@ function renderUse(){
   sel.value=cur; $("#sbx").value=xk;
   // one point per model and effort level; across several plans the cheapest plan that has it is named
   const seen=new Map(); plans.flatMap(planPts).forEach(q=>{const k=q.m.name+"|"+q.r.e, o=seen.get(k); if(!o||q.p.usd<o.p.usd) seen.set(k,q);});
-  const all=[...seen.values()], top=m=>Math.max(...all.filter(q=>q.m===m).map(q=>q.r.aaii));
-  const models=[...new Set(all.map(q=>q.m))].sort((a,b)=>top(b)-top(a)||a.name.localeCompare(b.name)), col=m=>{const i=models.indexOf(m); return i<SERIES?`var(--s${i+1})`:"var(--ink-3)";};
   const xf=xk==="cost"?money:v=>(v>=10?Math.round(v):+v.toFixed(1))+" s", nm=q=>esc(q.m.name)+effTag(q.r);
-  const pts=all.filter(q=>q.r[xk]>0).map(q=>({x:q.r[xk],y:q.r.aaii,r:EFF_R[q.r.e],fill:col(q.m),label:q.m.name+effTag(q.r),q,
+  const pts=[...seen.values()].filter(q=>q.r[xk]>0).map(q=>({x:q.r[xk],y:q.r.aaii,r:EFF_R[q.r.e],label:q.m.name,q,
     tip:modelTip(q.m,[["Effort",EFF_NAME[q.r.e]],["Index",q.r.aaii],["Cost per index task",q.r.cost!=null?money(q.r.cost):"—"],["First answer token",q.r.ttft!=null?q.r.ttft+" s":"—"],["Plan",esc(planName(q.p))+" · "+usd(q.p.usd)]])}));
+  const top=m=>Math.max(...pts.filter(p=>p.q.m===m).map(p=>p.y));
+  const models=[...new Set(pts.map(p=>p.q.m))].sort((a,b)=>top(b)-top(a)||a.name.localeCompare(b.name));
+  const col=m=>{const i=models.indexOf(m); return i<SERIES?`var(--s${i+1})`:"var(--ink-3)";};
+  pts.forEach(p=>{p.fill=col(p.q.m);});
   const one=plans.length===1?plans[0]:null, F=one&&planFam(one);
   $("#sbuse-sub").textContent=(xk==="cost"
     ?"Every effort level Artificial Analysis has measured for the models in the chosen plan, against what one Index task costs at API list prices. A flat-rate plan does not bill that figure, but vendors count plan usage in tokens and weight it by model, so it stands in for how fast a setting draws down the allowance. "
@@ -3127,13 +3215,15 @@ function renderUse(){
     +"The line is the Pareto frontier: the settings no "+(xk==="cost"?"lighter":"quicker")+" setting matches. Anything under the line "+(xk==="cost"?"draws more usage":"waits longer")+" for a lower score. Bigger dots are higher effort, and a thin line joins one model's levels."
     +(xk==="cost"&&!one?" Each plan has its own allowance, so across plans read usage as API-equivalent cost, not as one shared pool.":"")
     +(xk==="cost"&&F&&F.atList?` On this plan the dollars are real: tokens are billed at list prices against the $${one.x} monthly allowance.`:"");
-  $("#sbmodels").innerHTML=models.map(m=>`<span><i style="background:${col(m)}"></i>${esc(m.name)}</span>`).join("");
+  $("#sbmodels").innerHTML=models.map(m=>`<span><i style="background:${col(m)}"></i>${esc(m.name)}</span>`).join("")
+    +(models.length>SERIES?`<p class="note">Top ${SERIES} models get a colour; the rest are grey.</p>`:"");
   const skipped=plans.flatMap(p=>Object.keys(p.models)).filter((n,i,a)=>a.indexOf(n)===i&&!pts.some(q=>q.q.m.name===n));
   $("#sbuse-miss").innerHTML=skipped.length?`<b>Not drawn</b>, no Index score${xk==="cost"?" or cost":" or latency"} measured at the settings ${one?"the plan offers":"these plans offer"}: ${skipped.map(esc).join(", ")}.`:"";
   if(!pts.length){ host.innerHTML='<p class="empty">Artificial Analysis has not measured any of this plan\'s models at the settings it offers.</p>'; $("#sbuse-front").innerHTML=$("#sbuse-skip").innerHTML=""; return; }
   const lv=e=>EFF_ORDER.indexOf(e), paths=models.map(m=>({stroke:col(m),pts:pts.filter(q=>q.q.m===m).sort((a,b)=>lv(a.q.r.e)-lv(b.q.r.e))}));
   host.innerHTML=scatterSvg(pts,{aria:"Index score against "+(xk==="cost"?"usage per task":"waiting time")+" for each model and effort level in the plan",host,H:520,maxLab:18,paths,
-    xfmt:xf,yfmt:v=>String(Math.round(v)),xtitle:xk==="cost"?"Usage per task: API-equivalent dollars per Index task":"Seconds to first answer token",ytitle:"AA Intelligence Index",front:"min"});
+    xfmt:xf,yfmt:v=>String(Math.round(v)),xtitle:xk==="cost"?"Usage per task: API-equivalent dollars per Index task":"Seconds to first answer token",
+    shortX:xk==="cost"?"Usage per Index task ($)":"Seconds to first answer token",ytitle:"AA Intelligence Index",front:"min"});
   wire(host);
   const front=paretoFront(pts,"min");
   $("#sbuse-front").innerHTML=`<b>Worth running, ${xk==="cost"?"lightest":"quickest"} first:</b> `+front.map(q=>`${nm(q.q)} (${q.y} · ${xf(q.x)})`).join(" → ");
@@ -3142,6 +3232,7 @@ function renderUse(){
   $("#sbuse-skip").innerHTML=beaten.length?"<b>Beaten on both counts:</b> "+beaten.map(d=>`${nm(d.q.q)} (${d.q.y} · ${xf(d.q.x)}) by ${nm(d.by.q)} (${d.by.y} · ${xf(d.by.x)})`).join("; ")+".":"";
 }
 function renderTier(){
+  hideTip();
   const host=$("#c-sbtier");
   host.innerHTML=hbarSvg(PLANS.filter(p=>{const b=famBase(p.fam); return b&&b!==p&&perDollar(p)!=null;}).map(p=>{const v=perDollar(p), b=famBase(p.fam);
     return {name:planName(p),v,fill:isFlat(p)?"var(--accent)":"var(--ink-3)",label:v.toFixed(2)+"×",
@@ -3152,6 +3243,7 @@ function renderTier(){
 }
 const PLAN_COLS=[["have","","l"],["fam","Plan","l"],["usd","$/mo",""],["top","Top model","l"],["idx","Index",""],["n","Models",""],["use","Published usage",""],["per","Per $ vs entry tier",""],["brk","API break-even",""]];
 const PLAN_VAL={fam:p=>PLANS.indexOf(p),usd:p=>p.usd,idx:p=>planBest(p)?planBest(p).r.aaii:null,n:p=>Object.keys(p.models).length,per:perDollar,brk:planBreak};
+const PLAN_KEEP=new Set(["have","fam","usd","idx"]);
 function planDetail(p){
   const F=planFam(p), b=planBest(p), k=planBreak(p), allow=planEff(p);
   const mods=Object.keys(p.models).map(n=>{const ps=planPts(p).filter(q=>q.m.name===n).sort((x,y)=>y.r.aaii-x.r.aaii), hi=ps[0], lo=ps[ps.length-1];
@@ -3173,23 +3265,26 @@ function planDetail(p){
 }
 function renderPlanTable(){
   const th=$("#plantab thead"), tb=$("#plantab tbody"), k=state.planSort, f=PLAN_VAL[k];
-  th.innerHTML="<tr>"+PLAN_COLS.map(([c,l,cl])=>`<th class="${cl}"${PLAN_VAL[c]?` data-k="${c}"`:""}${c===k?" data-active":""}${c==="have"?' title="Your plans"':""}>${l}${PLAN_VAL[c]?` <span class="arw">${c===k&&state.planDir>0?"▴":"▾"}</span>`:""}</th>`).join("")+"</tr>";
-  $$("#plantab thead th[data-k]").forEach(el=>el.onclick=()=>{ const c=el.dataset.k;
+  refill(th,"<tr>"+PLAN_COLS.map(([c,l,cl])=>`<th scope="col" class="${cl}${PLAN_KEEP.has(c)?" keep":""}"${PLAN_VAL[c]?` data-k="${c}"`:""}${c===k?` data-active aria-sort="${state.planDir>0?"ascending":"descending"}"`:""}>${PLAN_VAL[c]
+    ?`<button type="button" class="thbtn" data-k="sort-${c}" aria-label="Sort by ${esc(l)}">${l} <span class="arw" aria-hidden="true">${c===k&&state.planDir>0?"▴":"▾"}</span></button>`
+    :c==="have"?'<span class="vh">Your plans</span>':l}</th>`).join("")+"</tr>");
+  $$("th[data-k]",th).forEach(el=>el.onclick=()=>{ const c=el.dataset.k;
     if(state.planSort===c) state.planDir*=-1; else { state.planSort=c; state.planDir=c==="idx"||c==="n"||c==="per"?-1:1; } renderPlanTable(); });
   const rows=[...PLANS].sort((a,b)=>{const av=f(a), bv=f(b); if(av==null&&bv==null) return PLANS.indexOf(a)-PLANS.indexOf(b); if(av==null) return 1; if(bv==null) return -1;
     return state.planDir*(av-bv)||PLANS.indexOf(a)-PLANS.indexOf(b);});
-  tb.innerHTML=rows.map((p,i)=>{const b=planBest(p), F=planFam(p), on=state.planOpen===p.id, has=state.mine.has(p.id), pd=perDollar(p), br=planBreak(p), nu='<td class="mono na" title="Not published by the vendor">—</td>';
+  refill(tb,rows.map((p,i)=>{const b=planBest(p), F=planFam(p), on=state.planOpen===p.id, has=state.mine.has(p.id), pd=perDollar(p), br=planBreak(p), nu='<td class="mono na" title="Not published by the vendor">—</td>';
     return `<tr data-plan="${p.id}" class="${on?"open":""}${k==="fam"&&state.planDir>0&&i&&rows[i-1].fam!==p.fam?" fam0":""}">
-      <td class="l"><button type="button" class="have" data-have="${p.id}" aria-pressed="${has}" aria-label="${esc(planName(p))}: ${has?"remove from":"add to"} your plans" title="${has?"One of your plans. Select to remove it":"Add to your plans"}">${has?"✓":"+"}</button></td>
-      <td class="l"><span class="mname"><span class="dot" style="background:${isFlat(p)?"var(--accent)":"var(--ink-3)"}" title="${isFlat(p)?"Flat-rate":"Token-metered"}"></span>${esc(planName(p))}<span class="prov">${esc(F.vendor)}</span></span></td>
-      <td class="mono">${usd(p.usd)}<span class="q ven" title="${QL.ven}"></span></td>
-      ${b?`<td class="l">${esc(b.m.name)}${b.r.e!=="one"?`<span class="eff">${b.r.e}</span>`:""}</td><td class="mono">${b.r.aaii}</td>`:'<td class="l na" title="No model in the plan has an Index score at the settings it offers">—</td><td class="mono na">—</td>'}
+      <td class="l keep"><button type="button" class="have" data-have="${p.id}" data-k="have-${p.id}" aria-pressed="${has}" aria-label="${esc(planName(p))}: ${has?"remove from":"add to"} your plans" title="${has?"One of your plans. Select to remove it":"Add to your plans"}">${has?"✓":"+"}</button></td>
+      <td class="l keep"><span class="mname"><span class="dot" style="background:${isFlat(p)?"var(--accent)":"var(--ink-3)"}" title="${isFlat(p)?"Flat-rate":"Token-metered"}"></span><button type="button" class="rowbtn" data-k="plan-${p.id}" aria-expanded="${on}" aria-label="${esc(planName(p))}: ${on?"hide":"show"} plan details"><span class="chev" aria-hidden="true">${on?"▾":"▸"}</span>${esc(planName(p))}</button><span class="prov">${esc(F.vendor)}</span></span></td>
+      <td class="mono keep">${usd(p.usd)}<span class="q ven" title="${QL.ven}"></span></td>
+      ${b?`<td class="l">${esc(b.m.name)}${b.r.e!=="one"?`<span class="eff">${b.r.e}</span>`:""}</td><td class="mono keep">${b.r.aaii}</td>`:'<td class="l na" title="No model in the plan has an Index score at the settings it offers">—</td><td class="mono na keep">—</td>'}
       <td class="mono">${Object.keys(p.models).length}</td>
       ${p.x!=null?`<td class="mono">${planUse(p,1)}</td>`:nu}
       ${pd!=null?`<td class="mono">${famBase(p.fam)===p?"entry":pd.toFixed(2)+"×"}</td>`:nu}
-      ${br!=null?`<td class="mono">${tasksN(br)} tasks</td>`:'<td class="mono na">—</td>'}</tr>`+(on?planDetail(p):"");}).join("");
+      ${br!=null?`<td class="mono">${tasksN(br)} tasks</td>`:'<td class="mono na">—</td>'}</tr>`+(on?planDetail(p):"");}).join(""));
   $$("#plantab tbody tr[data-plan]").forEach(tr=>tr.onclick=()=>{ state.planOpen=state.planOpen===tr.dataset.plan?null:tr.dataset.plan; renderPlanTable(); });
-  $$("#plantab .have").forEach(b=>b.onclick=e=>{ e.stopPropagation(); planToggle(b.dataset.have); });
+  $$("#plantab .have").forEach(b=>b.onclick=e=>{ e.stopPropagation(); const id=b.dataset.have;
+    planToggle(id); $(`#plantab .have[data-have="${id}"]`).focus({preventScroll:true}); });
 }
 /* ---------------- subscriptions: budget shortlist, compare tray and sheet ---------------- */
 /* The tab opens on one question, the monthly budget, and answers it with one plan per product: the tier with the highest
@@ -3207,6 +3302,7 @@ const cmpBtn=p=>{const on=state.subCmp.has(p.id), full=!on&&state.subCmp.size>=S
   return `<button type="button" class="sb-btn cmpb" data-sbcmp="${p.id}" data-k="cmp-${p.id}" aria-pressed="${on}"${full?` disabled title="Up to ${SUB_CMP_MAX} plans side by side"`:""}>${on?"✓ Comparing":"Compare"}</button>`;};
 function renderShort(){
   const cap=state.subCap, list=subShort(), nM=n=>n+" board model"+(n>1?"s":"");
+  const maxIndex=Math.max(1,...MODELS.map(m=>val(m,"aaii")??0));
   refill($("#sbbudget"),SUB_CAPS.map(c=>`<button type="button" data-cap="${c}" data-k="cap-${c}" aria-pressed="${c===cap}">${capLab(c)}</button>`).join(""));
   $("#sbflat").setAttribute("aria-pressed",state.subFlat);
   const win=cap===0?"Smartest free plan":cap===Infinity?"Smartest at any price":`Smartest for ${usd(cap)} a month or less`;
@@ -3224,7 +3320,7 @@ function renderShort(){
     return `<div class="sb-row"><span class="rk">${i+4}</span>
       <div class="nm"><b>${esc(F.l)}</b> ${esc(p.name)}<small>${esc(F.vendor)}${isFlat(p)?"":" · token-metered"}</small></div>
       <div class="pr">${feeTxt(p)}</div>
-      <div class="sb-ixm"><span class="sb-meter${isFlat(p)?"":" met"}"><i style="width:${(b.r.aaii/70*100).toFixed(1)}%"></i></span><b>${b.r.aaii}</b></div>
+      <div class="sb-ixm"><span class="sb-meter${isFlat(p)?"":" met"}"><i style="width:${Math.min(100,b.r.aaii/maxIndex*100).toFixed(1)}%"></i></span><b>${b.r.aaii}</b></div>
       <div class="mdl">${esc(b.m.name)}${effTag(b.r)}<span style="color:var(--ink-3)">${Object.keys(p.models).length>1?" · +"+(Object.keys(p.models).length-1)+" more":""}</span></div>
       <div class="sb-acts">${ownBtn(p)}${cmpBtn(p)}</div></div>`;}).join("")
     +(rest.length>vis.length?`<button type="button" class="sb-more-b" id="sbmore" data-k="more">Show ${rest.length-vis.length} more product${rest.length-vis.length>1?"s":""} in this budget</button>`:""));
@@ -3251,38 +3347,44 @@ function sbEff(p,lo,hi){
   const pos=v=>((v-lo)/(hi-lo)*100).toFixed(1), R=e=>e==="one"?10:7+Math.max(0,EFF_ORDER.indexOf(e))*1.5;
   return `<div class="sb-eff">`+ms.slice(0,6).map(m=>{const r=pts.filter(q=>q.m===m), a=Math.min(...r.map(q=>q.r.aaii)), b=Math.max(...r.map(q=>q.r.aaii));
     return `<span class="m" title="${esc(m.name)}">${esc(m.name)}</span><span class="tr"><span class="sp" style="left:${pos(a)}%;width:${(pos(b)-pos(a)).toFixed(1)}%"></span>`
-      +r.map(q=>`<i class="${on.has(q)?"on":""}" style="left:${pos(q.r.aaii)}%;width:${R(q.r.e)}px;height:${R(q.r.e)}px" data-tip="${esc(modelTip(m,[["Effort",EFF_NAME[q.r.e]],["Index",q.r.aaii],["Cost per index task",q.r.cost!=null?money(q.r.cost):"—"],["On this plan",on.has(q)?"Worth running":"A lighter setting scores as high"]]))}"></i>`).join("")+`</span>`;}).join("")
+      +r.map((q,i)=>{const measured=q.r.cost!=null, good=on.has(q), rad=R(q.r.e);
+        const dy=scoreOffset(r.map(p=>p.r.aaii),i);
+        return `<i class="${!measured?"unmeasured":good?"on":""}" style="left:${pos(q.r.aaii)}%;--dy:${dy}px;width:${rad}px;height:${rad}px" data-tip="${esc(modelTip(m,[["Effort",EFF_NAME[q.r.e]],["Index",q.r.aaii],["Cost per index task",measured?money(q.r.cost):"Cost not measured"],...(measured?[["On this plan",good?"Worth running":"A lighter setting scores as high"]]:[])]))}"></i>`;
+      }).join("")+`</span>`;}).join("")
     +`<span class="ax"><span>${Math.round(lo)}</span><span>Index</span><span>${Math.round(hi)}</span></span></div>`
     +(ms.length>6?`<span class="gt">+${ms.length-6} more model${ms.length>7?"s":""}; the plan table lists them all.</span>`:"");
 }
 function renderSheet(){
   const ps=PLANS.filter(p=>state.subCmp.has(p.id)), all=ps.flatMap(planPts).map(q=>q.r.aaii);
   const lo=all.length?Math.floor(Math.min(...all)-2):0, hi=all.length?Math.ceil(Math.max(...all)+2):70;
+  const settingHeading="Which setting to run<small>Filled = worth running · larger = higher effort · dashed = cost unmeasured</small>";
+  const meta=p=>`${esc(planFam(p).vendor)} · ${isFlat(p)?"flat-rate":"token-metered"}`;
   const rows=[["Price",p=>`<b class="mono">${feeTxt(p)}</b>${p.usd?" a month":""}`],
     ["Top model",p=>{const b=planBest(p); return b?`${esc(b.m.name)}${effTag(b.r)} · <b class="mono">${b.r.aaii}</b>`:"—";}],
     ["Board models",p=>Object.keys(p.models).length],
     ["Published usage",p=>p.x!=null?esc(planUse(p)):'<span class="gt">not published</span>'],
     ["Per $ vs entry tier",p=>{const v=perDollar(p); return v==null?"—":famBase(p.fam)===p?"entry tier":v.toFixed(2)+"×";}],
     ["API break-even",p=>{const k=planBreak(p); return k!=null?tasksN(k)+" Index tasks a month":"—";}],
-    ["Which setting to run",p=>sbEff(p,lo,hi)],
+    [settingHeading,p=>sbEff(p,lo,hi)],
     ["Limits",p=>`<span class="gt">${esc(p.lim)}</span>`],
     ["Past the limit",p=>`<span class="gt">${esc(planFam(p).over)}</span>`],
     ["Source",p=>`<a href="${planFam(p).url}" target="_blank" rel="noopener">${esc(planFam(p).url.replace(/^https:\/\//,""))}</a>`]];
-  const g=$("#sbgrid");
-  if(matchMedia("(max-width:700px)").matches){
-    // phones: one attribute at a time, each plan on its own line under it, so no plan is cut off;
-    // the long limit texts and sources fold away below the short facts
-    const line=([k,f])=>`<div class="gk">${k}</div>`+ps.map(p=>`<div class="gp"><span class="gpn">${esc(planName(p))}</span><span class="gpv">${f(p)}</span></div>`).join("");
+  const g=$("#sbgrid"), more=$(".gmore",g);
+  hideTip();
+  if(innerWidth<=860||innerWidth<160+ps.length*240){
+    // one attribute at a time, with the long limit texts and sources folded away below the short facts
+    const line=([k,f],i)=>`<div class="gk">${k}</div>`+ps.map(p=>`<div class="gp"><div class="gpn">${esc(planName(p))}${i===0?`<small>${meta(p)}</small>`:""}</div><div class="gpv">${f(p)}</div></div>`).join("");
     g.style.gridTemplateColumns="1fr"; g.classList.add("bya");
-    g.innerHTML=rows.slice(0,7).map(line).join("")+`<details class="gmore"><summary>Limits, overage and sources</summary>${rows.slice(7).map(line).join("")}</details>`;
+    g.innerHTML=rows.slice(0,7).map(line).join("")+`<details class="gmore"${more?.open?" open":""}><summary>Limits, overage and sources</summary>${rows.slice(7).map(row=>line(row)).join("")}</details>`;
   } else {
     g.classList.remove("bya"); g.style.gridTemplateColumns=`minmax(96px,130px) repeat(${ps.length},minmax(200px,1fr))`;
-    g.innerHTML=`<div></div>`+ps.map(p=>`<div class="gh">${esc(planName(p))}<small>${esc(planFam(p).vendor)} · ${isFlat(p)?"flat-rate":"token-metered"}</small></div>`).join("")
+    g.innerHTML=`<div></div>`+ps.map(p=>`<div class="gh">${esc(planName(p))}<small>${meta(p)}</small></div>`).join("")
       +rows.map(([k,f])=>`<div class="gk">${k}</div>`+ps.map(p=>`<div>${f(p)}</div>`).join("")).join("");
   }
+  sbSheet.width=innerWidth;
   wire(g);
 }
-const sbSheet={from:null, get open(){return !$("#sbsheet").hidden;},
+const sbSheet={from:null, width:0, get open(){return !$("#sbsheet").hidden;},
   show(btn){ if(state.subCmp.size<2) return; this.from=btn||$("#sbgo"); renderSheet(); $("#sbsheet").hidden=false;
     document.documentElement.classList.add("sblock"); $("#sbclose").focus({preventScroll:true}); },
   hide(){ if(!this.open) return; $("#sbsheet").hidden=true; document.documentElement.classList.remove("sblock"); hideTip();
@@ -3292,8 +3394,10 @@ function openPicker(){ const b=$("#sbpickb"); $("#sbpickbox").hidden=false; b.se
 $("#sbpickb").onclick=()=>{ const box=$("#sbpickbox"); box.hidden=!box.hidden; $("#sbpickb").setAttribute("aria-expanded",!box.hidden); };
 $("#sbflat").onclick=()=>{ state.subFlat=!state.subFlat; state.subMore=false; renderShort(); syncURL(); };
 $("#sbgo").onclick=e=>sbSheet.show(e.currentTarget);
-addEventListener("resize",()=>{ if(sbSheet.open) renderSheet(); });
-$("#boardcols").onclick=e=>{ const on=$("#board").classList.toggle("full"); e.currentTarget.setAttribute("aria-pressed",on); e.currentTarget.textContent=on?"Show fewer columns":"Show every column"; };
+addEventListener("resize",()=>{ if(sbSheet.open&&innerWidth!==sbSheet.width) renderSheet(); });
+for(const [button,table] of [["#boardcols","#board"],["#plancols","#plantab"]]){
+  $(button).onclick=e=>{ const on=$(table).classList.toggle("full"); e.currentTarget.setAttribute("aria-pressed",on); e.currentTarget.textContent=on?"Show fewer columns":"Show every column"; };
+}
 $("#sbclr").onclick=()=>{ state.subCmp.clear(); renderShort(); };
 $("#sbclose").onclick=()=>sbSheet.hide();
 $("#sbsheet").onclick=e=>{ if(e.target.id==="sbsheet") sbSheet.hide(); };
@@ -3311,8 +3415,9 @@ $("#p-subs").addEventListener("click",e=>{ const t=e.target.closest("button"); i
   if(t.dataset.cap!=null){ state.subCap=+t.dataset.cap; state.subMore=false; renderShort(); syncURL(); }
   else if(t.dataset.own){ planToggle(t.dataset.own); }
   else if(t.dataset.sbcmp){ const id=t.dataset.sbcmp; state.subCmp.has(id)?state.subCmp.delete(id):state.subCmp.size<SUB_CMP_MAX&&state.subCmp.add(id); renderShort(); }
-  else if(t.id==="sbmore"){ state.subMore=true; renderShort(); }
-  else if(t.id==="sbshowmet"){ state.subFlat=false; renderShort(); syncURL(); } });
+  else if(t.id==="sbmore"){ const n=$$("#sbshort .sb-row").length; state.subMore=true; renderShort();
+    $$("#sbshort .sb-row")[n]?.querySelector("button").focus(); }
+  else if(t.id==="sbshowmet"){ state.subFlat=false; state.subMore=false; renderShort(); $("#sbflat").focus(); syncURL(); } });
 // a closed section keeps its chart drawn at full width; opening it redraws the chart to fit
 [["sbd-ladder",()=>renderLadder()],["sbd-use",()=>renderUse()],["sbd-tier",()=>renderTier()]].forEach(([id,f])=>
   $("#"+id).addEventListener("toggle",e=>{ if(e.target.open) f(); }));
@@ -3368,10 +3473,11 @@ function secTrack(force){
     if(secPin&&!secSettled&&performance.now()-secInput>1500) return;
   }
   secY=scrollY; secPin=false;
-  const off=secOff()+4, cs=secCards(); let top=null, row=[];
+  const off=secOff()+4, cs=secCards(), atEnd=scrollY>0&&scrollY+innerHeight>=document.documentElement.scrollHeight-4;
+  let top=null, row=[];
   cs.forEach(c=>{ const t=c.getBoundingClientRect().top; if(t>off) return; if(top==null||t>top+2){top=t;row=[c];} else if(Math.abs(t-top)<=2) row.push(c); });
   // cards that share a row share a position: keep the one already named if it is in that row
-  const hit=row.find(c=>c.id==="ch-"+state.sec)||row[0], id=hit&&hit!==cs[0]?hit.id.slice(3):null;
+  const hit=atEnd?cs.at(-1):row.find(c=>c.id==="ch-"+state.sec)||row[0], id=hit&&hit!==cs[0]?hit.id.slice(3):null;
   if(id!==state.sec){ state.sec=id; syncURL(); }
 }
 function syncURL(){
@@ -3405,9 +3511,10 @@ function urlApply(){
   // pricing lens and the visitor's plans: the link first, then what this browser saved, then the defaults.
   // A link to a chart that only the API lens shows (an older ?chart=price or #ch-price link) opens under that lens.
   const saved=k=>{try{return localStorage.getItem(k);}catch(e){return null;}}, ids=new Set(PLANS.map(x=>x.id));
-  const apiSec=!!sec&&document.getElementById("ch-"+sec).dataset.lens==="api";
+  const sectionLens=tab==="quad"&&sec?document.getElementById("ch-"+sec).dataset.lens:null;
   const savedLens=saved(LENS_KEY)==="api"?"api":"sub";
-  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":apiSec||savedLens==="api"?"api":"sub";
+  state.lens=p.get("lens")==="api"?"api":p.get("lens")==="sub"?"sub":sectionLens||savedLens;
+  if(sectionLens&&sectionLens!==state.lens) sec=null;
   // a link that names a lens or plans other than this browser's keeps naming them, so a reload opens the same page;
   // the visitor's own saved choices are not overwritten until they change one themselves
   state.lensPin=p.has("lens")&&state.lens!==savedLens;
@@ -3416,11 +3523,14 @@ function urlApply(){
   state.mine=new Set(mine);
   state.plansPin=p.has("plans")&&[...state.mine].sort().join()!==[...new Set(savedMine)].sort().join();
   state.onlyMine=on(p.get("mine"))&&state.mine.size>0;
-  if(p.get("plan")==="mine"||ids.has(p.get("plan"))) state.subPlan=p.get("plan");
-  if(p.get("against")==="wait") state.subX="ttft";
-  if(state.subPlan||state.subX==="ttft") $("#sbd-use").open=true;
-  { const b=p.get("budget"), c=b==="any"?Infinity:+b; if(b!=null&&SUB_CAPS.includes(c)) state.subCap=c; }
-  if(on(p.get("metered"))) state.subFlat=false;
+  if(tab==="subs"){
+    const plan=p.get("plan"), b=p.get("budget"), cap=b==="any"?Infinity:+b;
+    if(ids.has(plan)||(plan==="mine"&&state.mine.size>=2)) state.subPlan=plan;
+    if(p.get("against")==="wait") state.subX="ttft";
+    if(state.subPlan||state.subX==="ttft") $("#sbd-use").open=true;
+    if(b&&(b==="any"||/^\d+$/.test(b))&&SUB_CAPS.includes(cap)) state.subCap=cap;
+    if(on(p.get("metered"))) state.subFlat=false;
+  }
   state.sec=tab==="quad"&&sec&&"ch-"+sec!==$("#p-quad .card[id^='ch-']").id?sec:null;
   let names=null;
   if(p.has("models")){ const by=new Map(MODELS.map(m=>[slug(m.name),m.name])), ids=p.get("models").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
@@ -3446,12 +3556,18 @@ function urlLand(){
   $$("#jump a").forEach(a=>a.onclick=e=>{ const id=a.getAttribute("href").slice(4); if(!secOK(id)) return;
     e.preventDefault(); secGo(id); state.sec=secCards()[0].id==="ch-"+id?null:id; syncURL(); });
   addEventListener("hashchange",()=>{ const id=location.hash.slice(4); if(!/^#ch-/.test(location.hash)||!secOK(id)) return;
-    if(curTab()!=="quad"){ setTab("quad"); render(); } secGo(id); state.sec=secCards()[0].id==="ch-"+id?null:id; syncURL(); });
+    const entering=curTab()!=="quad";
+    if(entering) setTab("quad");
+    if($("#ch-"+id).dataset.lens==="api"&&state.lens!=="api") setLens("api");
+    else if(entering) render();
+    secGo(id); state.sec=secCards()[0].id==="ch-"+id?null:id; syncURL(); });
 }
 $("#xaxis").onchange=$("#yaxis").onchange=()=>renderQuad(filtered());
-let lastW=innerWidth; addEventListener("resize",()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>{
-  if(Math.abs(innerWidth-lastW)>40&&($("#p-quad").classList.contains("on")||$("#p-subs").classList.contains("on"))){ lastW=innerWidth; const pin=secPin&&state.sec; render(); pin?secGo(state.sec):(secY=scrollY); } },150); });
-$("#foot-src").onclick=e=>{e.preventDefault(); $('.tab[data-p="src"]').click(); scrollTo(0,0);};
+let lastW=innerWidth, widthTimer;
+addEventListener("resize",()=>{ if(innerWidth===lastW) return; lastW=innerWidth; clearTimeout(widthTimer); widthTimer=setTimeout(()=>{
+  if(["quad","subs","bench"].includes(curTab())){ const pin=secPin&&state.sec; render(); pin?secGo(state.sec):(secY=scrollY); } },150); });
+$("#foot-src").onclick=e=>{e.preventDefault(); const tab=$('.tab[data-p="src"]'); tab.click(); scrollTo(0,0);
+  tab.focus({preventScroll:true}); tab.scrollIntoView({block:"nearest",inline:"nearest"}); };
 
 
 /* ---------------- list price (detail panel) ---------------- */
