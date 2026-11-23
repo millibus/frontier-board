@@ -339,7 +339,10 @@ try {
   if (await page.locator("#ch-ctx svg").evaluate(svgScale) > 1.5) problems.push("monthly-plan Context chart is inflated over 1.5×");
   const group = page.locator("#c-ctx [data-grp]").first();
   if (await group.getAttribute("tabindex") !== "0") problems.push("Context groups are not in the keyboard tab order");
-  const expanded = await group.evaluate(g => {
+  // Look the group up in the same task as the check: the chart can re-render after the resize and tab switch above,
+  // and a node resolved earlier may already be detached, where focus() does nothing.
+  const expanded = await page.evaluate(() => {
+    const g = document.querySelector("#c-ctx [data-grp]");
     g.focus({ preventScroll: true });
     const showedTip = document.querySelector("#tip").classList.contains("on");
     g.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));

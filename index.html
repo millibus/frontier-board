@@ -941,8 +941,8 @@ body:has(#p-subs.on #sbtray:not([hidden])) .foot{padding-bottom:92px}
    whichever models have a score.  Check with: node scripts/check-data.mjs
    ========================================================================= */
 
-const ASOF = "20 Nov 2026";
-const ASOF_NOTE = "20 Nov 2026 · Added Tencent Hy4 after its official pages and open-weight release, filled Gemini 4 Hydrogen’s ARC Prize scores and first Arena text ratings for Fable 5.2, GPT-6.2 Astra, GPT-6.2 Sol and GPT-6.1 Terra, and re-read Arena’s 19 Nov text and WebDev snapshots.";
+const ASOF = "23 Nov 2026";
+const ASOF_NOTE = "Corrections only, 23 Nov 2026: GitHub Copilot plan models and GPT-6 Luna's low-effort cost per task. Data last refreshed 20 Nov 2026 (benchmark scores); subscription plans 23 Nov 2026 for GitHub Copilot and 18 Nov 2026 for the other vendors.";
 
 const BENCH = {
   frontiercode2:{l:"FrontierCode 2.0",s:"FrontierCode 2.0",g:"coding",f:"pct",hi:1,src:"Vendor comparison tables",url:"https://www.anthropic.com/claude-fable-and-mythos-5-2",asof:"18 Nov 2026",d:"Maintainer-acceptance coding evaluation, version 2.0, with figures from launch tables published by Anthropic, OpenAI and Google DeepMind. Fable 5.2/5.1 use xhigh effort, Gemini 4 Carbon uses medium, and Gemini 4 Neon uses high. Not comparable to the original FrontierCode column.",warn:"Vendor-reported launch results; use each row’s effort and benchmark-version notes. Not an independent evaluation."},
@@ -1454,7 +1454,7 @@ const EFFORT = {
   "Claude Sonnet 5.5":[["max",55,10.02,146,264.32],["xhigh",50,4.09,142,25.96],["high",42,1.64,136,9.37],["medium",31,0.78,137,4.97],["low",26,0.51,135,2.32]],
   "Claude Opus 5.5":[["max",59,10.04,118,335.85],["xhigh",57,6.05,107,56.81],["high",52,3.46,108,19.17],["medium",48,2.45,105,12.76],["low",35,0.98,104,4.85]],
   "Grok 4.7":[["xhigh",35,7.77,70,51.51],["high",35,6.18,71,37.53],["low",31,2.92,68,14.88]],
-  "GPT-6 Luna":[["max",28,0.15,105,64.74],["xhigh",23,0.1,100,16.31],["high",21,0.07,93,10.65],["medium",18,0.04,96,5.32],["low",10,0.01,88,2.49]],
+  "GPT-6 Luna":[["max",28,0.15,105,64.74],["xhigh",23,0.1,100,16.31],["high",21,0.07,93,10.65],["medium",18,0.04,96,5.32],["low",10,0.005,88,2.49]],
   "GPT-6 Astra":[["max",57,6.24,42,172.52],["xhigh",55,3.66,44,76.87],["high",55,3.24,44,34.95],["medium",52,2.73,47,5.86],["low",43,1.42,45,3.55]],
   "Muse Wonder":[["max",44,6.95,117,20.38],["high",41,4.56,127,10.01]],
   "Claude Fable 5.1":[["xhigh",50,10.85,84,38.59],["max",49,12.99,91,149.23],["high",47,7.54,85,9.81],["medium",43,5.56,85,3.57],["low",39,4.47,85,2.37]],
@@ -1553,7 +1553,7 @@ const PRICES = {
      models  {board model name: "" or a short access note}; at least one
      lim     limits as published · note = anything else worth knowing
    ========================================================================= */
-const PLAN_ASOF = "18 Nov 2026";
+const PLAN_ASOF = "23 Nov 2026";
 const E5 = ["low","medium","high","xhigh","max"];
 const PLAN_FAMILIES = {
  claude:{vendor:"Anthropic",l:"Claude",kind:"flat",url:"https://claude.com/pricing",eff:E5,xu:"× Pro",
@@ -1628,8 +1628,8 @@ const TOKENPLAN = {"Qwen4 Max":"","Qwen3.8 Max":"","DeepSeek V4.1 Flash 1017":""
 const MIMOS = {"MiMo-V2.6-Pro":"","MiMo-V2.6-Flash":""};
 const STEPS = {"Step 5 Preview":"","Step 3.7 Flash":""};
 const BYTEPLUS = {"DeepSeek V4.1 Flash":"","DeepSeek V4 Pro":"","DeepSeek V4 Flash":"","GLM-5.3-Flash":"","GLM-5.2":""};
-const COPILOT_PRO = {"Claude Sonnet 5.5":"","Claude Haiku 5.5":"","GPT-6.1 Terra":"","GPT-6 Luna":"","GPT-5.6 Terra":"","GPT-5.6 Luna":"","GPT-5.3 Codex":"","Grok 4.7":"","Grok 4.6":"","Kimi K3":""};
-const COPILOT_TOP = {"GPT-6.2 Astra":"","GPT-6.2 Sol":"","Claude Fable 5.2":"","Claude Fable 5.1":"","Claude Opus 5.5":"","Claude Opus 5":"","GPT-6.1 Sol":"","GPT-6 Astra":"","GPT-6 Sol":"","GPT-5.6 Sol":"","Gemini 4 Carbon":"","Gemini 4 Neon":"","Gemini 4 Argon":"",...COPILOT_PRO};
+const COPILOT_PRO = {"Claude Sonnet 5.5":"","Claude Sonnet 5":"","Claude Haiku 5.5":"","Gemini 4 Hydrogen":"","GPT-6.1 Terra":"","GPT-6 Luna":"","GPT-5.6 Luna":"","GPT-5.3 Codex":"","Grok 4.7":"","Grok 4.6":"","Grok 4.5":"","Kimi K3":""};
+const COPILOT_TOP = {"GPT-6.2 Astra":"","GPT-6.2 Sol":"","Claude Fable 5.2":"","Claude Fable 5.1":"","Claude Opus 5.5":"","GPT-6.1 Sol":"","GPT-6 Astra":"","GPT-6 Sol":"","GPT-5.6 Sol":"","Gemini 4 Carbon":"","Gemini 4 Neon":"","Gemini 4 Argon":"",...COPILOT_PRO};
 const OLLAMAS = {"Inkling 2 Small":"","Kimi K3.1 Pro":"","Kimi K3":"","Kimi K2.7 Code":"","DeepSeek V4.1 Flash":"","DeepSeek V4 Pro":"","GLM-5.3":"","GLM-5.3-Flash":"","MiMo-V2.6-Pro":"","MiMo-V2.6-Flash":"","MiniMax M3.1 Flash":"","MiniMax M3":"","Mistral Large 4":"","Muse Spark Open":"","Beam 1.0":"","gpt-oss-120b":""};
 const PLANS = [
  {id:"claude-pro",fam:"claude",name:"Pro",usd:20,yr:200,x:1,models:CL_BASE,
@@ -1763,7 +1763,7 @@ const PLANS = [
   note:"GitHub says the flex allotment may change. Copilot moved from premium requests to token billing on 1 Jun 2026."},
  {id:"copilot-proplus",fam:"copilot",name:"Pro+",usd:39,x:70,models:COPILOT_TOP,
   lim:"3,900 AI credits plus a 3,100-credit flex allotment a month: $70 of usage at list token prices.",
-  note:"The cheapest Copilot plan with Fable, Opus, GPT-6 Sol and Astra, and Gemini 4 Neon. GitHub began rolling out Neon on 18 Nov."},
+  note:"The cheapest Copilot plan with Fable, Opus, GPT-6 Sol and Astra, and Gemini 4 Neon. GitHub began rolling out Neon on 18 Nov. GitHub retired Claude Opus 5 and GPT-5.6 Terra from Copilot on 16 Nov (its supported-models page, read 23 Nov)."},
  {id:"copilot-max",fam:"copilot",name:"Max",usd:100,x:200,models:COPILOT_TOP,
   lim:"10,000 AI credits plus a 10,000-credit flex allotment a month: $200 of usage at list token prices.",note:""},
 
@@ -1775,6 +1775,9 @@ const PLANS = [
 
 /* What changed, newest first. tag: add | rescale | data | move | feature */
 const CHANGELOG = [
+{d:"23 Nov 2026",items:[
+  ["data","Corrections only. GitHub Copilot, from GitHub's plans and supported-models pages read 23 Nov: Claude Opus 5 and GPT-5.6 Terra come off every Copilot plan, retired from Copilot on 16 Nov; Gemini 4 Hydrogen, Claude Sonnet 5 and Grok 4.5 join Pro, Pro+ and Max, where GitHub lists them as included. GPT-6 Luna's low-effort cost per index task goes back to $0.005 (Artificial Analysis lists $0.0051); it had been rounded to $0.01. No score changed. The plan date moves to 23 Nov; only GitHub's pages were re-read that day, and the other vendors' plan data is as read on 18 Nov."]
+]},
 {d:"20 Nov 2026",items:[
   ["add","Hy4 (Tencent, announced 4 Nov; open weights 20 Nov): 770B/49B MoE with a 1,048,576-token context, under the Tencent Hy License. Artificial Analysis Index 35 at $1.03 per task, 93 tok/s and 119.47 s to first answer token. Vals AI Terminal-Bench 4.0 39.39%. Arena WebDev 1650. API prices $0.83/$2.50 per million tokens ($0.042 cache reads), the USD figures published by Artificial Analysis and Vals AI against Tencent’s ¥6/¥18/¥0.3 TokenHub list. Hy4-preview moves to previous gen."],
   ["data","Arena text and WebDev were re-read from the official 19 Nov Hugging Face snapshots (arena.ai itself remains blocked to scripts). New text ratings: Claude Fable 5.2 1503 at max, GPT-6.2 Astra 1468, GPT-6.2 Sol 1465 and GPT-6.1 Terra 1474. GPT-6.2 Astra’s WebDev rating moved from 1797 to 1759 at max, and Sol’s from 1771 to 1755, as early vote counts grew. Other effort-matched rows were refreshed, including Gemini 4 Neon text 1518→1513 and WebDev 1764→1763, Hydrogen WebDev 1704→1701, and Fable 5.2 WebDev 1824→1823."],
